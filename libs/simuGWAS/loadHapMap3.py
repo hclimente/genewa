@@ -162,7 +162,7 @@ def load_population(pop, diskFiles, alleleNames, logger=None):
                 if ploidy == 2:
                     continue
                 if ind == pop.popSize():
-                    print 'Warning: individual index %d greater than population size %d ' % (ind, pop.popSize())
+                    print('Warning: individual index %d greater than population size %d ' % (ind, pop.popSize()))
                 # always chromosome 0, because each population has only one chromosome
                 assert pop.locusPos(line_no) == float(fields[1])
                 assert pop.locusName(line_no) == name

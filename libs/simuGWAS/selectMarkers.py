@@ -36,7 +36,7 @@ simuOpt.setOptions(alleleType='binary', quiet=True, version='1.0.1')
 from simuPOP import *
 
 from types import *
-import os, sys, exceptions
+import os, sys
 
 def mergeHapMapPops(HapMap_dir, HapMap_pops, chrom, logger=None):
     '''
@@ -110,7 +110,7 @@ def mergeHapMapPops(HapMap_dir, HapMap_pops, chrom, logger=None):
                     pop1_loci[toAllele].append(i)
                     pop1_names[toAllele].append(alleles)
             if pop.locusName(i) != pop1.locusName(i):
-                print 'Locus names are different', pop.locusName(i), pop1.locusName(i)
+                print('Locus names are different', pop.locusName(i), pop1.locusName(i))
                 sys.exit(0)
         if len(pop_loci[0]) > 0 or len(pop_loci[1]) > 0:
             # only change names
@@ -172,9 +172,9 @@ def getHapMapMarkers(HapMap_dir, names = [], chroms=[], HapMap_pops=['HapMap2_CE
         - a list of more than one element: raise an error if size mismatch.
         - an empty list: return param.
         '''
-        if type(param) in [IntType, LongType, FloatType]:
+        if type(param) in [int, float]:
             return [param]*size
-        elif type(param) in [TupleType, ListType]:
+        elif type(param) in [tuple, list]:
             if len(param) == 1:
                 return list(param)*size
             elif len(param) == 0:
@@ -275,7 +275,7 @@ options = [
         HapMap data is expected to be downloaded and saved in simuPOP format
         using script loadHapMap_r22.py from the simuPOP online cookbook. The
         files have names such as HapMap_CEU_chr10.pop.''',
-     'allowedTypes': [StringType],
+     'allowedTypes': [str],
      'validate': simuOpt.valueValidDir(),
     },
     {
@@ -284,7 +284,7 @@ options = [
     'useDefault': False,
     'label' : 'Name of populations',
     'description': '''Which HapMap populations to use?''',
-    'allowedTypes': [ListType, TupleType],
+    'allowedTypes': [list, tuple],
     'chooseFrom': HapMap2_pops + HapMap3_pops,
     'validate': simuOpt.valueListOf(HapMap2_pops + HapMap3_pops),
     },
@@ -295,7 +295,7 @@ options = [
     'label': 'Marker list file',
     'description': '''A file with a list of marker names. If there are more than
         one fields at a line, the rest of them are ignored.''',
-    'allowedTypes': [StringType],
+    'allowedTypes': [str],
     'validate': simuOpt.valueOr(simuOpt.valueEqual(''), simuOpt.valueValidFile()),
     },
     {
@@ -304,7 +304,7 @@ options = [
     'useDefault': True,
     'label': 'Chromosomes to use',
     'description': 'A list of chromosomes (1-22) to use.',
-    'allowedTypes': [TupleType, ListType],
+    'allowedTypes': [tuple, list],
     'validate': simuOpt.valueListOf(simuOpt.valueBetween(1, 22)),
     },
     {
@@ -316,7 +316,7 @@ options = [
         parameter should be ignored if it is unspecified or is set to zero
         for some chromosomes.
         ''',
-    'allowedTypes': [TupleType, ListType],
+    'allowedTypes': [tuple, list],
     'validate': simuOpt.valueOr(simuOpt.valueGT(0), simuOpt.valueListOf(simuOpt.valueGE(0)))
     },
     {
@@ -327,7 +327,7 @@ options = [
     'description': '''Starting position of the markers on each chromosome.
         The beginning of the chromosomes will be assumed if this parameter
         is unspecified or is set to zero.''',
-    'allowedTypes': [TupleType, ListType],
+    'allowedTypes': [tuple, list],
     'validate': simuOpt.valueOr(simuOpt.valueGE(0), simuOpt.valueListOf(simuOpt.valueGE(0)))
     },
     {
@@ -338,7 +338,7 @@ options = [
     'description': '''Ending position of the markers on each chromosome.
         The end of the chromosomes will be assumed if this parameter is
         unspecifed or is set to zero.''',
-     'allowedTypes': [TupleType, ListType],
+     'allowedTypes': [tuple, list],
      'validate': simuOpt.valueOr(simuOpt.valueGE(0), simuOpt.valueListOf(simuOpt.valueGE(0)))
     },
     {
@@ -347,7 +347,7 @@ options = [
     'useDefault': True,
     'label': 'Minimal minor allele frequency',
     'description': '''Minimal allele frequency of selected markers.''',
-    'allowedTypes': [IntType, LongType, FloatType],
+    'allowedTypes': [int, float],
     'validate': simuOpt.valueBetween(0, 0.5)
     },
     {
@@ -356,7 +356,7 @@ options = [
     'useDefault': True,
     'label': 'Minimal distance between markers',
     'description': '''Minimal distance between adjacent markers''',
-    'allowedTypes': [IntType, LongType, FloatType],
+    'allowedTypes': [int, float],
     'validate': simuOpt.valueGE(0),
     },
     {
@@ -365,7 +365,7 @@ options = [
     #'useDefault': True,
     'label': 'Merge all subpopulations',
     'description': '''Merge all subpopulations''',
-    'allowedTypes': [BooleanType],
+    'allowedTypes': [bool],
     },
     {
     'longarg': 'filename=',
@@ -375,7 +375,7 @@ options = [
     'description': '''Name of the population or an absolute path to
         a file. This parameter will be ignored if an empty string or None
         is given.''',
-    'allowedTypes': [StringType],
+    'allowedTypes': [str],
     'validate': simuOpt.valueNotEqual('')
     }
 ]

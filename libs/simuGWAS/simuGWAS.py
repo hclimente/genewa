@@ -32,39 +32,42 @@ loci. A scaling approach can be used to improve efficiency when weak, additive
 genetic factors are used.
 '''
 
-import simuOpt
-simuOpt.setOptions(alleleType='binary', optimized=False, quiet=True)
+import os, sys, math, types, time
+
+if "simuOpt" not in sys.modules:
+    import simuOpt
+    simuOpt.setOptions(alleleType='binary', optimized=False, quiet=True)
+else:
+    import simuOpt
 from simuPOP import *
 
 from simuPOP.utils import simulateForwardTrajectory, simulateBackwardTrajectory, migrSteppingStoneRates
-
-import os, sys, math, types, time
 
 options = [
     {'longarg': 'initPop=',
      'default': 'init.pop',
      'label': 'Initia population',
-     'allowedTypes': types.StringType,
+     'allowedTypes': str,
      'validate': simuOpt.valueValidFile(),
      'description': 'An initial population created using script selectedMarkers.py'
     },
     {'longarg': 'dumpRec=',
      'default': '',
-     'allowedTypes': types.StringType,
+     'allowedTypes': str,
      'description': '''This is a hidden option, if set, all recombination events will
             be dumped to the specified file. Please refer to the simuPOP user's guide
             for explanation of this file.'''
     },
     {'longarg': 'trajFile=',
      'default': '',
-     'allowedTypes': types.StringType,
+     'allowedTypes': str,
      'description': '''This is a hidden option which, if set from command line, will
             output the simulated trajectory to the specified file. The format
             is generation freq.'''
     },
     {'longarg': 'haploCount=',
      'default': [0,0],
-     'allowedTypes': [types.TupleType, types.ListType],
+     'allowedTypes': [tuple, list],
      'description': '''This is an hidden option, if set, the number of unique haplotypes
             between specified loci will be outputted.'''
     },
@@ -73,7 +76,7 @@ options = [
      'default': 'expanded.pop',
      'useDefault': True,
      'description': '''File to save the expanded population.''',
-     'allowedTypes': [types.StringType],
+     'allowedTypes': [str],
     },
     {'separator': 'Mutation, recombination, etc'},
     {
@@ -81,7 +84,7 @@ options = [
      'default': 1e-8,
      'useDefault': True,
      'label': 'Mutation rate',
-     'allowedTypes': [types.IntType, types.FloatType],
+     'allowedTypes': [int, float],
      'description': '''Mutation rate at all markers. This value will be scaled
             by the scaling parameter.''',
      'validate': simuOpt.valueBetween(0,1),
@@ -89,7 +92,7 @@ options = [
     {'longarg': 'recIntensity=',
      'default': 1e-8,
      'useDefault': True,
-     'allowedTypes': [types.FloatType, types.IntType, types.LongType],
+     'allowedTypes': [float, int],
      'label': 'Recombination intensity',
      'description': '''Recombination intensity. The actual recombination rate
             between two adjacent loci will be this intensity times loci distance
@@ -103,7 +106,7 @@ options = [
     {'longarg': 'scale=',
      'default': 1,
      'useDefault': True,
-     'allowedTypes': [types.IntType, types.LongType, types.FloatType],
+     'allowedTypes': [int, float],
      'label': 'Acceleration scale',
      'description': '''This parameter is used to speed up recombination, mutation
                 and selection. Briefly speaking, certain parts of the evolutionary
@@ -120,7 +123,7 @@ options = [
                 expansion stage. The actual evolved population is scaled down by
                 parameter --scale. (If scale==10, expandGen=1000, the actually
                 evolved generation is 100).''',
-     'allowedTypes': [types.IntType, types.LongType],
+     'allowedTypes': [int],
      'validate': simuOpt.valueGT(0)
     },
     {'longarg': 'initSize=',
@@ -130,7 +133,7 @@ options = [
                 size of the initial population will be used. Otherwise, the first
                 generation will have specified number of individuals. This is to avoid
                 losing genetic information if the initial population is very small.''',
-     'allowedTypes': [types.IntType, types.LongType],
+     'allowedTypes': [int],
     },
     {'longarg': 'expandSize=',
      'default': 50000,
@@ -143,7 +146,7 @@ options = [
                 to simulate a population with comparable properties of the unscaled one.
                 Otherwise, the simulation will appear to go through faster population expansion
                 which leads to reduced genetic drift.''',
-     'allowedTypes': [types.IntType, types.LongType],
+     'allowedTypes': [int],
      'validate': simuOpt.valueGE(100)
     },
     {'longarg': 'migrRate=',
@@ -153,7 +156,7 @@ options = [
      'description': '''If there are more than one subpopulations, this parameter
                 controlls the rate at which migration is allowed.
                 A circular stepping stone migration model will be used. ''',
-     'allowedTypes': [types.IntType, types.FloatType],
+     'allowedTypes': [int, float],
      'validate':    simuOpt.valueBetween(0,1)
     },
     {'separator': 'Disease information'},
@@ -163,14 +166,14 @@ options = [
      'label': 'Names of disease predisposing loci',
      'description': '''A list of names of disease predisposing loci. These loci
                 must exist in the population.''',
-     'allowedTypes': [types.TupleType, types.ListType],
-     'validate': simuOpt.valueListOf(types.StringType)
+     'allowedTypes': [tuple, list],
+     'validate': simuOpt.valueListOf(str)
     },
     {'longarg': 'curAlleleFreq=',
      'default': [0.05],
      'useDefault': True,
      'label': 'Final allele frequencies',
-     'allowedTypes': [types.ListType, types.TupleType],
+     'allowedTypes': [list, tuple],
      'description': '''Current allele frequencies for each DPL.
                 If a number is given, it is assumed to be the frequency
                 for all DPL.''',
@@ -180,7 +183,7 @@ options = [
      'default': 'forward',
      'useDefault': True,
      'label': 'Trajectory simulation method',
-     'allowedTypes': types.StringType,
+     'allowedTypes': str,
      'chooseOneOf': ['forward', 'backward'],
      'description': '''Trajectory simulation type. A forward method assumes that the mutants
                 are old so the trajectory will start from the existing allele frequency.
@@ -191,7 +194,7 @@ options = [
      'default': [1, 1, 1],
      'useDefault': True,
      'label': 'Fitness of genotype AA,Aa,aa',
-     'allowedTypes': [types.ListType, types.TupleType],
+     'allowedTypes': [list, tuple],
      'description': '''Fitness of genotype, can be:
                 f1, f2, f3: if one DPL, the fitness for genotype AA, Aa and aa
                 f1, f2, f3: if multiple DPL, the same fitness for each locus
@@ -218,7 +221,7 @@ options = [
                 interaction: the intepretation of fitness parameter is different.
                     see fitness.
                 ''',
-     'allowedTypes': [types.StringType],
+     'allowedTypes': [str],
      'chooseOneOf': [ 'additive', 'multiplicative', 'interaction', 'none']
     },
 ]
@@ -233,7 +236,7 @@ def expDemoFunc(N0, N1, expandGen):
     
     gen: generations to evolve.
     '''
-    if type(N1) in [types.IntType, types.LongType]:
+    if type(N1) in [int]:
         N1 = [int(N1*1.0*x/sum(N0)) for x in N0]
     elif len(N1) != len(N0):
         raise ValueError("Number of subpopulations should be the same")
@@ -275,7 +278,8 @@ def simuGWAS(pars, pop, logger=None):
             if type(pars.initSize) not in  [type(()), type([])]:
                 pars.initSize = [pars.initSize]
         else:
-            if type(pars.initSize) in [type(0), type(0L)]:
+            pass
+            if type(pars.initSize) in [type(0)]:
                 pars.initSize = [pars.initSize*1.0*x/pop.popSize() for x in pop.subPopSizes()]
         demoFunc = expDemoFunc(pars.initSize, pars.expandSize, pars.expandGen)
     if logger:
@@ -387,10 +391,10 @@ def simuGWAS(pars, pop, logger=None):
             recOp = Recombinator(rates=rate, loci=loc, infoFields='ind_id', output='>>%s' % pars.dumpRec)
         else:
             recOp = Recombinator(rates=rate, loci=loc)
-        print 'Scaled recombination at %.3f cM/Mb over %.2f centiMorgan genetic (%.0f bp physical) distance (first chromosome)' % \
-            (pars.recIntensity*1e6, (pop.dvars().geneticMap[pop.locusName(pop.numLoci(0)-1)] - \
-                pop.dvars().geneticMap[pop.locusName(0)]),
-                int(pop.locusPos(pop.numLoci(0)-1) - pop.locusPos(0)))
+        print('Scaled recombination at %.3f cM/Mb over %.2f centiMorgan genetic (%.0f bp physical) distance (first chromosome)' % \
+                    (pars.recIntensity*1e6, (pop.dvars().geneticMap[pop.locusName(pop.numLoci(0)-1)] - \
+                        pop.dvars().geneticMap[pop.locusName(0)]),
+                        int(pop.locusPos(pop.numLoci(0)-1) - pop.locusPos(0))))
     except:
         # if not possible, use a physical map
         if pars.dumpRec:
