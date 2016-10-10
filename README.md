@@ -14,3 +14,5 @@ Two well documented tools emerge [simuPOP](http://simupop.sourceforge.net) and [
 ## simuPOP + simuGWAS + GENS2
 
 To complete.
+[simuGWAS](http://simupop.sourceforge.net/Cookbook/SimuGWAS)
+[GENS2](https://sourceforge.net/projects/gensim/)
