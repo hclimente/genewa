@@ -26,7 +26,7 @@ HAPGEN requires 3 files with genomic information, all of which can [easily be ob
   
 Then, it requires some user-specified parameters, such as the number of cases and controls to be simulated, relative risks associated with disease SNPs, a subset of SNPs to output, etc.
 
-We downloaded the 1000G pahse 3 data, and simulated 1000 cases and 1000 controls for the chromosome 20. We arbitrarily picked the biallellic SNP rs13039134 (pos 92366), and tagged the minor allele G as pathogenic (heterozygous disease risk = 1.5< homozygous disease risk = 2.25). We run the simulation using the following command:
+We downloaded the 1000G phase 3 data, and simulated 1000 cases and 1000 controls for the chromosome 20. We arbitrarily picked the biallellic SNP rs13039134 (pos 92366), and tagged the minor allele G as pathogenic (heterozygous disease risk = 1.5; homozygous disease risk = 2.25). We run the simulation using the following command:
 
 ```bash
 
