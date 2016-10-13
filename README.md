@@ -1,5 +1,16 @@
 # gwas_simulation
 
+Required files:
+
+* libs
+  * [hapgen2](https://mathgen.stats.ox.ac.uk/genetics_software/hapgen/hapgen2.html#Download_and_Compilation)
+  * [SimulatePhenotypes](https://mathgen.stats.ox.ac.uk/genetics_software/hapgen/download/R_scripts/SimulatePhenotypes_1.0.tar.gz)
+* data
+  * 1000GP_Phase3_chr20.hap
+  * 1000GP_Phase3_chr20.legend
+  * genetic_map_chr20_combined_b37.txt
+* populations
+
 # Choice of simulation tool
 
 NIH has a [nice comparative](https://popmodels.cancercontrol.cancer.gov/gsr/search/) of genome simulation tools. We filtered by the following criteria:
