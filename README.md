@@ -32,7 +32,14 @@ We downloaded the 1000G pahse 3 data, and simulated 1000 cases and 1000 controls
 
 ```bash
 
-echo "libs/hapgen2/hapgen2 -m data/genetic_map_chr20_combined_b37.txt -h data/1000GP_Phase3_chr20.hap -l data/1000GP_Phase3_chr20.legend -o populations -N 1000 1000 -dl 92366 1 1.5 2.25" | qsub -cwd -S /bin/bash -V -o o.chr20.100.txt -e e.chr20.100.txt -N hapgen.chr20
+echo "libs/hapgen2/hapgen2 -m data/genetic_map_chr20_combined_b37.txt -h data/1000GP_Phase3_chr20.hap -l data/1000GP_Phase3_chr20.legend -o populations/chr20 -n 1000 1000 -dl 92366 1 1.5 2.25" | qsub -cwd -S /bin/bash -V -o o.chr20.100.txt -e e.chr20.100.txt -N hapgen.chr20
 
 ```
+The output consist of the following files:
+
+* populations/chr20.[cases|controls].haps: simulated haplotype data.
+* populations/chr20.legend: information about the SNPs in the .haps files.
+* populations/chr20.[cases|controls].gen: simualted genotype data
+* populations/chr20.[cases|controls].sample: a sample file for the simulated genotype data.
+* populations/chr20.[cases|controls].tags (if applicable): the genotype data limited to the subset of SNPs specified by the file supplied to the -t flag.
 
