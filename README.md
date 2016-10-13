@@ -27,6 +27,12 @@ HAPGEN requires 3 files with genomic information, all of which can [easily be ob
   3. cumulative rate in cM to the left of the marker.
   
 Then, it requires some user-specified parameters, such as the number of cases and controls to be simulated, relative risks associated with disease SNPs, a subset of SNPs to output, etc.
-  
-## 
+
+We downloaded the 1000G pahse 3 data, and simulated 1000 cases and 1000 controls for the chromosome 20 using the following command:
+
+```bash
+
+echo "libs/hapgen2/hapgen2 -m data/genetic_map_chr20_combined_b37.txt -h data/1000GP_Phase3_chr20.hap -l data/1000GP_Phase3_chr20.legend -o populations -N 1000 1000 -dl 92366 1 1.5 2.25" | qsub -cwd -S /bin/bash -V -o o.chr20.100.txt -e e.chr20.100.txt -N hapgen.chr20
+
+```
 
