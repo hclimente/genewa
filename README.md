@@ -1,4 +1,4 @@
-# A logbook for the genewa project
+# genewa project
 
 ## Index
 
