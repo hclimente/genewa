@@ -3,6 +3,7 @@
 ## Index
 
 1. [Data simulation](logbook/gwas_simulation.md)
+2. [State of the art](logbook/sota.md)
 
 ## Requirements
 
