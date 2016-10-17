@@ -47,4 +47,8 @@ The output consist of the following files:
 
 # GAMETES
 
-*to do*
+We discovered [GAMETES](https://sourceforge.net/projects/gametes/?source=navbar) when reviewing the bibliography of [Moore](https://scholar.google.fr/citations?user=mE1Te78AAAAJ&hl=en&oi=ao). It generates pure, random and strict epistatic models.
+
+# Open questions
+
+* HAPGEN2: do we need to impute the haplotypes to get SNPs on all the genes of the haplotype, instead of the haplotypes? Else it will be difficult to build any kind of network.
