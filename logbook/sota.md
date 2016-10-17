@@ -2,7 +2,11 @@ We want to compile a list of existing tools to detect epistasis. Firstly, we wan
 
 # List of tools
 
-*to do*
+## Regression-based methods
+## LD- and haplotype-based methods
+## Bayesian methods
+## Data-filtering methods
+## Artificial intelligence algorithms
 
 # Evaluation of tools
 
