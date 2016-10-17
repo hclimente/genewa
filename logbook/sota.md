@@ -6,6 +6,8 @@ Curated collection of tools compiled from the [literature](http://www.nature.com
 
 ## Regression-based methods
 
+Methods based on logistic regression. Time consuming and low powered.
+
 * [PLINK epistasis-module](http://pngu.mgh.harvard.edu/~purcell/plink/epi.shtml)
 * [FastEpistasis](http://www.vital-it.ch/software/FastEpistasis)
 * [BOOST](http://bioinformatics.ust.hk/BOOST.html)
@@ -15,24 +17,31 @@ Curated collection of tools compiled from the [literature](http://www.nature.com
 
 ## LD- and haplotype-based methods
 
-They check if the joint co-occurrence is different between cases and controls.
+They check if the joint co-occurrence is different between cases and controls. Faster and higher powered. Works well for *unlinked* loci (eg separate chromosomes) in *rare* diseases.
 
 * [SIXPAC](http://www.cs.columbia.edu/~snehitp/sixpac/)
 * [iLOCi](http://www4a.biotec.or.th/GI/tools/iloci)
 
 ## Bayesian methods
 
+Classify pairs of unlinked loci in one of three non-overlapping groups (unassociated, associated by marginal effects and associated by joint effects) according to their posterior probabilities.
+
+* [BEAM](http://sites.stat.psu.edu/~yuzhang/)
 * [GenomeMatrix](https://sph.uth.edu/hgc/faculty/xiong/software-B.html)
 * [IndOR](http://emily.perso.math.cnrs.fr/IndOR/IndOR/IndOR.html)
 * [HAPAL](https://www.stt.msu.edu/~cui/software.html)
 
 ## Data-filtering methods
 
+Hypothesis-driven approaches aim to select a subset of SNPs for interaction tests on the basis of existing biological knowledge (for example, databases of pathways and protein–protein interactions), statistical features (for example, marginal effects and SNP genotype frequencies or fast algorithms.
+
 * [SNPHarvester](http://bioinformatics.ust.hk/SNPHarvester.html)
 * [EDCF](http://www.cs.ucr.edu/~minzhux/EDCF.zip)
 * [Relief series](https://code.google.com/archive/p/ensemble-of-filters/)
 
 ## Artificial intelligence algorithms
+
+Use classifiers for data reduction and/or feature selection to reduce both the computational burden and the statistical burden of an exhaustive search.
 
 * [SNPruler](http://bioinformatics.ust.hk/Software.html)
 * [SNPInterForest](https://gwas.biosciencedbc.jp/SNPInterForest/index.html)
