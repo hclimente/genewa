@@ -47,7 +47,22 @@ The output consist of the following files:
 
 # GAMETES
 
-We discovered [GAMETES](https://sourceforge.net/projects/gametes/?source=navbar) ([paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3605108/)) when reviewing the bibliography of [Moore](https://scholar.google.fr/citations?user=mE1Te78AAAAJ&hl=en&oi=ao). It generates pure, random and strict epistatic models. GAMETES generates a number of random model arquitectures under the specified constraints (MAF, Heritability...); this size of this sampe is specified in the parameter *Quantile population size*. Then, those models are scored according to the metric specified under *Quantile* (EDM or Odds ratio). The higher those values are, the easier the underlying epistasis is to detect. The quantiles specified in *Quantile count* are picked from the distribution of scores. Then it generates sample datasets for each of the generated models. Those datasets consist of a number of cases and controls, and a specified number of cohorts.
+We discovered [GAMETES](https://sourceforge.net/projects/gametes/?source=navbar) ([paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3605108/)) when reviewing the bibliography of [Moore](https://scholar.google.fr/citations?user=mE1Te78AAAAJ&hl=en&oi=ao). It generates pure, random and strict epistatic models. GAMETES generates a number of random model arquitectures under the specified constraints (MAF, Heritability...); the size of this sampe is specified in the parameter *Quantile population size*. Then, those models are scored according to the metric specified under *Quantile* (EDM or Odds ratio). The higher those values are, the easier the underlying epistasis is to detect. The quantiles specified in *Quantile count* are picked from the distribution of scores. Then it generates sample datasets for each of the generated models. Those datasets consist of a number of cases and controls, and a specified number of cohorts.
+
+**ATTENTION** CLI version requires the floats to be input with comma as decimal mark!
+
+We generate a set of models with different heritabilities and MAFs. We allow prevalence be chosen by the program because, as stated in the paper, it doesn't make much difference.
+
+```bash
+for h in "0,005" "0,01" "0,025" "0,05" "0,1" "0,2"
+do 
+	for maf in "0,2" "0,4"
+	do
+		outfile=`echo populations/gametes/models/h"$h"_maf"$maf" | sed 's/0,//g'`
+		java -jar libs/GAMETES/GAMETES_2.1.jar -M " -h $h -a $maf -a $maf -o $outfile" -q 10 -p 1000 -t 100000
+	done
+done
+```
 
 # Open questions
 
