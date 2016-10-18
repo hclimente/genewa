@@ -20,10 +20,10 @@ HAPGEN requires 3 files with genomic information, all of which can [easily be ob
   3. Base represented by 0.
   4. Base represented by 1.
 * A file containing the fine-scale **recombination rate** across the region. This file should have 3 columns with one line for each SNP:
-  1. physical location, 
+  1. physical location,
   2. rate in cM/Mb to the right of the marker
   3. cumulative rate in cM to the left of the marker.
-  
+
 Then, it requires some user-specified parameters, such as the number of cases and controls to be simulated, relative risks associated with disease SNPs, a subset of SNPs to output, etc.
 
 We downloaded the 1000G phase 3 data, and simulated 1000 cases and 1000 controls for the chromosome 20. We arbitrarily picked the biallellic SNP rs13039134 (pos 92366), and tagged the minor allele G as pathogenic (heterozygous disease risk = 1.5; homozygous disease risk = 2.25). We ran the simulation using the following command:
@@ -49,17 +49,21 @@ The output consist of the following files:
 
 We discovered [GAMETES](https://sourceforge.net/projects/gametes/?source=navbar) ([paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3605108/)) when reviewing the bibliography of [Moore](https://scholar.google.fr/citations?user=mE1Te78AAAAJ&hl=en&oi=ao). It generates pure, random and strict epistatic models. GAMETES generates a number of random model arquitectures under the specified constraints (MAF, Heritability...); the size of this sampe is specified in the parameter *Quantile population size*. Then, those models are scored according to the metric specified under *Quantile* (EDM or Odds ratio). The higher those values are, the easier the underlying epistasis is to detect. The quantiles specified in *Quantile count* are picked from the distribution of scores. Then it generates sample datasets for each of the generated models. Those datasets consist of a number of cases and controls, and a specified number of cohorts.
 
-**ATTENTION** CLI version requires the floats to be input with comma as decimal mark!
+**ATTENTION:** CLI version requires the floats to be input with comma as decimal mark!
 
-We generate a set of models with different heritabilities and MAFs. We allow prevalence be chosen by the program because, as stated in the paper, it doesn't make much difference.
+We generate a set of models with different heritabilities and MAFs. We allow prevalence be chosen by the program because, as stated in the paper, it doesn't make much difference. Then, for each of them, we generate 100 replicates of 1000 cases and 1000 controls for 100 SNPs.
 
 ```bash
 for h in "0,005" "0,01" "0,025" "0,05" "0,1" "0,2"
-do 
+do
 	for maf in "0,2" "0,4"
 	do
-		outfile=`echo populations/gametes/models/h"$h"_maf"$maf" | sed 's/0,//g'`
-		java -jar libs/GAMETES/GAMETES_2.1.jar -M " -h $h -a $maf -a $maf -o $outfile" -q 10 -p 1000 -t 100000
+		modelfile=`echo populations/gametes/models/h"$h"_maf"$maf" | sed 's/0,//g'`
+		java -jar libs/GAMETES/GAMETES_2.1.jar -M " -h $h -a $maf -a $maf -o $modelfile" -q 10 -p 1000 -t 100000
+
+		out=`echo populations/gametes/h"$h"_maf"$maf" | sed 's/0,//g'`
+		java -jar libs/GAMETES/GAMETES_2.1.jar -i "$modelfile"_Models.txt -D " -n 0.01 -x 0.5 -a 100 -s 1000 -w 1000 -r 100 -o $out"
+
 	done
 done
 ```
