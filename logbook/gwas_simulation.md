@@ -47,7 +47,7 @@ The output consist of the following files:
 
 # GAMETES
 
-We discovered [GAMETES](https://sourceforge.net/projects/gametes/?source=navbar) when reviewing the bibliography of [Moore](https://scholar.google.fr/citations?user=mE1Te78AAAAJ&hl=en&oi=ao). It generates pure, random and strict epistatic models.
+We discovered [GAMETES](https://sourceforge.net/projects/gametes/?source=navbar)([paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3605108/)) when reviewing the bibliography of [Moore](https://scholar.google.fr/citations?user=mE1Te78AAAAJ&hl=en&oi=ao). It generates pure, random and strict epistatic models. GAMETES generates a number of random model arquitectures under the specified constraints (MAF, Heritability...); this size of this sampe is specified in the parameter *Quantile population size*. Then, those models are scored according to the metric specified under *Quantile* (EDM or Odds ratio). The higher those values are, the easier the underlying epistasis is to detect. The quantiles specified in *Quantile count* are picked from the distribution of scores. Then it generates sample datasets for each of the generated models. Those datasets consist of a number of cases and controls, and a specified number of cohorts.
 
 # Open questions
 
