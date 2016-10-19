@@ -53,6 +53,8 @@ We discovered [GAMETES](https://sourceforge.net/projects/gametes/?source=navbar)
 
 We generate a set of models with different heritabilities and MAFs. We allow prevalence be chosen by the program because, as stated in the paper, it doesn't make much difference. Then, for each of them, we generate 100 replicates of 1000 cases and 1000 controls for 100 SNPs.
 
+**ERROR** uninvolved SNPs do not present variability.
+
 ```bash
 for h in "0,005" "0,01" "0,025" "0,05" "0,1" "0,2"
 do
