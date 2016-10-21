@@ -13,6 +13,8 @@ N=`head -n$SGE_TASK_ID $param_file | tail -n1 | cut -f3`
 modelNo=`head -n$SGE_TASK_ID $param_file | tail -n1 | cut -f4`
 repNo=`head -n$SGE_TASK_ID $param_file | tail -n1 | cut -f5`
 
+echo Analyzing population h $h maf $maf N $N modelNo $modelNo repNo $repNo 
+
 scripts/gametes2plink.R $h $maf $N $modelNo $repNo
 ped=populations/gametes/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".txt.ped
 
