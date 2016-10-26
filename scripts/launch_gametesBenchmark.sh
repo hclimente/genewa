@@ -64,13 +64,20 @@ do
     ## format header
     sed 's/# /No/' | sed 's/ /_/g' >$mdrOut
 
-    # RELIEFF
+    # TURF
     turfOut=populations/gametes/turf/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".turf.txt
+
+    ## run turf in a box
+    box=turf_h"$h"_maf"$maf"_N"$N"
+    mkdir $box
+    cd $box
     if [ "$N" == "20" ]
     then
-      perl libs/turf/TuRF-E.pl -f $gametesFile -o $turfOut -t 20
+      perl libs/turf/TuRF-E.pl -f ../$gametesFile -o ../$turfOut -t 20
     else
-      perl libs/turf/TuRF-E.pl -f $gametesFile -o $turfOut
+      perl libs/turf/TuRF-E.pl -f ../$gametesFile -o ../$turfOut
     fi
+    cd ..
+    rm -r $box
   done
 done
