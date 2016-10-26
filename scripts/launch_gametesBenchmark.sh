@@ -7,7 +7,7 @@
 #$ -tc 100
 
 #####################
-#     GET PARAMS    #
+#    ENVIRONMENT    #
 #####################
 
 mkdir -p populations/gametes/mdr
@@ -15,6 +15,13 @@ mkdir populations/gametes/plink
 mkdir populations/gametes/sixpac
 mkdir populations/gametes/turf
 mkdir populations/gametes/pops
+
+# make sure no interactive mode is active
+unalias rm
+
+#####################
+#     GET PARAMS    #
+#####################
 
 param_file="populations/gametes/parameters.txt"
 
