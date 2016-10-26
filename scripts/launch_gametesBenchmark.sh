@@ -80,9 +80,9 @@ do
     cd $box
     if [ "$N" == "20" ]
     then
-      perl libs/turf/TuRF-E.pl -f ../$gametesFile -o ../$turfOut -t 20
+      perl ../libs/turf/TuRF-E.pl -f ../$gametesFile -o ../$turfOut -t 20
     else
-      perl libs/turf/TuRF-E.pl -f ../$gametesFile -o ../$turfOut
+      perl ../libs/turf/TuRF-E.pl -f ../$gametesFile -o ../$turfOut
     fi
     cd ..
     rm -r $box
