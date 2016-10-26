@@ -203,7 +203,7 @@ sub permutate {
 # execute TuRF and aggregate the scores
 sub exeTuRF{
 	my $file = shift; # file name
-	system("java -Xmx1024m -jar mdr.jar -filter=TURF $file > rank");
+	system("java -Xmx1024m -jar libs/turf/mdr.jar -filter=TURF $file > rank");
 
 	open (I, "rank");
 	while (<I>) {

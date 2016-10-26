@@ -10,7 +10,7 @@
 #     GET PARAMS    #
 #####################
 
-mkdir populations/gametes/mdr
+mkdir -p populations/gametes/mdr
 mkdir populations/gametes/plink
 mkdir populations/gametes/sixpac
 mkdir populations/gametes/turf
@@ -48,7 +48,7 @@ do
 
     # PLINK
     plinkOut=populations/gametes/plink/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".plink.txt
-    plink --noweb --epistasis --ped $ped --map populations/gametes/map_$N.txt --out $plinkOut --epi1 1 --epi2 1 --allow-no-sex
+    plink --noweb --epistasis --ped $ped --map $map --out $plinkOut --epi1 1 --epi2 1 --allow-no-sex
 
     # SIXPAC
     # sixpacOut=populations/gametes/sixpac/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".sixpac.txt

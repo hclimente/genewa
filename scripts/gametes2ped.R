@@ -17,8 +17,7 @@ if (!file.exists(map)){
              snp = snpNames,
              morgans = 0,
              pos = 0) %>%
-    #write_tsv("map.txt", col_names = FALSE)
-    write.table(paste0("map_",N,".txt"), col.names = F, sep = "\t", quote = F, row.names = F)
+    write.table(map, col.names = F, sep = "\t", quote = F, row.names = F)
 }
 
 # generate PED file
