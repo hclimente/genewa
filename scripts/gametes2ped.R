@@ -1,8 +1,6 @@
 #!/usr/bin/env Rscript
 source("~/libs/wisdom/r/data_analysis_environment.R")
 
-setwd("~/genewa/populations/gametes")
-
 args <- commandArgs(trailingOnly = TRUE)
 sample <- args[1]
 N <- args[2]
