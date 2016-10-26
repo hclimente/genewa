@@ -69,8 +69,8 @@ for (my $i = 0; $i < $size; $i++) {
 }
 
 # step 4: clean up the temp files
-system("del replica.txt");
-system("del rank");
+system("rm replica.txt");
+system("rm rank");
 
 
 # step 5: rank SNPs according to the aggregation scores
@@ -203,7 +203,7 @@ sub permutate {
 # execute TuRF and aggregate the scores
 sub exeTuRF{
 	my $file = shift; # file name
-	system("java -Xmx1024m -jar libs/turf/mdr.jar -filter=TURF $file > rank");
+	system("java -Xmx1024m -jar ../libs/turf/mdr.jar -filter=TURF $file > rank");
 
 	open (I, "rank");
 	while (<I>) {
