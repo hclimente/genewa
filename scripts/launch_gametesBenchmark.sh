@@ -10,6 +10,12 @@
 #     GET PARAMS    #
 #####################
 
+mkdir populations/gametes/mdr
+mkdir populations/gametes/plink
+mkdir populations/gametes/sixpac
+mkdir populations/gametes/turf
+mkdir populations/gametes/pops
+
 param_file="populations/gametes/parameters.txt"
 
 h=`head -n$SGE_TASK_ID $param_file | tail -n1 | cut -f1`
@@ -22,9 +28,9 @@ echo Analyzing population h $h maf $maf N $N
 #    RUN GAMETES    #
 #####################
 
-out=populations/gametes/h"$h"_maf"$maf"_N"$N"
-java -jar libs/GAMETES/GAMETES_2.1.jar -M " -h 0.$h -a 0.$maf -a 0.$maf -o $out" -q 10 -p 1000 -t 100000
-java -jar libs/GAMETES/GAMETES_2.1.jar -i "$out"_Models.txt -D " -n 0.01 -x 0.5 -a $N -s 1000 -w 1000 -r 100 -o $out"
+gametesOut=populations/gametes/pops/h"$h"_maf"$maf"_N"$N"
+java -jar libs/GAMETES/GAMETES_2.1.jar -M " -h 0.$h -a 0.$maf -a 0.$maf -o $gametesOut" -q 10 -p 1000 -t 100000
+java -jar libs/GAMETES/GAMETES_2.1.jar -i "$gametesOut"_Models.txt -D " -n 0.01 -x 0.5 -a $N -s 1000 -w 1000 -r 100 -o $gametesOut"
 
 ########################
 #  LOOK FOR EPISTASIS  #
@@ -35,9 +41,10 @@ do
   for repNo in $(seq -f "%03g" 1 100)
   do
     # generate PED file
-    scripts/gametes2ped.R $h $maf $N $modelNo $repNo
-    ped=populations/gametes/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".txt.ped
-    gametesFile=populations/gametes/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".txt
+    ped="$gametesOut"_EDM-"$modelNo"/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".txt.ped
+    map=populations/gametes/pops/map_$N.txt
+    gametesFile="$gametesOut"_EDM-"$modelNo"/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".txt
+    scripts/gametes2ped.R $gametesFile $N $map $ped
 
     # PLINK
     plinkOut=populations/gametes/plink/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".plink.txt
@@ -58,11 +65,12 @@ do
     sed 's/# /No/' | sed 's/ /_/g' >$mdrOut
 
     # RELIEFF
+    turfOut=populations/gametes/turf/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".turf.txt
     if [ "$N" == "20" ]
     then
-      perl libs/turf/TuRF-E.pl -f $gametesFile -t 20
+      perl libs/turf/TuRF-E.pl -f $gametesFile -o $turfOut -t 20
     else
-      perl libs/turf/TuRF-E.pl -f $gametesFile
+      perl libs/turf/TuRF-E.pl -f $gametesFile -o $turfOut
     fi
   done
 done
