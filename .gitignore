@@ -1,4 +1,5 @@
 populations/gametes/h*
 populations/gametes/map*
 populations/gametes/models/*
+data/*
 libs/*
