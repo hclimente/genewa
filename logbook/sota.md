@@ -43,8 +43,14 @@ Curated collection of tools compiled from [several](https://www.ncbi.nlm.nih.gov
 
 ## PLINK
 
-![PLINK gametes accuracy](results/sota_benchmark/plink.gametes.accuracy.png)
+Analysis of PLINKs results with:
 
-![PLINK gametes sensitivity](results/sota_benchmark/plink.gametes.sensitivity.png)
+```shell
+scripts/plink_summary.R gametes
+```
 
-![PLINK gametes specificity](results/sota_benchmark/plink.gametes.specificity.png)
+![PLINK gametes accuracy](../results/sota_benchmark/plink.gametes.accuracy.png)
+
+![PLINK gametes sensitivity](../results/sota_benchmark/plink.gametes.sensitivity.png)
+
+![PLINK gametes specificity](../results/sota_benchmark/plink.gametes.specificity.png)

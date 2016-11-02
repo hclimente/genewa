@@ -1,7 +1,12 @@
+#!/usr/bin/env Rscript
+
 library(magrittr)
 library(readr)
 library(dplyr)
 library(ggplot2)
+
+args <- commandArgs(trailingOnly = TRUE)
+simTool <- args[1]
 
 plink.quality <- list()
 
@@ -13,10 +18,11 @@ for (h in c("005","01","025","05","1","2")){
 
         for (repNo in formatC(1:100, width = 3, flag = "0")){
           replicate <- paste0("h",h,"_maf",maf,"_N",N,"_EDM-",modelNo,"_",repNo,".plink.txt.epi.qt")
+          replicatePath <- paste0("populations/",simTool,"/plink/",replicate)
 
-          if (file.exists(replicate)){
+          if (file.exists(replicatePath)){
             # read the tests, get the pvalues
-            thisSample <- read_fwf(replicate, fwf_widths(c(4,5,5,5,13,13,13)), skip = 1) %>%
+            thisSample <- read_fwf(replicatePath, fwf_widths(c(4,5,5,5,13,13,13)), skip = 1) %>%
               set_colnames(c("chr1", "snp1", "chr2", "snp2", "beta", "stat", "p")) %>%
               select(-beta, -stat)
 
@@ -65,31 +71,33 @@ plink.quality.sum <- do.call("rbind", plink.quality) %>%
   group_by(h, maf, model, N) %>%
   summarise(acc = median(accuracy), min_acc = min(accuracy), max_acc = max(accuracy),
             tpr = median(sensitivity), min_tpr = min(sensitivity), max_tpr = max(sensitivity),
-            tnr = median(specificity), min_tnr = min(specificity), max_tnr = max(specificity))
+            tnr = median(specificity), min_tnr = min(specificity), max_tnr = max(specificity)) %>%
+  ungroup %>%
+  mutate(h = paste0("h = 0.", h), maf = paste0("MAF = 0.", maf))
 
 ggplot(plink.quality.sum, aes(x = N, y = tpr, fill = model)) +
   geom_bar(stat = "identity", position = "dodge") +
   geom_errorbar(aes(ymax = max_tpr, ymin=min_tpr), position = "dodge") +
   ylim(c(0,1)) +
-  labs(y = "Sensitivity", fill = "N") +
-  facet_grid(h ~ maf)
-# %>%
-# ggsave("~/Bureau/plink.sensitivity.pdf", .)
+  labs(x = "# SNPs", y = "Sensitivity", fill = "Model") +
+  facet_grid(h ~ maf) +
+  theme_minimal()
+ggsave(paste0("results/sota_benchmark/plink.",simTool,".sensitivity.png"))
 
 ggplot(plink.quality.sum, aes(x = N, y = tnr, fill = model)) +
   geom_bar(stat = "identity", position = "dodge") +
-  geom_errorbar(aes(ymax = max_tnr, ymin=min_tnr), position = "dodge", width = .25) +
+  geom_errorbar(aes(ymax = max_tnr, ymin=min_tnr), position = "dodge") +
   ylim(c(0,1)) +
-  labs(y = "Specificity", fill = "N") +
-  facet_grid(h ~ maf)
-# %>%
-# ggsave("~/Bureau/plink.specificity.pdf", .)
+  labs(x = "# SNPs", y = "Specificity", fill = "Model") +
+  facet_grid(h ~ maf) +
+  theme_minimal()
+ggsave(paste0("results/sota_benchmark/plink.",simTool,".specificity.png"))
 
 ggplot(plink.quality.sum, aes(x = N, y = acc, fill = model)) +
   geom_bar(stat = "identity", position = "dodge") +
   geom_errorbar(aes(ymax = max_acc, ymin=min_acc), position = "dodge") +
   ylim(c(0,1)) +
-  labs(y = "Accuracy", fill = "N") +
-  facet_grid(h ~ maf)
-# %>%
-# ggsave("~/Bureau/plink.accuracy.pdf", plink.accuracy)
+  labs(x = "# SNPs", y = "Accuracy", fill = "Model") +
+  facet_grid(h ~ maf) +
+  theme_minimal()
+ggsave(paste0("results/sota_benchmark/plink.",simTool,".accuracy.png"))
