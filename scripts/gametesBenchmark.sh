@@ -28,11 +28,11 @@ unalias rm
 
 param_file="populations/gametes/parameters_long.txt"
 
-h=`head -n$SGE_TASK_ID $param_file | tail -n1 | cut -f1`
-maf=`head -n$SGE_TASK_ID $param_file | tail -n1 | cut -f2`
-N=`head -n$SGE_TASK_ID $param_file | tail -n1 | cut -f3`
-modelNo=`head -n$SGE_TASK_ID $param_file | tail -n1 | cut -f4`
-repNo=`head -n$SGE_TASK_ID $param_file | tail -n1 | cut -f5`
+h=`head -n$SGE_TASK_ID $param_file | tail -n1 | cut -d' ' -f1`
+maf=`head -n$SGE_TASK_ID $param_file | tail -n1 | cut -d' ' -f2`
+N=`head -n$SGE_TASK_ID $param_file | tail -n1 | cut -d' ' -f3`
+modelNo=`head -n$SGE_TASK_ID $param_file | tail -n1 | cut -d' ' -f4`
+repNo=`head -n$SGE_TASK_ID $param_file | tail -n1 | cut -d' ' -f5`
 
 # generate PED file
 #######################
