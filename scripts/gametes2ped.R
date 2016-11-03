@@ -26,7 +26,7 @@ genotypes <- read_tsv(sample) %>%
          paternal_id = 1:2000,
          maternal_id = 1:2000,
          sex = "unknown",
-         phenotype = Class + 1) %>%
+         phenotype = as.integer(Class + 1)) %>%
   select(-Class) %>%
   select(family_id:phenotype, N0:M0P1)
 
