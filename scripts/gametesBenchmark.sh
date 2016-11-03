@@ -36,6 +36,7 @@ repNo=`head -n$SGE_TASK_ID $param_file | tail -n1 | cut -d' ' -f5`
 
 # generate PED file
 #######################
+gametesOut=populations/gametes/pops/h"$h"_maf"$maf"_N"$N"
 gametesFile="$gametesOut"_EDM-"$modelNo"/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".txt
 ped=$gametesFile.ped
 map=populations/gametes/pops/map_$N.txt
