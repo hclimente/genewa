@@ -1,10 +1,10 @@
 #!/bin/bash
-#$ -N gametes
+#$ -N gametesBenchmark
 #$ -cwd
 #$ -V
 #$ -S /bin/sh
 # maximum number of nodes to take
-#$ -tc 100
+#$ -tc 200
 # qsub -t 1-36000 -e populations/gametes/logs -o populations/gametes/logs scripts/gametesBenchmark.sh
 
 #####################
@@ -63,7 +63,7 @@ sed 's/# /No/' | sed 's/ /_/g' >$mdrOut
 turfOut=populations/gametes/turf/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".turf.txt
 
 ## run turf in a box
-box=turf_h"$h"_maf"$maf"_N"$N"
+box=h"$h"_maf"$maf"_N"$N"_"$modelNo"_$repNo
 mkdir $box
 cd $box
 if [ "$N" == "20" ]
@@ -87,7 +87,6 @@ rm -r $box
 
 # BEAM
 #######################
-box=beam_h"$h"_maf"$maf"_N"$N"
 mkdir $box
 
 beamIn=$gametesFile.beam
