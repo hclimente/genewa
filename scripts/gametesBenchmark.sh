@@ -11,11 +11,9 @@
 #    ENVIRONMENT    #
 #####################
 
-SGE_TASK_ID=1
-
 mkdir -p populations/gametes/mdr
 mkdir populations/gametes/plink
-mkdir populations/gametes/bean
+mkdir populations/gametes/beam
 mkdir populations/gametes/turf
 mkdir populations/gametes/pops
 
@@ -60,7 +58,7 @@ sed 's/# /No/' | sed 's/ /_/g' >$mdrOut
 
 # TURF
 #######################
-turfOut=populations/gametes/turf/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".turf.txt
+turfOut=../populations/gametes/turf/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".turf.txt
 
 ## run turf in a box
 box=h"$h"_maf"$maf"_N"$N"_"$modelNo"_$repNo
@@ -74,7 +72,7 @@ else
 fi
 
 perl ../libs/turf/DataConverter/ARFF2MDR.pl SNP_filtered.arff >SNP_filtered.mdr
-java -jar libs/mdr_3.0.2/mdr_3.0.2.jar -min=1 -max=2 -table_data=true SNP_filtered.mdr | \
+java -jar ../libs/mdr_3.0.2/mdr_3.0.2.jar -min=1 -max=2 -table_data=true SNP_filtered.mdr | \
 ## crop the Top models table
 awk '/### Top Models ###/{f=1} /FINISHED/{f=0;print} f' | \
 ## remove first and last line and blank lines
@@ -89,15 +87,16 @@ rm -r $box
 #######################
 mkdir $box
 
-beamIn=$gametesFile.beam
-beamRawOut=../../populations/gametes/beam/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".beam.raw.txt
-beamOut=../../populations/gametes/beam/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".beam.txt
-
-scripts/ped2beam.R $ped $beamIn
+beamIn=../$gametesFile.beam
+beamRawOut=../populations/gametes/beam/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".beam.raw.txt
+beamOut=../populations/gametes/beam/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".beam.txt
 
 cd $box
-sed "s/INSERT_THIN/$N/" libs/beam/parameters.txt >parameters.txt
-libs/beam/BEAM $beamIn $beamRawOut
+
+../scripts/ped2beam.R ../$ped $beamIn
+
+sed "s/INSERT_THIN/$N/" ../libs/beam/parameters.txt >parameters.txt
+../libs/beam/BEAM $beamIn $beamRawOut
 
 ## take the relevant table
 awk '/DETECTED_ASSOCIATIONS/{f=1} /POSTERIOR_DISTRIBUTION/{f=0;print} f' $beamRawOut | \
