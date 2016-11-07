@@ -37,7 +37,7 @@ gametesFile="$gametesOut"_EDM-"$modelNo"/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$
 aesFile=$gametesFile.aes
 aesOut=populations/gametes/aes/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".aes.txt
 
-sed $gametesFile 's/\t/,/g' >$aesFile
+sed 's/\t/,/g' $gametesFile >$aesFile
 
 ## run aes in a box
 box=h"$h"_maf"$maf"_N"$N"_"$modelNo"_"$repNo"_2
