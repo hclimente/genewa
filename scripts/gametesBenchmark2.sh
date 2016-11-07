@@ -32,6 +32,7 @@ repNo=`head -n$SGE_TASK_ID $param_file | tail -n1 | cut -d' ' -f5`
 
 # AntEpiSeeker
 #######################
+gametesOut=populations/gametes/pops/h"$h"_maf"$maf"_N"$N"
 gametesFile="$gametesOut"_EDM-"$modelNo"/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".txt
 aesFile=$gametesFile.aes
 aesOut=populations/gametes/aes/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".aes.txt
