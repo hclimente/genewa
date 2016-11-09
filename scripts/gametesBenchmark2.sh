@@ -46,7 +46,8 @@ mkdir $box
 cd $box
 
 sed "s,INPUT_FILE,../$aesFile," ../libs/AntEpiSeeker1.0_linux/parameters.txt |
-sed "s,OUTPUT_FILE,../$aesOut," >parameters.txt
+sed "s,OUTPUT_FILE,../$aesOut," |
+sed "s,NUM_SNPS,$N," >parameters.txt
 
 ../libs/AntEpiSeeker1.0_linux/AntEpiSeeker
 
