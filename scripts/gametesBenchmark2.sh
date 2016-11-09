@@ -14,6 +14,7 @@
 SGE_TASK_ID=1
 
 mkdir populations/gametes/aes
+mkdir populations/gametes/gwggi
 
 # make sure no interactive mode is active
 unalias rm
@@ -30,10 +31,13 @@ N=`head -n$SGE_TASK_ID $param_file | tail -n1 | cut -d' ' -f3`
 modelNo=`head -n$SGE_TASK_ID $param_file | tail -n1 | cut -d' ' -f4`
 repNo=`head -n$SGE_TASK_ID $param_file | tail -n1 | cut -d' ' -f5`
 
-# AntEpiSeeker
-#######################
 gametesOut=populations/gametes/pops/h"$h"_maf"$maf"_N"$N"
 gametesFile="$gametesOut"_EDM-"$modelNo"/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".txt
+ped=$gametesFile.ped
+map=populations/gametes/pops/map_$N.txt
+
+# AntEpiSeeker
+#######################
 aesFile=$gametesFile.aes
 aesOut=populations/gametes/aes/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".aes.txt
 
@@ -53,3 +57,20 @@ sed "s,NUM_SNPS,$N," >parameters.txt
 
 cd ..
 rm -r $box
+
+# GWGGI
+#######################
+gwggiOut=populations/gametes/gwggi/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".gwggi.txt
+gwggiIn=h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo"
+
+mkdir $box
+cd $box
+
+cut -f1-6 ../$ped >$gwggiIn.ped
+grep -v ^N ../$gametesFile | sed 's/\t.$//' >$gwggiIn.gen
+sed 's/$/A\tT/' ../$map >$gwggiIn.map
+
+../libs/gwggi.unix/gwggi --file $gwggiIn --tamw --converge --ntree 4000 --clsf-sqrt --tree-depth 4 --showntree --out ../$gwggiOut
+
+cd ..
+#rm -r $box
