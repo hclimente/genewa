@@ -60,7 +60,7 @@ do
 	do
     for N in "1000" "100" "20"
     do
-      echo -e "$h\t$maf\t$N" >>populations/gametes/parameters_short.txt
+      echo $h $maf $N >>populations/gametes/parameters_short.txt
     done
   done
 done
