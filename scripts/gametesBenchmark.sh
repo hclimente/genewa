@@ -4,8 +4,8 @@
 #$ -V
 #$ -S /bin/sh
 # maximum number of nodes to take
-#$ -tc 200
-# qsub -t 1-36000 -e populations/gametes/logs -o populations/gametes/logs scripts/gametesBenchmark.sh
+#$ -tc 150
+# qsub -t 1-54000 -e populations/gametes/logs -o populations/gametes/logs scripts/gametesBenchmark.sh
 
 #####################
 #    ENVIRONMENT    #
