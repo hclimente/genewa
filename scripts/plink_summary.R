@@ -5,13 +5,15 @@ library(readr)
 library(dplyr)
 library(ggplot2)
 
+options("readr.num_columns" = 0)
+
 args <- commandArgs(trailingOnly = TRUE)
 simTool <- args[1]
 
 plink.quality <- list()
 
 for (h in c("005","01","025","05","1","2")){
-  for (maf in c("2","4")){
+  for (maf in c("05","2","4")){
     for (N in c("20","100","1000")){
       for (modelNo in formatC(1:10, width = 2, flag = "0")){
         plink.tests <- data_frame()
@@ -40,24 +42,24 @@ for (h in c("005","01","025","05","1","2")){
           models <- plink.tests %>%
             select(-starts_with("p")) %>%
             mutate(NumPositives = rowSums(pvals < 0.05, na.rm = T))
-          
+
           # count cases with NAs (no test performed)
           naPositives <- sum(is.na(pvals[models$snp1 == "M0P0" & models$snp2 == "M0P1"]), na.rm = T)
           naNegatives <- pvals[models$snp1 != "M0P0" | models$snp2 != "M0P1",] %>%
             is.na %>%
             rowSums %>%
             sum
-          
+
           # quality measures
           TP <- models$NumPositives[models$snp1 == "M0P0" & models$snp2 == "M0P1"] - naPositives
           FN <- ncol(pvals) - models$NumPositives[models$snp1 == "M0P0" & models$snp2 == "M0P1"] - naPositives
           FP <- sum(models$NumPositives[models$snp1 != "M0P0" | models$snp2 != "M0P1"]) - naNegatives
           TN <- (nrow(pvals) - 1) * ncol(pvals) - naNegatives
-          
+
           acc <- (TP + TN)/(TP + TN + FP + FN)
           tpr <- TP/(TP + FN)
           tnr <- TN/(TN + FP)
-          
+
           plink.quality[[paste(h, maf, modelNo, N)]] <- data.frame( h = h, maf = maf, model = modelNo, N = N,
                                                                   accuracy = acc, sensitivity = tpr, specificity = tnr)
         }
