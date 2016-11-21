@@ -17,7 +17,7 @@ for (h in c("005","01","025","05","1","2")){
         plink.tests <- data_frame()
 
         for (repNo in formatC(1:100, width = 3, flag = "0")){
-          replicate <- paste0("h",h,"_maf",maf,"_N",N,"_EDM-",modelNo,"_",repNo,".plink.txt.epi.qt")
+          replicate <- paste0("h",h,"_maf",maf,"_N",N,"_EDM-",modelNo,"_",repNo,".plink.txt.epi.cc")
           replicatePath <- paste0("populations/",simTool,"/plink/",replicate)
 
           if (file.exists(replicatePath)){
