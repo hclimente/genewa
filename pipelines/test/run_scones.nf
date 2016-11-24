@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 
-params.input = "$HOME/genewa/populations/gametes/pops/h*/*.txt"
+params.input = "$HOME/genewa/populations/gametes/pops/h*/*2.txt"
 gametes_populations = Channel
                           .fromPath(params.input)
                           .map { file -> tuple(file.baseName, file)}
@@ -12,6 +12,7 @@ process gametes2ped {
   output:
     file "${name}.ped" into ped
     file "${name}.map" into map
+    val name
 
   """
   ped=${name}.ped
@@ -19,11 +20,13 @@ process gametes2ped {
 
   $HOME/genewa/scripts/gametes2ped.R $gametes 20 \$map \$ped
 
-  cut -f7- \$ped | sed 's/\\t1\\t/\\tA\\t/g' | sed 's/\\t2\\t/\\tT\\t/g' > kk
-  cut -f1-6 \$ped > peo
+  cut -f7- \$ped | sed 's/1/A/g' | sed 's/2/T/g' > gt
+  cut -f1-6 \$ped > samples
 
-  paste peo kk >\$ped
+  paste samples gt | sed 's/\\t/ /g' >\$ped
+  sed 's/\\t/ /g' \$map >map.tmp
 
+  mv map.tmp \$map
   """
 
 }
@@ -32,6 +35,7 @@ process ped2hdf5 {
   input:
     file ped
     file map
+    val name
   output:
     file "genotype.hdf5" into hdf5In_default, hdf5In_emmax
 
@@ -39,7 +43,7 @@ process ped2hdf5 {
   wDir=`pwd`
 
   cd ~/genewa/libs/easyGWASCore
-  ~/anaconda2/bin/python python/easygwascore.py data --plink2hdf5 --plink_data data/testing/scones/genotype --plink_phenotype data/testing/scones/phenotype.txt --hout \$wDir/genotype.hdf5
+  ~/anaconda2/bin/python python/easygwascore.py data --plink2hdf5 --plink_data \$wDir/$name --hout \$wDir/genotype.hdf5
 
   """
 }
@@ -84,12 +88,12 @@ process easyGWAS_emmax {
 
 }
 
-process hdf52csv {
+process hdf5ToCsv {
 
   publishDir="$HOME/genewa/scones"
 
   input:
-    file hdf5Out_default .mix(hdf5Out_emmax)
+    file hdf5Out from hdf5Out_default .mix(hdf5Out_emmax)
   output:
     file 'output.csv' into csv
 
@@ -101,6 +105,25 @@ process hdf52csv {
 
   cd \$wDir
   mv TEST.csv output.csv
+
+  """
+
+}
+
+process runScones {
+
+  input:
+    file "/bioinfo/users/hcliment/genewa/libs/easyGWASCore/data/testing/scones/genotype.ped"
+    file "/bioinfo/users/hcliment/genewa/libs/easyGWASCore/data/testing/scones/genotype.map"
+    file "/bioinfo/users/hcliment/genewa/libs/easyGWASCore/data/testing/scones/phenotype.txt"
+    file "/bioinfo/users/hcliment/genewa/libs/easyGWASCore/data/testing/scones/network.txt"
+  output:
+    file "TEST.scones.out.txt" into out
+    file "TEST.scones.pmatrix.txt" into pmatrix
+
+  """
+
+  ~/genewa/libs/easyGWASCore/bin/linux2/tools/scones genotype phenotype.txt network.txt 0.05 `pwd` additive 0
 
   """
 
