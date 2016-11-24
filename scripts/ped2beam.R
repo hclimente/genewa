@@ -1,11 +1,15 @@
 #!/usr/bin/env Rscript
-source("~/libs/wisdom/r/data_analysis_environment.R")
+library(magrittr)
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
 
 args <- commandArgs(trailingOnly = TRUE)
 ped <- args[1]
 beam <- args[2]
 
-snps <- read_tsv(ped, col_names = F) %>% 
+snps <- read_tsv(ped, col_names = F) %>%
   # remove columns related to family, individual, father, mother and sex
   select(-X1, -X2, -X3, -X4, -X5) %>%
   # cases are 1 and controls are 0
