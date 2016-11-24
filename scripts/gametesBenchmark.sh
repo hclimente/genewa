@@ -4,7 +4,7 @@
 #$ -V
 #$ -S /bin/sh
 # maximum number of nodes to take
-#$ -tc 150
+#$ -tc 100
 # qsub -t 1-54000 -e populations/gametes/logs -o populations/gametes/logs scripts/gametesBenchmark.sh
 
 #####################
@@ -41,16 +41,16 @@ gametesFile="$gametesOut"_EDM-"$modelNo"/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$
 ped=$gametesFile.ped
 map=populations/gametes/pops/map_$N.txt
 
-if [ ! -f $ped ];
-then
+# if [ ! -s $ped ];
+# then
   scripts/gametes2ped.R $gametesFile $N $map $ped
-fi
+# fi
 
 # PLINK
 #######################
 plinkOut=populations/gametes/plink/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".plink.txt
 
-if [ ! -f $plinkOut.epi.cc ];
+if [ ! -s $plinkOut.epi.cc ];
 then
   plink --noweb --epistasis --ped $ped --map $map --out $plinkOut --epi1 1 --epi2 1 --allow-no-sex
 fi
@@ -59,7 +59,7 @@ fi
 #######################
 mdrOut=populations/gametes/mdr/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".mdr.txt
 
-if [ ! -f $mdrOut ];
+if [ ! -s $mdrOut ];
 then
   java -jar libs/mdr_3.0.2/mdr_3.0.2.jar -min=1 -max=2 -table_data=true $gametesFile | \
   ## crop the Top models table
@@ -79,7 +79,7 @@ box=h"$h"_maf"$maf"_N"$N"_"$modelNo"_$repNo
 mkdir $box
 cd $box
 
-if [ ! -f $turfOut ];
+if [ ! -s $turfOut ];
 then
   if [ "$N" == "20" ]
   then
@@ -111,7 +111,7 @@ beamOut=../populations/gametes/beam/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo
 
 cd $box
 
-if [ ! -f $beamOut ];
+if [ ! -s $beamOut ];
 then
   ../scripts/ped2beam.R ../$ped $beamIn
 
@@ -140,7 +140,7 @@ sed 's/\t/,/g' $gametesFile >$aesFile
 mkdir $box
 cd $box
 
-if [ ! -f $aesOut ];
+if [ ! -s $aesOut ];
 then
   sed "s,INPUT_FILE,../$aesFile," ../libs/AntEpiSeeker1.0_linux/parameters.txt |
   sed "s,OUTPUT_FILE,$aesOut," |
@@ -160,7 +160,7 @@ gwggiIn=h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo"
 mkdir $box
 cd $box
 
-if [ ! -f $gwggiOut.tamw.rst ];
+if [ ! -s $gwggiOut.tamw.rst ];
 then
   cut -f1-6 ../$ped >$gwggiIn.ped
   grep -v ^N ../$gametesFile | sed 's/\t.$//' >$gwggiIn.gen
