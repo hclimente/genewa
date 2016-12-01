@@ -33,7 +33,8 @@ for (h in c("005","01","025","05","1","2")){
               # read the tests, get the pvalues
               thisSample <- read_fwf(replicatePath, fwf_widths(c(4,5,5,5,13,13,13)), skip = 1) %>%
                 set_colnames(c("chr1", "snp1", "chr2", "snp2", "beta", "stat", "p")) %>%
-                select(snp1,snp2,p)
+                select(snp1,snp2,p) %>%
+                mutate(., p = p * nrow(.))
             }
           }
           # BEAM
@@ -49,7 +50,8 @@ for (h in c("005","01","025","05","1","2")){
                 separate(Marker_Group, c("snp1", "snp2", "snp3"), ",") %>%
                 filter(is.na(snp3)) %>%
                 select(snp1, snp2, Pvalue) %>%
-                rename(p = Pvalue)
+                rename(p = Pvalue) %>%
+                mutate(., p = p * nrow(.))
             }
           }
 
@@ -128,3 +130,13 @@ ggplot(quality.sum, aes(x = N, y = acc, fill = model)) +
   facet_grid(h ~ maf) +
   theme_minimal()
 ggsave(paste("results/sota_benchmark/",software,simTool,"accuracy.png", sep="."))
+
+
+# quality.sum <- do.call("rbind", quality) %>%
+#   as.data.frame %>%
+#   group_by(h, maf, N) %>%
+#   summarise(acc = median(accuracy), sd_acc = sd(accuracy),
+#             tpr = median(sensitivity), sd_tpr = sd(sensitivity),
+#             tnr = median(specificity), sd_tnr = sd(specificity)) %>%
+#   ungroup %>%
+#   mutate(h = paste0("h = 0.", h), maf = paste0("MAF = 0.", maf))
