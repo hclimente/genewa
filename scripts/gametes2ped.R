@@ -3,12 +3,13 @@ source("~/libs/wisdom/r/data_analysis_environment.R")
 
 args <- commandArgs(trailingOnly = TRUE)
 sample <- args[1]
-N <- args[2]
-map <- args[3]
-ped <- args[4]
+n <- args[2]
+p <- args[3]
+map <- args[4]
+ped <- args[5]
 
 # generate MAP file
-snpNames <- c(paste0("N",0:(as.integer(N)-3)),c("M0P0","M0P1"))
+snpNames <- c(paste0("N",0:(as.integer(p)-3)),c("M0P0","M0P1"))
 
 if (!file.exists(map)){
   data_frame(chromosome = 0,
@@ -21,10 +22,10 @@ if (!file.exists(map)){
 # generate PED file
 genotypes <- read_tsv(sample) %>%
   ## create individual identifiers
-  mutate(family_id = 1:2000,
-         individual_id = 1:2000,
-         paternal_id = 1:2000,
-         maternal_id = 1:2000,
+  mutate(family_id = 1:(2*n),
+         individual_id = 1:(2*n),
+         paternal_id = 1:(2*n),
+         maternal_id = 1:(2*n),
          sex = "unknown",
          phenotype = as.integer(Class + 1)) %>%
   select(-Class) %>%

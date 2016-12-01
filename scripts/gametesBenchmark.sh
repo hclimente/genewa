@@ -45,7 +45,7 @@ map=populations/gametes/pops/map_$p.txt
 
 # if [ ! -s $ped ];
 # then
-  scripts/gametes2ped.R $gametesFile $p $map $ped
+  scripts/gametes2ped.R $gametesFile $n $p $map $ped
 # fi
 
 # PLINK
