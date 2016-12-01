@@ -1,5 +1,8 @@
 #!/usr/bin/env Rscript
-source("~/libs/wisdom/r/data_analysis_environment.R")
+library(tidyr)
+library(magrittr)
+library(readr)
+library(dplyr)
 
 args <- commandArgs(trailingOnly = TRUE)
 sample <- args[1]
