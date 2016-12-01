@@ -111,7 +111,7 @@ ggplot(quality.sum, aes(x = N, y = tpr, fill = model)) +
   labs(x = "# SNPs", y = "Sensitivity", fill = "Model") +
   facet_grid(h ~ maf) +
   theme_minimal()
-ggsave(paste("results/sota_benchmark/",software,simTool,"sensitivity.png", sep="."))
+ggsave(paste0("results/sota_benchmark/", paste(software,simTool,"sensitivity.png", sep=".")))
 
 ggplot(quality.sum, aes(x = N, y = tnr, fill = model)) +
   geom_bar(stat = "identity", position = "dodge") +
@@ -120,7 +120,7 @@ ggplot(quality.sum, aes(x = N, y = tnr, fill = model)) +
   labs(x = "# SNPs", y = "Specificity", fill = "Model") +
   facet_grid(h ~ maf) +
   theme_minimal()
-ggsave(paste("results/sota_benchmark/",software,simTool,"specificity.png", sep="."))
+ggsave(paste0("results/sota_benchmark/", paste(software,simTool,"specificity.png", sep=".")))
 
 ggplot(quality.sum, aes(x = N, y = acc, fill = model)) +
   geom_bar(stat = "identity", position = "dodge") +
@@ -129,7 +129,7 @@ ggplot(quality.sum, aes(x = N, y = acc, fill = model)) +
   labs(x = "# SNPs", y = "Accuracy", fill = "Model") +
   facet_grid(h ~ maf) +
   theme_minimal()
-ggsave(paste("results/sota_benchmark/",software,simTool,"accuracy.png", sep="."))
+ggsave(paste0("results/sota_benchmark/", paste(software,simTool,"accuracy.png", sep=".")))
 
 
 # quality.sum <- do.call("rbind", quality) %>%
