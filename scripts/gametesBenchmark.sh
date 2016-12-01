@@ -26,29 +26,31 @@ unalias rm
 #     GET PARAMS    #
 #####################
 
+# number of samples
+n=$1
 param_file="populations/gametes/parameters_long.txt"
 
 h=`head -n$SGE_TASK_ID $param_file | tail -n1 | cut -d' ' -f1`
 maf=`head -n$SGE_TASK_ID $param_file | tail -n1 | cut -d' ' -f2`
-N=`head -n$SGE_TASK_ID $param_file | tail -n1 | cut -d' ' -f3`
+p=`head -n$SGE_TASK_ID $param_file | tail -n1 | cut -d' ' -f3`
 modelNo=`head -n$SGE_TASK_ID $param_file | tail -n1 | cut -d' ' -f4`
 repNo=`head -n$SGE_TASK_ID $param_file | tail -n1 | cut -d' ' -f5`
 
 # generate PED file
 #######################
-gametesOut=populations/gametes/pops/h"$h"_maf"$maf"_N"$N"
-gametesFile="$gametesOut"_EDM-"$modelNo"/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".txt
+gametesOut=populations/gametes/pops/h"$h"_maf"$maf"_n"$n"_p"$p"
+gametesFile="$gametesOut"_EDM-"$modelNo"/h"$h"_maf"$maf"_n"$n"_p"$p"_EDM-"$modelNo"_"$repNo".txt
 ped=$gametesFile.ped
-map=populations/gametes/pops/map_$N.txt
+map=populations/gametes/pops/map_$p.txt
 
 # if [ ! -s $ped ];
 # then
-  scripts/gametes2ped.R $gametesFile $N $map $ped
+  scripts/gametes2ped.R $gametesFile $p $map $ped
 # fi
 
 # PLINK
 #######################
-plinkOut=populations/gametes/plink/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".plink.txt
+plinkOut=populations/gametes/plink/h"$h"_maf"$maf"_n"$n"_p"$p"_EDM-"$modelNo"_"$repNo".plink.txt
 
 if [ ! -s $plinkOut.epi.cc ];
 then
@@ -57,7 +59,7 @@ fi
 
 # MDR
 #######################
-mdrOut=populations/gametes/mdr/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".mdr.txt
+mdrOut=populations/gametes/mdr/h"$h"_maf"$maf"_n"$n"_p"$p"_EDM-"$modelNo"_"$repNo".mdr.txt
 
 if [ ! -s $mdrOut ];
 then
@@ -72,16 +74,16 @@ fi
 
 # TURF
 #######################
-turfOut=../populations/gametes/turf/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".turf.txt
+turfOut=../populations/gametes/turf/h"$h"_maf"$maf"_n"$n"_p"$p"_EDM-"$modelNo"_"$repNo".turf.txt
 
 ## run turf in a box
-box=h"$h"_maf"$maf"_N"$N"_"$modelNo"_$repNo
+box=h"$h"_maf"$maf"_n"$n"_p"$p"_"$modelNo"_$repNo
 mkdir $box
 cd $box
 
 if [ ! -s $turfOut ];
 then
-  if [ "$N" == "20" ]
+  if [ "$p" == "20" ]
   then
     perl ../libs/turf/TuRF-E.pl -f ../$gametesFile -t 20
   else
@@ -106,8 +108,8 @@ rm -r $box
 mkdir $box
 
 beamIn=../$gametesFile.beam
-beamRawOut=../populations/gametes/beam/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".beam.raw.txt
-beamOut=../populations/gametes/beam/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".beam.txt
+beamRawOut=../populations/gametes/beam/h"$h"_maf"$maf"_n"$n"_p"$p"_EDM-"$modelNo"_"$repNo".beam.raw.txt
+beamOut=../populations/gametes/beam/h"$h"_maf"$maf"_n"$n"_p"$p"_EDM-"$modelNo"_"$repNo".beam.txt
 
 cd $box
 
@@ -115,7 +117,7 @@ if [ ! -s $beamOut ];
 then
   ../scripts/ped2beam.R ../$ped $beamIn
 
-  sed "s/INSERT_THIN/$N/" ../libs/beam/parameters.txt >parameters.txt
+  sed "s/INSERT_THIN/$p/" ../libs/beam/parameters.txt >parameters.txt
   ../libs/beam/BEAM $beamIn $beamRawOut
 
   ## take the relevant table
@@ -132,7 +134,7 @@ rm -r $box
 # AntEpiSeeker
 #######################
 aesFile=$gametesFile.aes
-aesOut=../populations/gametes/aes/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".aes.txt
+aesOut=../populations/gametes/aes/h"$h"_maf"$maf"_n"$n"_p"$p"_EDM-"$modelNo"_"$repNo".aes.txt
 
 sed 's/\t/,/g' $gametesFile >$aesFile
 
@@ -144,7 +146,7 @@ if [ ! -s $aesOut ];
 then
   sed "s,INPUT_FILE,../$aesFile," ../libs/AntEpiSeeker1.0_linux/parameters.txt |
   sed "s,OUTPUT_FILE,$aesOut," |
-  sed "s,NUM_SNPS,$N," >parameters.txt
+  sed "s,NUM_SNPS,$p," >parameters.txt
 
   ../libs/AntEpiSeeker1.0_linux/AntEpiSeeker
 fi
@@ -154,8 +156,8 @@ rm -r $box
 
 # GWGGI
 #######################
-gwggiOut=../populations/gametes/gwggi/h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo".gwggi.txt
-gwggiIn=h"$h"_maf"$maf"_N"$N"_EDM-"$modelNo"_"$repNo"
+gwggiOut=../populations/gametes/gwggi/h"$h"_maf"$maf"_n"$n"_p"$p"_EDM-"$modelNo"_"$repNo".gwggi.txt
+gwggiIn=h"$h"_maf"$maf"_p"$p"_EDM-"$modelNo"_"$repNo"
 
 mkdir $box
 cd $box
