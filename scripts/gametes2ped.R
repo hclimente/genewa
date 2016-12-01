@@ -6,13 +6,13 @@ library(dplyr)
 
 args <- commandArgs(trailingOnly = TRUE)
 sample <- args[1]
-n <- args[2]
-p <- args[3]
+n <- as.integer(args[2])
+p <- as.integer(args[3])
 map <- args[4]
 ped <- args[5]
 
 # generate MAP file
-snpNames <- c(paste0("N",0:(as.integer(p)-3)),c("M0P0","M0P1"))
+snpNames <- c(paste0("N",0:(p-3)),c("M0P0","M0P1"))
 
 if (!file.exists(map)){
   data_frame(chromosome = 0,
