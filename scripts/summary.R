@@ -12,12 +12,13 @@ args <- commandArgs(trailingOnly = TRUE)
 # QUITAR
 simTool <- "gametes"
 software <- "beam"
+n <- 1000
 
 quality <- list()
 
 for (h in c("005","01","025","05","1","2")){
   for (maf in c("05","2","4")){
-    for (N in c("20","100","1000")){
+    for (p in c("20","100","1000")){
       # QUITAR
       for (modelNo in formatC(1:2, width = 2, flag = "0")){
         tests <- data_frame()
@@ -26,7 +27,7 @@ for (h in c("005","01","025","05","1","2")){
           # PLINK
           ###########################
           if (software == "plink"){
-            replicate <- paste0("h",h,"_maf",maf,"_N",N,"_EDM-",modelNo,"_",repNo,".plink.txt.epi.cc")
+            replicate <- paste0("h",h,"_maf",maf,"_n",n,"_p",p,"_EDM-",modelNo,"_",repNo,".plink.txt.epi.cc")
             replicatePath <- paste0("populations/",simTool,"/plink/",replicate)
 
             if (file.exists(replicatePath)){
@@ -34,13 +35,13 @@ for (h in c("005","01","025","05","1","2")){
               thisSample <- read_fwf(replicatePath, fwf_widths(c(4,5,5,5,13,13,13)), skip = 1) %>%
                 set_colnames(c("chr1", "snp1", "chr2", "snp2", "beta", "stat", "p")) %>%
                 select(snp1,snp2,p) %>%
-                mutate(., p = p * nrow(.))
+                mutate(p = p.adjust(p, method = "bonferroni"))
             }
           }
           # BEAM
           ###########################
           else if (software == "beam"){
-            replicate <- paste0("h",h,"_maf",maf,"_N",N,"_EDM-",modelNo,"_",repNo,".beam.txt")
+            replicate <- paste0("h",h,"_maf",maf,"_n",n,"_p",p,"_EDM-",modelNo,"_",repNo,".beam.txt")
             replicatePath <- paste0("populations/",simTool,"/beam/",replicate)
 
             if (file.exists(replicatePath) & file.info(replicatePath)$size > 0){
@@ -51,7 +52,7 @@ for (h in c("005","01","025","05","1","2")){
                 filter(is.na(snp3)) %>%
                 select(snp1, snp2, Pvalue) %>%
                 rename(p = Pvalue) %>%
-                mutate(., p = p * nrow(.))
+                mutate(p = p.adjust(p, method = "bonferroni"))
             }
           }
 
@@ -73,8 +74,8 @@ for (h in c("005","01","025","05","1","2")){
           if (software == "plink"){
             causalSnpRow <- models$snp1 == "M0P0" & models$snp2 == "M0P1"
           } else if (software == "beam"){
-            M0P0 <- as.character(as.numeric(N) - 2)
-            M0P1 <- as.character(as.numeric(N) - 1)
+            M0P0 <- as.character(as.numeric(p) - 2)
+            M0P1 <- as.character(as.numeric(p) - 1)
             causalSnpRow <- models$snp1 %in% c(M0P0,M0P1) & models$snp2 %in% c(M0P0,M0P1)
           }
 
@@ -87,7 +88,7 @@ for (h in c("005","01","025","05","1","2")){
           tpr <- TP/(TP + FN)
           tnr <- TN/(TN + FP)
 
-          quality[[paste(h, maf, modelNo, N)]] <- data.frame( h = h, maf = maf, model = modelNo, N = N,
+          quality[[paste(h, maf, modelNo, p)]] <- data.frame( h = h, maf = maf, model = modelNo, p = p,
                                                               accuracy = acc, sensitivity = tpr, specificity = tnr)
         }
       }
@@ -97,14 +98,14 @@ for (h in c("005","01","025","05","1","2")){
 
 quality.sum <- do.call("rbind", quality) %>%
   as.data.frame %>%
-  group_by(h, maf, model, N) %>%
+  group_by(h, maf, model, p) %>%
   summarise(acc = median(accuracy), min_acc = min(accuracy), max_acc = max(accuracy),
             tpr = median(sensitivity), min_tpr = min(sensitivity), max_tpr = max(sensitivity),
             tnr = median(specificity), min_tnr = min(specificity), max_tnr = max(specificity)) %>%
   ungroup %>%
   mutate(h = paste0("h = 0.", h), maf = paste0("MAF = 0.", maf))
 
-ggplot(quality.sum, aes(x = N, y = tpr, fill = model)) +
+ggplot(quality.sum, aes(x = p, y = tpr, fill = model)) +
   geom_bar(stat = "identity", position = "dodge") +
   geom_errorbar(aes(ymax = max_tpr, ymin=min_tpr), position = "dodge") +
   ylim(c(0,1)) +
@@ -113,7 +114,7 @@ ggplot(quality.sum, aes(x = N, y = tpr, fill = model)) +
   theme_minimal()
 ggsave(paste0("results/sota_benchmark/", paste(software,simTool,"sensitivity.png", sep=".")))
 
-ggplot(quality.sum, aes(x = N, y = tnr, fill = model)) +
+ggplot(quality.sum, aes(x = p, y = tnr, fill = model)) +
   geom_bar(stat = "identity", position = "dodge") +
   geom_errorbar(aes(ymax = max_tnr, ymin=min_tnr), position = "dodge") +
   ylim(c(0,1)) +
@@ -122,7 +123,7 @@ ggplot(quality.sum, aes(x = N, y = tnr, fill = model)) +
   theme_minimal()
 ggsave(paste0("results/sota_benchmark/", paste(software,simTool,"specificity.png", sep=".")))
 
-ggplot(quality.sum, aes(x = N, y = acc, fill = model)) +
+ggplot(quality.sum, aes(x = p, y = acc, fill = model)) +
   geom_bar(stat = "identity", position = "dodge") +
   geom_errorbar(aes(ymax = max_acc, ymin=min_acc), position = "dodge") +
   ylim(c(0,1)) +
@@ -134,7 +135,7 @@ ggsave(paste0("results/sota_benchmark/", paste(software,simTool,"accuracy.png", 
 
 # quality.sum <- do.call("rbind", quality) %>%
 #   as.data.frame %>%
-#   group_by(h, maf, N) %>%
+#   group_by(h, maf, p) %>%
 #   summarise(acc = median(accuracy), sd_acc = sd(accuracy),
 #             tpr = median(sensitivity), sd_tpr = sd(sensitivity),
 #             tnr = median(specificity), sd_tnr = sd(specificity)) %>%
