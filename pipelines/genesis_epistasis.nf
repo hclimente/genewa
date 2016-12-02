@@ -31,11 +31,10 @@ process impute_genotypes {
     file ped_filtered
     file map_filtered
   output:
-    file "genesis.imputed.filtered.ped" into ped_filtered
-    file "genesis.imputed.filtered.map" into map_imputed, map_gs, map_gm, map_gi
+    file "genesis.filtered.ped" into ped_imputed
+    file "genesis.filtered.map" into map_imputed, map_gs, map_gm, map_gi
 
   """
-  $impute
   """
 }
 
@@ -174,16 +173,16 @@ process get_phenotypes {
 process run_scones {
 
   input:
-    file ped_imputed
-    file map_imputed
-    file pheno
+    file ped from ped_imputed.first()
+    file map from map_imputed.first()
+    file phenotype from pheno.first()
     file net from gs .mix(gm) . mix(gi)
   output:
-    file "BRCA_${net.baseName}.scones.out.txt" into out
-    file "BRCA_${net.baseName}.scones.pmatrix.txt" into pmatrix
+    file "BRCA_${ped.baseName}.scones.out.txt" into out
+    file "BRCA_${ped.baseName}.scones.pmatrix.txt" into pmatrix
 
   """
-  $scones ${ped_filtered.baseName} $pheno $net 0.05 `pwd` additive 0
+  $scones ${ped.baseName} $phenotype $net 0.05 `pwd` additive 0
   mv BRCA.scones.pmatrix.txt BRCA_${net.baseName}.scones.pmatrix.txt
   mv BRCA.scones.out.txt BRCA_${net.baseName}.scones.out.txt
   """
