@@ -8,6 +8,7 @@ ppi = file("$HOME/genewa/data/genesis/BIOGRID-ORGANISM-Homo_sapiens-3.4.138.tab.
 
 plink = "$HOME/genewa/libs/plink-1.07-x86_64/plink"
 scones = "$HOME/genewa/libs/easyGWASCore/bin/linux2/tools/scones"
+impute = "$HOME/genewa/libs/impute_v2.3.2_x86_64_static/impute2"
 
 process numeric2acgt {
   input:
@@ -15,13 +16,26 @@ process numeric2acgt {
     file map
   output:
     file "genesis.filtered.ped" into ped_filtered
-    file "genesis.filtered.map" into map_filtered, map_gs, map_gm, map_gi
+    file "genesis.filtered.map" into map_filtered
 
   """
-  #!/usr/bin/env bash
   # remove indels for the moment
   grep '\\[D/I\\]\\|\\[I/D\\]' ~/genewa/data/genesis/icogs_snp_list.csv | cut -d',' -f2 >indels.txt
   $plink --file ${ped.baseName} --recode --alleleACGT --exclude indels.txt --out genesis.filtered --noweb
+  """
+}
+
+process impute_genotypes {
+
+  input:
+    file ped_filtered
+    file map_filtered
+  output:
+    file "genesis.imputed.filtered.ped" into ped_filtered
+    file "genesis.imputed.filtered.map" into map_imputed, map_gs, map_gm, map_gi
+
+  """
+  $impute
   """
 }
 
@@ -160,8 +174,8 @@ process get_phenotypes {
 process run_scones {
 
   input:
-    file ped_filtered
-    file map_filtered
+    file ped_imputed
+    file map_imputed
     file pheno
     file net from gs .mix(gm) . mix(gi)
   output:
