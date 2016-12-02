@@ -165,8 +165,8 @@ process run_scones {
     file pheno
     file net from gs .mix(gm) . mix(gi)
   output:
-    file "BRCA_${ped_filtered.baseName}.scones.out.txt" into out
-    file "BRCA_${ped_filtered.baseName}.scones.pmatrix.txt" into pmatrix
+    file "BRCA_${net.baseName}.scones.out.txt" into out
+    file "BRCA_${net.baseName}.scones.pmatrix.txt" into pmatrix
 
   """
   $scones ${ped_filtered.baseName} $pheno $net 0.05 `pwd` additive 0
