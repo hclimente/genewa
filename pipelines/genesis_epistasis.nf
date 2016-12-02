@@ -89,13 +89,13 @@ process get_GM {
   map <- read_tsv("$map", col_names = FALSE) %>%
     set_colnames(c("chr","snp","cm","pos")) %>%
     merge(genes) %>%
-    select(chr,gene,pos)
+    select(chr,gene,pos) %>%
+    # in some cases the same position is linked to two different variants
+    unique
 
   gm <- by(map, map\$gene, function(x){
     chr <- unique(x\$chr)
-    if (nrow(x) == 1){
-      data.frame(chr1 = chr, pos1 = x\$pos, chr2 = chr, pos2 = x\$pos)
-    } else {
+    if (nrow(x) > 1){
       comb <- combn(x\$pos, 2)
       data.frame(chr1 = chr, pos1 = comb[1,], chr2 = chr, pos2 = comb[2,])
     }
@@ -139,6 +139,7 @@ process get_GI {
     select(OFFICIAL_SYMBOL_FOR_A,OFFICIAL_SYMBOL_FOR_B) %>%
     rename(gene1 = OFFICIAL_SYMBOL_FOR_A,
            gene2 = OFFICIAL_SYMBOL_FOR_B) %>%
+    # remove self-interactions
     filter(gene1 != gene2) %>%
     unique
 
@@ -178,8 +179,8 @@ process run_scones {
     file phenotype from pheno.first()
     file net from gs .mix(gm) . mix(gi)
   output:
-    file "BRCA_${ped.baseName}.scones.out.txt" into out
-    file "BRCA_${ped.baseName}.scones.pmatrix.txt" into pmatrix
+    file "BRCA_${net.baseName}.scones.out.txt" into out
+    file "BRCA_${net.baseName}.scones.pmatrix.txt" into pmatrix
 
   """
   $scones ${ped.baseName} $phenotype $net 0.05 `pwd` additive 0
