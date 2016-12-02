@@ -170,7 +170,7 @@ process run_scones {
 
   """
   $scones ${ped_filtered.baseName} $pheno $net 0.05 `pwd` additive 0
-  mv BRCA.scones.pmatrix.txt BRCA_${ped_filtered.baseName}.scones.pmatrix.txt
-  mv BRCA.scones.out.txt BRCA_${ped_filtered.baseName}.scones.out.txt
+  mv BRCA.scones.pmatrix.txt BRCA_${net.baseName}.scones.pmatrix.txt
+  mv BRCA.scones.out.txt BRCA_${net.baseName}.scones.out.txt
   """
 }
