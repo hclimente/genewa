@@ -18,6 +18,7 @@ process numeric2acgt {
     file "genesis.filtered.map" into map_filtered, map_gs, map_gm, map_gi
 
   """
+  #!/usr/bin/env bash
   # remove indels for the moment
   grep '\\[D/I\\]\\|\\[I/D\\]' ~/genewa/data/genesis/icogs_snp_list.csv | cut -d',' -f2 >indels.txt
   $plink --file ${ped.baseName} --recode --alleleACGT --exclude indels.txt --out genesis.filtered --noweb
@@ -151,7 +152,7 @@ process get_phenotypes {
     file "phenotype.txt" into pheno
 
   """
-  echo FID IID TEST > phenotype.txt
+  echo FID IID BRCA > phenotype.txt
   cut -d' ' -f1,2,6 $ped >> phenotype.txt
   """
 }
@@ -163,8 +164,13 @@ process run_scones {
     file map_filtered
     file pheno
     file net from gs .mix(gm) . mix(gi)
+  output:
+    file "BRCA_${ped_filtered.baseName}.scones.out.txt" into out
+    file "BRCA_${ped_filtered.baseName}.scones.pmatrix.txt" into pmatrix
 
   """
   $scones ${ped_filtered.baseName} $pheno $net 0.05 `pwd` additive 0
+  mv BRCA.scones.pmatrix.txt BRCA_${ped_filtered.baseName}.scones.pmatrix.txt
+  mv BRCA.scones.out.txt BRCA_${ped_filtered.baseName}.scones.out.txt
   """
 }
