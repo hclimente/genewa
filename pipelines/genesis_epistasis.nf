@@ -1,46 +1,16 @@
 #!/usr/bin/env nextflow
 
-ped = file("$HOME/genewa/data/genesis/Genesis.ped")
-map = file("$HOME/genewa/data/genesis/Genesis.map")
+ped = file("$HOME/genewa/data/genesis/genesis.imputed.filtered.ped")
+map = file("$HOME/genewa/data/genesis/genesis.imputed.filtered.map")
 genes = file("$HOME/genewa/data/genesis/glist-hg19")
 snp2gene = file("$HOME/genewa/data/genesis/gene2snp.hg19")
 ppi = file("$HOME/genewa/data/genesis/BIOGRID-ORGANISM-Homo_sapiens-3.4.138.tab.txt")
 
-plink = "$HOME/genewa/libs/plink-1.07-x86_64/plink"
 scones = "$HOME/genewa/libs/easyGWASCore/bin/linux2/tools/scones"
-impute = "$HOME/genewa/libs/impute_v2.3.2_x86_64_static/impute2"
-
-process numeric2acgt {
-  input:
-    file ped
-    file map
-  output:
-    file "genesis.filtered.ped" into ped_filtered
-    file "genesis.filtered.map" into map_filtered
-
-  """
-  # remove indels for the moment
-  grep '\\[D/I\\]\\|\\[I/D\\]' ~/genewa/data/genesis/icogs_snp_list.csv | cut -d',' -f2 >indels.txt
-  $plink --file ${ped.baseName} --recode --alleleACGT --exclude indels.txt --out genesis.filtered --noweb
-  """
-}
-
-process impute_genotypes {
-
-  input:
-    file ped_filtered
-    file map_filtered
-  output:
-    file "genesis.filtered.ped" into ped_imputed
-    file "genesis.filtered.map" into map_imputed, map_gs, map_gm, map_gi
-
-  """
-  """
-}
 
 process get_GS {
   input:
-    file map_gs
+    file map
   output:
     file "gs.txt" into gs, gs_tmp
 
@@ -72,7 +42,7 @@ process get_GS {
 process get_GM {
   input:
     file snp2gene
-    file map_gm
+    file map
     file gs_tmp
   output:
     file "gm.txt" into gm, gm_tmp
@@ -114,7 +84,7 @@ process get_GI {
   input:
     file ppi
     file snp2gene
-    file map_gi
+    file map
     file gm_tmp
   output:
     file "gi.txt" into gi
@@ -173,8 +143,8 @@ process get_phenotypes {
 process run_scones {
 
   input:
-    file ped from ped_imputed.first()
-    file map from map_imputed.first()
+    file ped from ped.first()
+    file map from map.first()
     file phenotype from pheno.first()
     file net from gs .mix(gm) . mix(gi)
   output:
