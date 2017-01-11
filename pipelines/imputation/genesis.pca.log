@@ -1,0 +1,17 @@
+parameter file: genesis.pca.par
+### THE INPUT PARAMETERS
+##PARAMETER NAME: VALUE
+genotypename: Genesis.ped
+snpname: Genesis.map
+indivname: Genesis.ped
+evecoutname: genesis.pca.evec
+evaloutname: genesis.eval
+altnormstyle: NO
+numoutevec: 10
+numoutlieriter: 5
+numoutlierevec: 10
+outliersigmathresh: 6
+qtmode: 0
+## smartpca version: 13050
+norm used
+

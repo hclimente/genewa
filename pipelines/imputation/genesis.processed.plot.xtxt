@@ -1,0 +1,7 @@
+set terminal postscript color noenhanced
+set title  "" 
+set xlabel  "eigenvector 1" 
+set ylabel  "eigenvector 2" 
+plot  "genesis.processed.pca.evec.1:2:Case" using ($2)*1:($3)*1 title "Case" , \
+ "genesis.processed.pca.evec.1:2:Control" using ($2)*1:($3)*1 title "Control" 
+## pause 9999

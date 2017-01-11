@@ -17,12 +17,6 @@ legend = file("$HOME/genewa/data/1000GP_Phase3/1000GP_Phase3_chr${chr_region}.le
 haps = file("$HOME/genewa/data/1000GP_Phase3/1000GP_Phase3_chr${chr_region}.hap.gz")
 genetic_map = file("$HOME/genewa/data/1000GP_Phase3/genetic_map_chr${chr_region}_combined_b37.txt")
 
-/* TODO
-- Check how missing values are handled. There are supposed to be missing values in the output still...
-- Check how many SNPs are lost (if they are not in the reference panel): not many
-- sort gen_filenames
-*/
-
 process ped2gen {
 
   clusterOptions = '-l mem=20G'

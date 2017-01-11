@@ -1,0 +1,19 @@
+parameter file: genesis.processed.chisq.par
+genotypename: genesis.processed.ped
+snpname: genesis.processed.map
+indivname: genesis.processed.ped
+pcaname: genesis.processed.pca
+outputname: genesis.processed.chisq
+numpc: 1
+qtmode: NO
+genetic distance set from physical distance
+snp order check fail (gdis order != physdis order): genesis.processed.map (processing continues)    1 1943859 194385904 
+snp order check fail (gdis order != physdis order): genesis.processed.map (processing continues)    1 1943864 194386423 
+snp order check fail (gdis order != physdis order): genesis.processed.map (processing continues)    1 1943873 194387316 
+snp order check fail (gdis order != physdis order): genesis.processed.map (processing continues)    1 1943881 194388088 
+snp order check fail (gdis order != physdis order): genesis.processed.map (processing continues)    1 1944019 194401896 
+snp order check fail (gdis order != physdis order): genesis.processed.map (processing continues)    1 1944053 194405323 
+snp order check fail (gdis order != physdis order): genesis.processed.map (processing continues)    1 1944168 194416810 
+snp order check fail (gdis order != physdis order): genesis.processed.map (processing continues)    1 1944207 194420674 
+snp order check fail (gdis order != physdis order): genesis.processed.map (processing continues)    1 1944349 194434931 
+genotype file processed

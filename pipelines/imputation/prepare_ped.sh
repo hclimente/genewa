@@ -1,6 +1,10 @@
 unalias mv
 unalias cp
 
+########################################
+#               IMPUTE                 #
+########################################
+
 # impute
 for i in `seq 1 22`
 do
@@ -26,8 +30,12 @@ do
   cat ~/genewa/data/genesis/chr$i.processed.map >>genesis.processed.map
 done
 
-mv genesis.processed.??? ~/genewa/data/genesis
+########################################
+#     STUDY POPULATION STRUCTURE       #
+########################################
 
-# correct for genomic inflation
-smartpca.perl -i genesis.processed.ped -a genesis.processed.map -b genesis.processed.ped -o genesis.pca -p genesis.plot -e genesis.eval -l genesis.pca.log
-smarteigenstrat.perl -i genesis.processed.ped -a genesis.processed.map -b genesis.processed.ped -p genesis.pca.evec -l genesis.eigenstrat.log -o genesis.chisq
+smartpca.perl -i genesis.processed.ped -a genesis.processed.map -b genesis.processed.ped -o genesis.processed.pca -p genesis.processed.plot -e genesis.processed.eval -l genesis.processed.pca.log
+smarteigenstrat.perl -i genesis.processed.ped -a genesis.processed.map -b genesis.processed.ped -p genesis.processed.pca -l genesis.processed.eigenstrat.log -o genesis.processed.chisq
+gc.perl genesis.processed.chisq genesis.processed.lambda
+
+mv genesis.processed.??? ~/genewa/data/genesis
