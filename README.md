@@ -4,6 +4,7 @@
 
 1. [Data simulation](logbook/gwas_simulation.md)
 2. [State of the art](logbook/sota.md)
+3. [GENESIS](logbook/genesis_data.md)
 
 ## Requirements
 
