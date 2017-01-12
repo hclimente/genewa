@@ -3,3 +3,8 @@ populations/gametes/map*
 populations/gametes/models/*
 data/*
 libs/*
+pipelines/*.png.*
+pipelines/*/.nextflow/*
+pipelines/*/work/*
+.nextflow.log*
+.nextflow
