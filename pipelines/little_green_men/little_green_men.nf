@@ -3,9 +3,12 @@
 params.N = 100
 params.rr = 1.5
 
+snpInvolved = 'chromosomes[["involved"]] <- list(list(1,3,c(2)),list(2,4,c(1,5)))'
+snpNeutral = 'chromosomes[["neutral"]] <- list(list(1,2,c(4)),list(1,2,c(3,5)),list(2,4,c(4,2)))'
+
 process get_ped {
 
-  publishDir "$HOME/genewa/data/little_green_men", overwrite: true
+  publishDir "../../data/little_green_men", overwrite: true
 
   output:
     file "genotypes.ped" into ped
@@ -18,43 +21,55 @@ process get_ped {
 
   rr = $params.rr
   N = $params.N
-  nInvolvedSnps = 7
-  nNeutralSnps = 8
   maf = 0.4
+
+  chromosomes <- list()
+  $snpInvolved
+  $snpNeutral
 
   # involved snps
   # A = low risk allele
   # C = high risk allele
   involvedSnps <- list()
-  for (i in 1:nInvolvedSnps){
-    cases <- rep("A",N)
-    cases[runif(N) < (rr/(rr+1))] <- "C"
-    controls <- rep("A",N)
-    controls[runif(N) > (rr/(rr+1))] <- "C"
+  i <- 1
+  involvedSnps <- list()
+  for (gene in chromosomes[['involved']]){
+    for (n in 1:gene[[2]]){
+      cases <- rep("A",N)
+      cases[runif(N) < (rr/(rr+1))] <- "C"
+      controls <- rep("A",N)
+      controls[runif(N) > (rr/(rr+1))] <- "C"
 
-    involvedSnps[[i]] <- c(cases, controls)
+      involvedSnps[[i]] <- c(cases, controls)
+      i <- i + 1
+    }
   }
 
   involvedSnps <- do.call("cbind", involvedSnps)
 
   # neutral snps
   # T,G = alleles without impact
+  i <- 1
   neutralSnps <- list()
-  for (i in 1:nNeutralSnps){
-    cases <- rep("G",N)
-    cases[runif(N) < maf] <- "T"
-    controls <- rep("G",N)
-    controls[runif(N) < maf] <- "T"
+  for (gene in chromosomes[['neutral']]){
+    for (n in 1:gene[[2]]){
+      cases <- rep("G",N)
+      cases[runif(N) < (rr/(rr+1))] <- "T"
+      controls <- rep("G",N)
+      controls[runif(N) > (rr/(rr+1))] <- "T"
 
-    neutralSnps[[i]] <- c(cases, controls)
+      neutralSnps[[i]] <- c(cases, controls)
+      i <- i + 1
+    }
   }
 
   neutralSnps <- do.call("cbind", neutralSnps)
 
   snps <- cbind(involvedSnps,neutralSnps)
   ids <- 1:(2*N)
-  data.frame(family = ids, indiv = ids, pater = 0, mater = 0,
-             pheno = c(rep(2, N), rep(1, N))) %>%
+  data.frame(family = ids, indiv = ids,
+             pater = as.integer(0), mater = as.integer(0),
+             pheno = as.integer(c(rep(2, N), rep(1, N)))) %>%
     cbind(snps) %>%
     write_delim("genotypes.ped", col_names=FALSE)
 
@@ -64,7 +79,7 @@ process get_ped {
 
 process get_map {
 
-  publishDir "$HOME/genewa/data/little_green_men", overwrite: true
+  publishDir "../../data/little_green_men", overwrite: true
 
   output:
     file "genotypes.map" into map
@@ -76,8 +91,8 @@ process get_map {
   library(dplyr)
 
   chromosomes <- list()
-  chromosomes[["involved"]] <- list(c(1,3),c(2,4))
-  chromosomes[["neutral"]] <- list(c(1,2),c(1,2),c(2,4))
+  $snpInvolved
+  $snpNeutral
 
   perchr <- list("1" = 0, "2" = 0)
   map <- list()
@@ -85,27 +100,28 @@ process get_map {
   i <- 1
   for (snpType in chromosomes){
     for (gene in snpType){
-      chr <- as.character(gene[1])
-      nsnps <- gene[2]
-      start <- step + perchr[[chr]]*step
-      end <- start + nsnps*step
-      map[[i]] <- data.frame(chr = chr, position = seq(start, end, step), name = paste0("rs", i))
-      perchr[[chr]] <- perchr[[chr]] + nsnps
-      i <- i + 1
+      chr <- as.character(gene[[1]])
+      nsnps <- gene[[2]]
+      for (snp in 1:nsnps){
+        map[[i]] <- data.frame(chr = chr, position = step + perchr[[chr]]*step, name = paste0("rs", i))
+        i <- i + 1
+        perchr[[chr]] <- perchr[[chr]] + 1
+      }
     }
   }
 
   do.call("rbind", map) %>%
     mutate(geneticDistance = 0) %>%
     select(chr, name, geneticDistance, position) %>%
-    write_delim("genotypes.map", col_names=FALSE)
+    write.table("genotypes.map", sep = "\t", row.names = F, col.names = F, quote = F)
+
   """
 
 }
 
 process get_phenotypes {
 
-  publishDir "$HOME/genewa/data/little_green_men", overwrite: true
+  publishDir "../../data/little_green_men", overwrite: true
 
   input:
     file ped
@@ -120,7 +136,7 @@ process get_phenotypes {
 
 process get_gene2snp {
 
-  publishDir "$HOME/genewa/data/little_green_men", overwrite: true
+  publishDir "../../data/little_green_men", overwrite: true
 
   output:
     file "gene2snp.tsv" into gene2snp
@@ -133,24 +149,24 @@ process get_gene2snp {
   library(dplyr)
 
   chromosomes <- list()
-  chromosomes[["involved"]] <- list(list(1,3,c(2),list(2,4,c(1,5))
-  chromosomes[["neutral"]] <- list(list(1,2,c(3),list(1,2,c(2,5),list(2,4,c(4,1))
+  $snpInvolved
+  $snpNeutral
 
   snp2gene <- list()
   i <- 1
   g <- 1
   for (snpType in chromosomes){
     for (gene in snpType){
-      for (ind in 1:gene[2]){
+      for (ind in 1:gene[[2]]){
         snp2gene[[i]] <- data.frame(SNP = paste0("rs", i), GENE = paste0("g", g))
         i <- i + 1
       }
+      g <- g + 1
     }
-    g <- g + 1
   }
 
   do.call("rbind", snp2gene) %>%
-    write_delim("gene2snp.tsv")
+    write_tsv("gene2snp.tsv")
 
   """
 
@@ -158,7 +174,7 @@ process get_gene2snp {
 
 process get_ppi {
 
-  publishDir "$HOME/genewa/data/little_green_men", overwrite: true
+  publishDir "../../data/little_green_men", overwrite: true
 
   output:
     file "ppi.tab" into ppi
@@ -170,15 +186,17 @@ process get_ppi {
   library(dplyr)
 
   chromosomes <- list()
-  chromosomes[["involved"]] <- list(list(1,3,c(2),list(2,4,c(1,5))
-  chromosomes[["neutral"]] <- list(list(1,2,c(3),list(1,2,c(2,5),list(2,4,c(4,1))
+  $snpInvolved
+  $snpNeutral
 
   ppi <- list()
   g <- 1
+  i <- 1
   for (snpType in chromosomes){
     for (gene in snpType){
-      for (intx in gene[3]){
+      for (intx in gene[[3]]){
         ppi[[i]] <- data.frame(OFFICIAL_SYMBOL_FOR_A = paste0("g", g), OFFICIAL_SYMBOL_FOR_B = paste0("g", intx))
+        i <- i + 1
       }
       g <- g + 1
     }
@@ -188,15 +206,15 @@ process get_ppi {
     mutate(INTERACTOR_A = "", INTERACTOR_B = "", ALIASES_FOR_A = "",
            ALIASES_FOR_B = "", EXPERIMENTAL_SYSTEM = "", SOURCE = "",
            PUBMED_ID = "", ORGANISM_A_ID = "", ORGANISM_B_ID = "") %>%
-    write_delim("ppi.tab")
+    write_tsv("ppi.tab")
 
   """
 
 }
 
-process get_ppi {
+process get_snp_list {
 
-  publishDir "$HOME/genewa/data/little_green_men", overwrite: true
+  publishDir "../../data/little_green_men", overwrite: true
 
   input:
     file map
@@ -209,7 +227,7 @@ process get_ppi {
   library(magrittr)
   library(dplyr)
 
-  read_delim("$map", " ", col_names=FALSE) %>%
+  read_tsv("$map", col_names=FALSE) %>%
     set_colnames(c("Chromosome","Illumina_SNP_Name","geneDist","Build37_Position")) %>%
     select(Illumina_SNP_Name,Chromosome,Build37_Position) %>%
     write_csv("snp_list.csv")
