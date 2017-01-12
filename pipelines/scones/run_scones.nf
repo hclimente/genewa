@@ -1,66 +1,17 @@
 #!/usr/bin/env nextflow
 
-// GENESIS data
-peds = Channel.fromPath("$HOME/genewa/data/genesis/chr*.processed.ped")
-maps = Channel.fromPath("$HOME/genewa/data/genesis/chr*.processed.map")
-// ped = file("$HOME/genewa/data/genesis/Genesis.ped")
-// map = file("$HOME/genewa/data/genesis/Genesis.map")
+ped = file("$params.ped")
+map = file("$params.map")
 
 // network information
-genes = file("$HOME/genewa/data/genesis/glist-hg19")
-snp2gene = file("$HOME/genewa/data/genesis/gene2snp.hg19")
-icogsSnps = file("$HOME/genewa/data/genesis/icogs_snp_list.csv")
-ppi = file("$HOME/genewa/data/genesis/BIOGRID-ORGANISM-Homo_sapiens-3.4.138.tab.txt")
-
-process join_files {
-
-  input:
-    file peds from peds.toList()
-    file maps from maps.toList()
-  output:
-    file "genesis.processed.ped" into ped
-    file "genesis.processed.map" into map
-
-  """
-  cat chr20.processed.ped | sed 's/[\\t ]\$//' >genesis.processed.ped
-  cat chr20.processed.map >genesis.processed.map
-
-  ###################
-  # CORRECT ALL CHR, REPLACE 20 BY 1 #
-  ###################
-  for i in `seq 21 22`
-  do
-    paste -d' ' genesis.processed.ped <(cut -d' ' -f7- chr\$i.processed.ped | sed 's/[\\t ]\$//') > tmp.ped && mv tmp.ped genesis.processed.ped
-    cat genesis.processed.map chr\$i.processed.map >tmp.map && mv tmp.map genesis.processed.map
-  done
-  """
-
-}
-
-ped.into { ped; ped_pheno }
-map.into { map; map_gs; map_gm; map_gi }
-
-/*
-process numeric2acgt {
-  input:
-    file ped
-    file map
-  output:
-    file "genesis.filtered.ped" into ped_filtered
-    file "genesis.filtered.map" into map_filtered
-
-  """
-  # remove indels for the moment
-  grep '\\[D/I\\]\\|\\[I/D\\]' ~/genewa/data/genesis/icogs_snp_list.csv | cut -d',' -f2 >indels.txt
-  plink --file ${ped.baseName} --recode --alleleACGT --exclude indels.txt --out genesis.filtered --noweb
-  """
-}
-*/
+snp2gene = file("$params.snp2gene")
+icogsSnps = file("$params.icogsSnps")
+ppi = file("$params.ppi")
 
 process get_phenotypes {
 
   input:
-    file ped from ped_pheno
+    file ped
   output:
     file "phenotype.txt" into pheno
 
@@ -73,7 +24,7 @@ process get_phenotypes {
 process get_GS {
 
   input:
-    file map from map_gs
+    file map
   output:
     file "gs.txt" into gs
 
@@ -108,7 +59,7 @@ process get_GM {
 
   input:
     file snp2gene
-    file map from map_gm
+    file map
     file gs from gs_tmp
   output:
     file "gm.txt" into gm
@@ -155,7 +106,7 @@ process get_GI {
   input:
     file ppi
     file snp2gene
-    file map from map_gi
+    file map
     file gm from gm_tmp
   output:
     file "gi.txt" into gi
@@ -207,8 +158,8 @@ process run_scones {
   clusterOptions = '-l mem=30G'
 
   input:
-    file ped from ped.first()
-    file map from map.first()
+    file ped from ped
+    file map from map
     file phenotype from pheno.first()
     file net from gs .mix(gm) . mix(gi)
   output:
@@ -216,7 +167,7 @@ process run_scones {
     file "BRCA_${net.baseName}.scones.pmatrix.txt" into pmatrix
 
   """
-  scones ${ped.baseName} $phenotype $net 0.05 `pwd` additive 3
+  scones2 -p ${ped.baseName} -f $phenotype -n $net
   mv BRCA.scones.pmatrix.txt BRCA_${net.baseName}.scones.pmatrix.txt
   mv BRCA.scones.out.txt BRCA_${net.baseName}.scones.out.txt
   """
