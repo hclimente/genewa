@@ -103,37 +103,6 @@ process get_map {
 
 }
 
-process get_gs {
-
-  publishDir "$HOME/genewa/data/little_green_men", overwrite: true
-
-  input:
-    file map
-  output:
-    file "gs.txt"
-
-  """
-  #!/usr/bin/env Rscript
-  library(readr)
-  library(magrittr)
-  library(dplyr)
-
-  map <- read_delim("genotypes.map", " ", col_names=FALSE) %>%
-    set_colnames(c("chr","name","geneDist","pos")) %>%
-    arrange(chr, pos)
-
-  by(map, map\$chr, function(x){
-        chr <- unique(x\$chr)
-        pos1 <- head(x\$pos, n = length(x\$pos) - 1)
-        pos2 <- tail(x\$pos, n = length(x\$pos) - 1)
-        data.frame(chr1 = chr, pos1 = pos1, chr2 = chr, pos2 = pos2)
-  }) %>% do.call("rbind", .) %>%
-    write_tsv("gs.txt", col_names=FALSE)
-
-  """
-
-}
-
 process get_phenotypes {
 
   publishDir "$HOME/genewa/data/little_green_men", overwrite: true
