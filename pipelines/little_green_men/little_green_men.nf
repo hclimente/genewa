@@ -1,15 +1,105 @@
 #!/usr/bin/env nextflow
 
-params.N = 100
-params.rr = 1.5
+// params for genotype generation
+params.N = 3000
+params.rr = 30
 
-snpInvolved = 'chromosomes[["involved"]] <- list(list(1,3,c(2)),list(2,4,c(1,5)))'
-snpNeutral = 'chromosomes[["neutral"]] <- list(list(1,2,c(4)),list(1,2,c(3,5)),list(2,4,c(4,2)))'
+// params for genome generation
+params.numCausalGenes = 3
+params.numGenesPerPathway = 6
+params.numPathways = 30
+params.numSnpsPerGene = 4
+params.numChromosomes = 5
+params.crosstalkFreq = 0.3
+
+if (params.population == "custom"){
+
+  process getCustomGenome {
+
+    output:
+      file "genome.Rdata" into genome_ped, genome_map, genome_ppi
+
+    """
+    #!/usr/bin/env Rscript
+    genome <- data.frame(id = 1:5, chr = c(1,1,1,2,2),
+                         causalGene = c(F,T,F,F,T),
+                         snps = c(2,3,2,4,4))
+    genome\$ppi <- list(c(2), c(1,5), c(4), c(3,5), c(4,2))
+
+    save(genome, file = "genome.Rdata")
+    """
+  }
+} else if (params.population == "random") {
+
+  process generateRandomGenome {
+
+    output:
+      file "genome.Rdata" into genome_ped, genome_map, genome_ppi
+
+    """
+    #!/usr/bin/env Rscript
+    library(magrittr)
+    library(dplyr)
+
+    # define parameters
+    numCausalGenes <- $params.numCausalGenes
+    numGenesPerPathway <- $params.numGenesPerPathway
+    numPathways <- $params.numPathways
+    numSnpsPerGene <- $params.numSnpsPerGene
+    numChromosomes <- $params.numChromosomes
+    crosstalkFreq <- $params.crosstalkFreq
+
+    # create data frame
+    numGenes <- numPathways * numGenesPerPathway
+    causalGenes <- sample(1:numGenes, numCausalGenes)
+    genome <- data.frame(id = 1:numGenes,
+                        chr = sample(numChromosomes, numGenes, replace = TRUE)) %>%
+      mutate(causalGene = id %in% causalGenes,
+             snps = numSnpsPerGene)
+
+    #calculate ppi
+    ppiPathway.model <- expand.grid(1:numGenesPerPathway, 1:numGenesPerPathway)
+
+    ppiPathway <- lapply(0:(numPathways - 1), function(i){
+      ppiPathway.model + i * numGenesPerPathway
+    }) %>% do.call("rbind", .) %>%
+      set_colnames(c("Gene1", "Gene2"))
+
+    ppiCrosstalk <- lapply(1:numPathways, function(i){
+      first <- 1 + numGenesPerPathway * (i - 1)
+      last <- numGenesPerPathway * i
+
+      pwGenes <- genome\$id[first:last]
+      otherGenes <- genome\$id[-(first:last)]
+
+      possibleCrosstalk <- expand.grid(pwGenes, otherGenes)
+
+      sample_n(possibleCrosstalk, floor(numGenesPerPathway * crosstalkFreq))
+    }) %>% do.call("rbind", .) %>%
+      set_colnames(c("Gene1", "Gene2"))
+
+    ppiCrosstalk <- data.frame(Gene1 = c(ppiCrosstalk\$Gene1, ppiCrosstalk\$Gene2),
+               Gene2 = c(ppiCrosstalk\$Gene2, ppiCrosstalk\$Gene1))
+
+    ppi <- rbind(ppiPathway, ppiCrosstalk)
+
+    genome\$ppi <- apply(genome, 1, function(x){
+      ppi\$Gene2[ppi\$Gene1 == x[[1]]] %>% sort %>% unique
+    })
+
+    # save results
+    save(genome, file = "genome.Rdata")
+    """
+  }
+
+}
 
 process get_ped {
 
   publishDir "../../data/little_green_men", overwrite: true
 
+  input:
+    file genome_ped
   output:
     file "genotypes.ped" into ped
 
@@ -19,56 +109,43 @@ process get_ped {
   library(magrittr)
   library(dplyr)
 
+  getGenotypes <- function(i, wt, alt, maf, N){
+    cases.chr1 <- rep(wt,N)
+    cases.chr1[runif(N) < maf] <- alt
+    cases.chr2 <- rep(wt,N)
+    cases.chr2[runif(N) < maf] <- alt
+
+    controls.chr1 <- rep(wt,N)
+    controls.chr1[runif(N) > maf] <- alt
+    controls.chr2 <- rep(wt,N)
+    controls.chr2[runif(N) > maf] <- alt
+
+    data.frame(chr1 = c(cases.chr1, controls.chr1),
+               chr2 = c(cases.chr2, controls.chr2))
+  }
+
   rr = $params.rr
   N = $params.N
   maf = 0.4
 
-  chromosomes <- list()
-  $snpInvolved
-  $snpNeutral
+  load("$genome_ped")
 
   # involved snps
   # A = low risk allele
   # C = high risk allele
-  involvedSnps <- list()
-  i <- 1
-  involvedSnps <- list()
-  for (gene in chromosomes[['involved']]){
-    for (n in 1:gene[[2]]){
-      cases <- rep("A",N)
-      cases[runif(N) < (rr/(rr+1))] <- "C"
-      controls <- rep("A",N)
-      controls[runif(N) > (rr/(rr+1))] <- "C"
-
-      involvedSnps[[i]] <- c(cases, controls)
-      i <- i + 1
-    }
-  }
-
-  involvedSnps <- do.call("cbind", involvedSnps)
+  involvedSnps <- lapply(1:sum(genome\$snps[genome\$causalGene]), getGenotypes, "A", "C", rr/(rr+1), N) %>%
+    do.call("cbind", .)
 
   # neutral snps
   # T,G = alleles without impact
-  i <- 1
-  neutralSnps <- list()
-  for (gene in chromosomes[['neutral']]){
-    for (n in 1:gene[[2]]){
-      cases <- rep("G",N)
-      cases[runif(N) < (rr/(rr+1))] <- "T"
-      controls <- rep("G",N)
-      controls[runif(N) > (rr/(rr+1))] <- "T"
-
-      neutralSnps[[i]] <- c(cases, controls)
-      i <- i + 1
-    }
-  }
-
-  neutralSnps <- do.call("cbind", neutralSnps)
+  neutralSnps <- lapply(1:(sum(genome\$snps) - sum(genome\$snps[genome\$causalGene])), getGenotypes, "T", "G", maf, N) %>%
+    do.call("cbind", .)
 
   snps <- cbind(involvedSnps,neutralSnps)
   ids <- 1:(2*N)
   data.frame(family = ids, indiv = ids,
              pater = as.integer(0), mater = as.integer(0),
+             sex = as.integer(2),
              pheno = as.integer(c(rep(2, N), rep(1, N)))) %>%
     cbind(snps) %>%
     write_delim("genotypes.ped", col_names=FALSE)
@@ -81,8 +158,11 @@ process get_map {
 
   publishDir "../../data/little_green_men", overwrite: true
 
+  input:
+    file genome_map
   output:
     file "genotypes.map" into map
+    file "gene2snp.tsv" into gene2snp
 
   """
   #!/usr/bin/env Rscript
@@ -90,30 +170,27 @@ process get_map {
   library(magrittr)
   library(dplyr)
 
-  chromosomes <- list()
-  $snpInvolved
-  $snpNeutral
-
-  perchr <- list("1" = 0, "2" = 0)
-  map <- list()
+  load("$genome_map")
   step <- 5000
-  i <- 1
-  for (snpType in chromosomes){
-    for (gene in snpType){
-      chr <- as.character(gene[[1]])
-      nsnps <- gene[[2]]
-      for (snp in 1:nsnps){
-        map[[i]] <- data.frame(chr = chr, position = step + perchr[[chr]]*step, name = paste0("rs", i))
-        i <- i + 1
-        perchr[[chr]] <- perchr[[chr]] + 1
-      }
-    }
-  }
 
-  do.call("rbind", map) %>%
-    mutate(geneticDistance = 0) %>%
+  df <- genome %>%
+    arrange(desc(causalGene), chr, id)
+
+  map <- df[rep(row.names(df), df\$snps), ] %>%
+    select(chr, id) %>%
+    mutate(name = paste0("rs", 1:n()),
+           geneticDistance = 0) %>%
+    group_by(chr) %>%
+    mutate(position = step + 1:n() * step)
+
+  map %>%
     select(chr, name, geneticDistance, position) %>%
-    write.table("genotypes.map", sep = "\t", row.names = F, col.names = F, quote = F)
+    write.table("genotypes.map", sep = "\\t", row.names = F, col.names = F, quote = F)
+
+  map %>%
+    select(name, id) %>%
+    rename(SNP = name, GENE = id) %>%
+    write_tsv("gene2snp.tsv")
 
   """
 
@@ -134,48 +211,12 @@ process get_phenotypes {
   """
 }
 
-process get_gene2snp {
-
-  publishDir "../../data/little_green_men", overwrite: true
-
-  output:
-    file "gene2snp.tsv" into gene2snp
-
-  """
-  #!/usr/bin/env Rscript
-
-  library(readr)
-  library(magrittr)
-  library(dplyr)
-
-  chromosomes <- list()
-  $snpInvolved
-  $snpNeutral
-
-  snp2gene <- list()
-  i <- 1
-  g <- 1
-  for (snpType in chromosomes){
-    for (gene in snpType){
-      for (ind in 1:gene[[2]]){
-        snp2gene[[i]] <- data.frame(SNP = paste0("rs", i), GENE = paste0("g", g))
-        i <- i + 1
-      }
-      g <- g + 1
-    }
-  }
-
-  do.call("rbind", snp2gene) %>%
-    write_tsv("gene2snp.tsv")
-
-  """
-
-}
-
 process get_ppi {
 
   publishDir "../../data/little_green_men", overwrite: true
 
+  input:
+    file genome_ppi
   output:
     file "ppi.tab" into ppi
 
@@ -185,24 +226,14 @@ process get_ppi {
   library(magrittr)
   library(dplyr)
 
-  chromosomes <- list()
-  $snpInvolved
-  $snpNeutral
+  load("$genome_ppi")
 
-  ppi <- list()
-  g <- 1
-  i <- 1
-  for (snpType in chromosomes){
-    for (gene in snpType){
-      for (intx in gene[[3]]){
-        ppi[[i]] <- data.frame(OFFICIAL_SYMBOL_FOR_A = paste0("g", g), OFFICIAL_SYMBOL_FOR_B = paste0("g", intx))
-        i <- i + 1
-      }
-      g <- g + 1
-    }
-  }
-
-  do.call("rbind", ppi) %>%
+  genome %>%
+    apply(1, function(gene){
+      lapply(gene[[5]], function(intx, id){
+        data.frame(OFFICIAL_SYMBOL_FOR_A = id, OFFICIAL_SYMBOL_FOR_B = as.integer(intx))
+        }, gene[[1]]) %>% do.call("rbind", .)
+      }) %>% do.call("rbind", .) %>%
     mutate(INTERACTOR_A = "", INTERACTOR_B = "", ALIASES_FOR_A = "",
            ALIASES_FOR_B = "", EXPERIMENTAL_SYSTEM = "", SOURCE = "",
            PUBMED_ID = "", ORGANISM_A_ID = "", ORGANISM_B_ID = "") %>%
