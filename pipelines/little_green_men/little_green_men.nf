@@ -10,7 +10,8 @@ params.numGenesPerPathway = 6
 params.numPathways = 30
 params.numSnpsPerGene = 4
 params.numChromosomes = 5
-params.crosstalkFreq = 0.3
+params.freqCrosstalk = 0.3
+params.freqCausalSnp = 0.8
 
 if (params.population == "custom"){
 
@@ -21,7 +22,7 @@ if (params.population == "custom"){
 
     """
     #!/usr/bin/env Rscript
-    genome <- data.frame(id = 1:5, chr = c(1,1,1,2,2),
+    genome <- data.frame(id = paste0("g", 1:5), chr = c(1,1,1,2,2),
                          causalGene = c(F,T,F,F,T),
                          snps = c(2,3,2,4,4))
     genome\$ppi <- list(c(2), c(1,5), c(4), c(3,5), c(4,2))
@@ -47,23 +48,27 @@ if (params.population == "custom"){
     numPathways <- $params.numPathways
     numSnpsPerGene <- $params.numSnpsPerGene
     numChromosomes <- $params.numChromosomes
-    crosstalkFreq <- $params.crosstalkFreq
+    freqCrosstalk <- $params.freqCrosstalk
+    freqCausalSnp <- $params.freqCausalSnp
 
     # create data frame
     numGenes <- numPathways * numGenesPerPathway
-    causalGenes <- sample(1:numGenes, numCausalGenes)
-    genome <- data.frame(id = 1:numGenes,
-                        chr = sample(numChromosomes, numGenes, replace = TRUE)) %>%
+    causalGenes <- paste0("g", 1:numCausalGenes)
+
+    genome <- data.frame(id = paste0("g", 1:numGenes),
+                         chr = sample(numChromosomes, numGenes, replace = TRUE)) %>%
       mutate(causalGene = id %in% causalGenes,
              snps = numSnpsPerGene)
 
-    #calculate ppi
+    # calculate ppi
     ppiPathway.model <- expand.grid(1:numGenesPerPathway, 1:numGenesPerPathway)
 
     ppiPathway <- lapply(0:(numPathways - 1), function(i){
       ppiPathway.model + i * numGenesPerPathway
     }) %>% do.call("rbind", .) %>%
-      set_colnames(c("Gene1", "Gene2"))
+      set_colnames(c("Gene1", "Gene2")) %>%
+      mutate(Gene1 = paste0("g", Gene1),
+             Gene2 = paste0("g", Gene2))
 
     ppiCrosstalk <- lapply(1:numPathways, function(i){
       first <- 1 + numGenesPerPathway * (i - 1)
@@ -74,12 +79,13 @@ if (params.population == "custom"){
 
       possibleCrosstalk <- expand.grid(pwGenes, otherGenes)
 
-      sample_n(possibleCrosstalk, floor(numGenesPerPathway * crosstalkFreq))
+      sample_n(possibleCrosstalk, floor(numGenesPerPathway * freqCrosstalk))
     }) %>% do.call("rbind", .) %>%
-      set_colnames(c("Gene1", "Gene2"))
+      set_colnames(c("Gene1", "Gene2")) %>%
+      mutate(Gene1 = as.character(Gene1), Gene2 = as.character(Gene2))
 
     ppiCrosstalk <- data.frame(Gene1 = c(ppiCrosstalk\$Gene1, ppiCrosstalk\$Gene2),
-               Gene2 = c(ppiCrosstalk\$Gene2, ppiCrosstalk\$Gene1))
+                               Gene2 = c(ppiCrosstalk\$Gene2, ppiCrosstalk\$Gene1))
 
     ppi <- rbind(ppiPathway, ppiCrosstalk)
 
@@ -96,7 +102,7 @@ if (params.population == "custom"){
 
 process get_ped {
 
-  publishDir "../../data/little_green_men", overwrite: true
+  publishDir ".", overwrite: true
 
   input:
     file genome_ped
@@ -156,7 +162,7 @@ process get_ped {
 
 process get_map {
 
-  publishDir "../../data/little_green_men", overwrite: true
+  publishDir ".", overwrite: true
 
   input:
     file genome_map
@@ -181,7 +187,8 @@ process get_map {
     mutate(name = paste0("rs", 1:n()),
            geneticDistance = 0) %>%
     group_by(chr) %>%
-    mutate(position = step + 1:n() * step)
+    mutate(position = step + 1:n() * step) %>%
+    ungroup
 
   map %>%
     select(chr, name, geneticDistance, position) %>%
@@ -198,7 +205,7 @@ process get_map {
 
 process get_phenotypes {
 
-  publishDir "../../data/little_green_men", overwrite: true
+  publishDir ".", overwrite: true
 
   input:
     file ped
@@ -213,7 +220,7 @@ process get_phenotypes {
 
 process get_ppi {
 
-  publishDir "../../data/little_green_men", overwrite: true
+  publishDir ".", overwrite: true
 
   input:
     file genome_ppi
@@ -245,7 +252,7 @@ process get_ppi {
 
 process get_snp_list {
 
-  publishDir "../../data/little_green_men", overwrite: true
+  publishDir ".", overwrite: true
 
   input:
     file map
