@@ -9,13 +9,14 @@ library(cowplot)
 
 options("readr.num_columns" = 0)
 
-top <- 7
-total <- 15
+args <- commandArgs(trailingOnly = TRUE)
+top <- as.numeric(args[1])
+total <- as.numeric(args[2])
+
 p <- paste0("rs", 1:top)
 n <- paste0("rs", (top+1):total)
 
 parameters <- c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
-
 
 for (net in c("gs","gm","gi")){
   selectedSnps <- list()
@@ -24,10 +25,10 @@ for (net in c("gs","gm","gi")){
       l <- paste0(1,paste0(rep("0",l.exp), collapse = ""))
       e <- paste0(1,paste0(rep("0",e.exp), collapse = ""))
       # SELECTED SNPS
-      selectedSnpsFile <- paste0("gridsearch/BRCA_", net, ".l", l,".e", e,".scones.out.txt")
-      this.selectedSnps <- read_tsv(selectedSnpsFile, comment = "#", col_names = F)
+      this.selectedSnps <- paste0("BRCA_", net, ".l", l,".e", e,".scones.out.txt") %>%
+        read_tsv(comment = "#", col_names = F)
       if (nrow(this.selectedSnps)==0){
-
+        
         tp <- NA
         tn <- NA
         
@@ -42,12 +43,12 @@ for (net in c("gs","gm","gi")){
       }
       
       # TERMS
-      termsFile <- paste0("gridsearch/BRCA_", net, ".l", l,".e", e,".scones.terms.txt")
+      termsFile <- paste0("BRCA_", net, ".l", l,".e", e,".scones.terms.txt")
       this.terms <- read_tsv(termsFile, col_names = F) %>%
         t %>% set_colnames(c("association","connectivity","sparsity"))
-
+      
       selectedSnps[[paste0(l,e)]] <- data.frame(tpr = tp/length(p), tnr = tn/length(n),
-                                                lambda = as.numeric(l), 
+                                                lambda = as.numeric(l),
                                                 eta = as.numeric(e),
                                                 Association = this.terms[1],
                                                 Connectivity = this.terms[2],
@@ -58,18 +59,18 @@ for (net in c("gs","gm","gi")){
   
   selectedSnps <- do.call("rbind",selectedSnps)
   
-  tpr <- ggplot(selectedSnps, aes(lambda, eta, fill = tpr )) + 
-    geom_tile(color = "gray") + 
+  tpr <- ggplot(selectedSnps, aes(lambda, eta, fill = tpr )) +
+    geom_tile(color = "gray") +
     labs(x = "λ", y = "η", fill = "Sensitivity") +
     theme_minimal() +
-    scale_x_log10() + 
+    scale_x_log10() +
     scale_y_log10()
-
-  tnr <- ggplot(selectedSnps, aes(lambda, eta, fill = tnr )) + 
-    geom_tile(color = "gray") + 
+  
+  tnr <- ggplot(selectedSnps, aes(lambda, eta, fill = tnr )) +
+    geom_tile(color = "gray") +
     labs(x = "λ", y = "η", fill = "Specificity") +
     theme_minimal() +
-    scale_x_log10() + 
+    scale_x_log10() +
     scale_y_log10()
   
   terms <- selectedSnps %>%
@@ -88,16 +89,16 @@ for (net in c("gs","gm","gi")){
   cv <- selectedSnps %>%
     group_by(lambda, eta) %>%
     summarise(cv = sd(c(Association, Connectivity, Sparsity))/mean(c(Association, Connectivity, Sparsity))) %>%
-    ggplot(aes(lambda, eta, fill = cv )) + 
-    geom_tile(color = "gray") + 
+    ggplot(aes(lambda, eta, fill = cv )) +
+    geom_tile(color = "gray") +
     labs(x = "λ", y = "η", fill = "CV") +
-    theme_minimal() + 
+    theme_minimal() +
     scale_y_log10() +
     scale_x_log10()
   
-  plot_grid(tpr, tnr, terms, cv, 
-            labels=c("Sensitivity","Specificity","Term order", "CV"), 
+  plot_grid(tpr, tnr, terms, cv,
+            labels=c("Sensitivity","Specificity","Term order", "CV"),
             label_size = 8) %>%
-    ggsave(paste0(net, ".png"), ., width = 12, height = 9)
+    ggsave(paste(net,"png", sep = "."), ., width = 12, height = 9)
   
 }
