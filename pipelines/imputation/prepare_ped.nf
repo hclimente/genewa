@@ -166,7 +166,8 @@ process impute {
   ## only genotyped snps are included in the panel
   ## use 503 samples for the reference with european origin
   impute2 \
-    -m $genetic_map -known_haps_g prephased.gen_haps -int \$begin \$end \
+    -use_prephased_g -known_haps_g prephased.gen_haps \
+    -m $genetic_map -int \$begin \$end \
     -h $haps -l $legend \
     -Ne 20000 -verbose \
     -strand_g $strand_info \
@@ -178,7 +179,7 @@ process impute {
 }
 
 process gen2ped {
-  publishDir "$HOME/genewa/data/genesis", mode: 'move', overwrite: true
+  publishDir ".", mode: 'move', overwrite: true
 
   input:
     file imputed_gen from imputed_gens.toList()
