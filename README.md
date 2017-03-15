@@ -5,6 +5,7 @@
 1. [Data simulation](logbook/gwas_simulation.md)
 2. [State of the art](logbook/sota.md)
 3. [GENESIS](logbook/genesis_data.md)
+4. [Playing with the simplest example](logbook/simplest_example.ipynb)
 
 ## Requirements
 
