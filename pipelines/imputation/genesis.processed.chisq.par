@@ -1,7 +1,0 @@
-genotypename:  genesis.processed.ped
-snpname:       genesis.processed.map
-indivname:     genesis.processed.ped
-pcaname:       genesis.processed.pca
-outputname:    genesis.processed.chisq
-numpc:         1
-qtmode:        NO
