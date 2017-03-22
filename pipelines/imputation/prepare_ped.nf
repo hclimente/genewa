@@ -26,7 +26,7 @@ process ped2gen {
     file map
   output:
     file "chr${chr_region}.gen" into gen
-    file "chr${chr_region}.sample" into samples_Xp, samples_Xi, samples
+    file "chr${chr_region}.sample" into samples_Xi, samples
 
   """
   awk '\$1==$chr' $map | cut -f2 >allVariants.txt
@@ -47,7 +47,7 @@ process get_snp_strand {
     file icogs_info
 
   output:
-    file "strand_info" into strand_info_1, strand_info_2
+    file "strand_info" into strand_info
 
   """
   chr_clean=`echo $chr_region | sed 's/_.\\+//'`
@@ -91,61 +91,20 @@ process chunk_chromosome {
   """
 }
 
-process prephase {
-
-  clusterOptions = '-l mem=5G'
-  queueSize = 1
-
-  input:
-    file gen from gen.first()
-    file sample from samples_Xp.first()
-    file strand_info from strand_info_1.first()
-    file "chunk_info" from chunks.splitText()
-
-  output:
-    set file("chunk_info"), file("chr${chr_region}.*.prephased.gen_haps") into prephased_gens
-
-  """
-  chr=$chr_region
-  begin=`cut -d' ' -f2 chunk_info`
-  end=`cut -d' ' -f3 chunk_info`
-
-  chrXflags=''
-  if [[ \$chr == *X* ]]
-  then
-    chrXflags="-sample_g $sample -chrX"
-    if [[ \$chr != *NONPAR* ]]
-    then
-      chrXflags="\$chrXflags -Xpar"
-    fi
-  fi
-
-  # pre-phasing
-  ## use 503 samples for the reference with european origin
-  impute2 \
-    -prephase_g \
-    -m $genetic_map -g $gen -int \$begin \$end \
-    -h $haps -l $legend \
-    -Ne 20000 -verbose \
-    -strand_g $strand_info \
-    \$chrXflags \
-    -k_hap 503 \
-    -o chr$chr_region.\$begin.\$end.prephased.gen
-  """
-}
-
 process impute {
 
   clusterOptions = '-l mem=30G'
-  queueSize = 10
+  queueSize = 15
 
   input:
     file sample from samples_Xi.first()
-    file strand_info from strand_info_2.first()
-    set file("chunk_info"), file("prephased.gen_haps") from prephased_gens
+    file strand_info from strand_info.first()
+    file gen from gen.first()
+    file "chunk_info" from chunks.splitText()
 
   output:
     file "chr${chr_region}.*.imputed.gen" into imputed_gens
+    file "chr${chr_region}.*.imputed.gen_warnings" into warnings
 
   """
   chr=$chr_region
@@ -166,14 +125,18 @@ process impute {
   ## only genotyped snps are included in the panel
   ## use 503 samples for the reference with european origin
   impute2 \
-    -use_prephased_g -known_haps_g prephased.gen_haps \
-    -m $genetic_map -int \$begin \$end \
-    -h $haps -l $legend \
-    -Ne 20000 -verbose \
+    -g $gen \
+    -m $genetic_map \
+    -int \$begin \$end \
+    -h $haps \
+    -l $legend \
+    -Ne 20000 \
+    -verbose \
     -strand_g $strand_info \
     \$chrXflags \
     -k_hap 503 \
     -os 2 -o chr$chr_region.\$begin.\$end.imputed.gen
+
   """
 
 }
@@ -196,4 +159,46 @@ process gen2ped {
   # recover family information
   sed 's/\\t/ /g' chr"$chr_region".processed.ped | sed 's/_[^ ]\\+//' | sed 's/[^ ]\\+_//' >tmp && mv tmp chr"$chr_region".processed.ped
   """
+}
+
+process extractWarningPositions {
+
+  input:
+    file all_warns from warnings.toList()
+
+  output:
+    file "warning_positions.txt" into warning_positions
+
+  """
+  sed 's/[^0-9]\\+//' *.imputed.gen_warnings | sed 's/in Panel 2.\\+//' >warning_positions.txt
+  """
+
+}
+
+process getWarningInformation {
+  publishDir ".", mode: 'move', overwrite: true
+
+  input:
+    file warning_positions
+
+  output:
+    file "warning_info.txt" into warning_information
+
+  """
+  #!/usr/bin/env Rscript
+
+  library(readr)
+  library(magrittr)
+  library(dplyr)
+
+  warns <- read_tsv("$warning_positions", col_names=F)
+
+  icogs <- read_csv("~/genewa/data/genesis/icogs_snp_list.csv") %>%
+    filter(Chromosome == $chr & Build37_Position %in% warns\$X1) %>%
+    select(Illumina_SNP_Name,Alternative_SNP_Name,Chromosome,Build37_Position,Strand,ForwardAlleles,DesignAlleles) %>%
+    write_tsv("warning_info.txt")
+
+
+  """
+
 }
