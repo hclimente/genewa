@@ -25,7 +25,7 @@ if (params.population == "custom"){
     genome <- data.frame(id = paste0("g", 1:5), chr = c(1,1,1,2,2),
                          causalGene = c(F,T,F,F,T),
                          snps = c(2,3,2,4,4))
-    genome\$ppi <- list(c(2), c(1,5), c(4), c(3,5), c(4,2))
+    genome\$ppi <- list(c("g2"), c("g1","g5"), c("g4"), c("g3","g5"), c("g4","g2))
 
     save(genome, file = "genome.Rdata")
     """
@@ -53,7 +53,7 @@ if (params.population == "custom"){
 
     # create data frame
     numGenes <- numPathways * numGenesPerPathway
-    causalGenes <- paste0("g", 1:numCausalGenes)
+    causalGenes <- paste0("g", sample(1:(2 * numCausalGenes), numCausalGenes))
 
     genome <- data.frame(id = paste0("g", 1:numGenes),
                          chr = sample(numChromosomes, numGenes, replace = TRUE)) %>%
@@ -61,7 +61,12 @@ if (params.population == "custom"){
              snps = numSnpsPerGene)
 
     # calculate ppi
-    ppiPathway.model <- expand.grid(1:numGenesPerPathway, 1:numGenesPerPathway)
+    # all combinations possible
+    # ppiPathway.model <- expand.grid(1:numGenesPerPathway, 1:numGenesPerPathway)
+
+    # sequential
+    ppiPathway.model <- data.frame( Gene1 = (1:numGenesPerPathway)[-numGenesPerPathway],
+                                    Gene2 = (1:numGenesPerPathway)[-1])
 
     ppiPathway <- lapply(0:(numPathways - 1), function(i){
       ppiPathway.model + i * numGenesPerPathway
@@ -84,10 +89,9 @@ if (params.population == "custom"){
       set_colnames(c("Gene1", "Gene2")) %>%
       mutate(Gene1 = as.character(Gene1), Gene2 = as.character(Gene2))
 
-    ppiCrosstalk <- data.frame(Gene1 = c(ppiCrosstalk\$Gene1, ppiCrosstalk\$Gene2),
-                               Gene2 = c(ppiCrosstalk\$Gene2, ppiCrosstalk\$Gene1))
-
     ppi <- rbind(ppiPathway, ppiCrosstalk)
+    ppi <- data.frame(Gene1 = c(ppi\$Gene1, ppi\$Gene2),
+                      Gene2 = c(ppi\$Gene2, ppi\$Gene1))
 
     genome\$ppi <- apply(genome, 1, function(x){
       ppi\$Gene2[ppi\$Gene1 == x[[1]]] %>% sort %>% unique
@@ -176,6 +180,9 @@ process get_map {
   library(magrittr)
   library(dplyr)
 
+  # disable scientific notation
+  options(scipen=999)
+
   load("$genome_map")
   step <- 5000
 
@@ -238,7 +245,7 @@ process get_ppi {
   genome %>%
     apply(1, function(gene){
       lapply(gene[[5]], function(intx, id){
-        data.frame(OFFICIAL_SYMBOL_FOR_A = id, OFFICIAL_SYMBOL_FOR_B = as.integer(intx))
+        data.frame(OFFICIAL_SYMBOL_FOR_A = id, OFFICIAL_SYMBOL_FOR_B = intx)
         }, gene[[1]]) %>% do.call("rbind", .)
       }) %>% do.call("rbind", .) %>%
     mutate(INTERACTOR_A = "", INTERACTOR_B = "", ALIASES_FOR_A = "",
