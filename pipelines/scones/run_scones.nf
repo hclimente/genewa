@@ -5,10 +5,16 @@ map = file("$params.map")
 params.eta = -1
 params.lambda = -1
 params.gridsearch = ""
+params.stat = "skat"
+params.lambda_base = 10
+params.eta_base = 10
 
 eta = params.eta
 lambda = params.lambda
 gridsearch = params.gridsearch
+stat = params.stat
+lambda_base = params.lambda_base
+eta_base = params.eta_base
 
 // network information
 snp2gene = file("$params.snp2gene")
@@ -48,12 +54,19 @@ process get_GS {
     unique %>%
     arrange(chr, pos)
 
-  by(map, map\$chr, function(x){
+  gs <- by(map, map\$chr, function(x){
       chr <- unique(x\$chr)
       pos1 <- head(x\$pos, n = length(x\$pos) - 1)
       pos2 <- tail(x\$pos, n = length(x\$pos) - 1)
       data.frame(chr1 = chr, pos1 = pos1, chr2 = chr, pos2 = pos2)
-    }) %>% do.call("rbind", .) %>%
+    }) %>% do.call("rbind", .)
+
+    gs %>%
+      # make it bidirectional
+      rename(chrn = chr1, posn = pos1, chr1 = chr2, pos1 = pos2) %>%
+      rename(chr2 = chrn, pos2 = posn) %>%
+      select(chr1, pos1, chr2, pos2) %>%
+      rbind(gs) %>%
       write_tsv("gs.txt", col_names=FALSE)
 
   """
@@ -95,9 +108,17 @@ process get_GM {
     }
   }) %>% do.call("rbind", .)
 
+  # make it bidirectional
+  gm <- gm %>%
+    rename(chrn = chr1, posn = pos1, chr1 = chr2, pos1 = pos2) %>%
+    rename(chr2 = chrn, pos2 = posn) %>%
+    select(chr1, pos1, chr2, pos2) %>%
+    rbind(gm)
+
   read_tsv("$gs", col_names = FALSE) %>%
     set_colnames(c("chr1", "pos1", "chr2", "pos2")) %>%
     rbind(gm) %>%
+    unique %>%
     write_tsv("gm.txt", col_names=FALSE)
 
   """
@@ -151,9 +172,17 @@ process get_GI {
     # remove cases of the same snp mapped to interacting genes
     filter(chr1 != chr2 | pos1 != pos2)
 
+  # make it bidirectional
+  gi <- gi %>%
+    rename(chrn = chr1, posn = pos1, chr1 = chr2, pos1 = pos2) %>%
+    rename(chr2 = chrn, pos2 = posn) %>%
+    select(chr1, pos1, chr2, pos2) %>%
+    rbind(gi)
+
   read_tsv("$gm", col_names = FALSE) %>%
     set_colnames(c("chr1", "pos1", "chr2", "pos2")) %>%
     rbind(gi) %>%
+    unique %>%
     write_tsv("gi.txt", col_names=FALSE)
 
   """
@@ -163,13 +192,13 @@ process get_GI {
 if (gridsearch == "custom"){
   process run_scones_customGridsearch {
 
-    publishDir "gridsearch", mode: 'move', overwrite: true
+    publishDir "gridsearch", mode: 'copy', overwrite: true
     clusterOptions = '-l mem=30G'
-    parameters = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ]
+    exps = -5..5
 
     input:
-      each l from parameters
-      each e from parameters
+      each lambda_exp from exps
+      each eta_exp from exps
       file ped from ped
       file map from map
       file phenotype from pheno.first()
@@ -180,13 +209,13 @@ if (gridsearch == "custom"){
       file "BRCA_${net.baseName}.scones.L.txt" into laplacian
 
     """
-    lambda=\$((10**$l))
-    eta=\$((10**$e))
-    scones2 -p ${ped.baseName} -f $phenotype -n $net -l `echo \$lambda` -e `echo \$eta` -d
-    mv BRCA.scones.pmatrix.txt BRCA_${net.baseName}.l10e"$l".e10e"$e".scones.pmatrix.txt
-    mv BRCA.scones.out.txt BRCA_${net.baseName}.l10e"$l".e10e"$e".scones.out.txt
-    mv BRCA.scones.out.ext.txt BRCA_${net.baseName}.l10e"$l".e10e"$e".scones.out.ext.txt
-    grep '#Association\\|#Connectivity\\|#Sparsity' BRCA_${net.baseName}.l10e"$l".e10e"$e".scones.out.ext.txt | sed 's/^[^\\t]\\+\\t//' > BRCA_${net.baseName}.l10e"$l".e10e"$e".scones.terms.txt
+    lambda=`echo 'print($lambda_base ** $lambda_exp)' | python`
+    eta=`echo 'print($eta_base ** $eta_exp)' | python`
+    scones2 -p ${ped.baseName} -f $phenotype -n $net -l \$lambda -e \$eta -d -t $stat
+    mv BRCA.scones.pmatrix.txt BRCA_${net.baseName}.l"$lambda_base"e"$lambda_exp".e"$eta_base"e"$eta_exp".scones.pmatrix.txt
+    mv BRCA.scones.out.txt BRCA_${net.baseName}.l"$lambda_base"e"$lambda_exp".e"$eta_base"e"$eta_exp".scones.out.txt
+    mv BRCA.scones.out.ext.txt BRCA_${net.baseName}.l"$lambda_base"e"$lambda_exp".e"$eta_base"e"$eta_exp".scones.out.ext.txt
+    grep '#Association\\|#Connectivity\\|#Sparsity' BRCA_${net.baseName}.l"$lambda_base"e"$lambda_exp".e"$eta_base"e"$eta_exp".scones.out.ext.txt | sed 's/^[^\\t]\\+\\t//' > BRCA_${net.baseName}.l"$lambda_base"e"$lambda_exp".e"$eta_base"e"$eta_exp".scones.terms.txt
     mv BRCA.scones.L.txt BRCA_${net.baseName}.scones.L.txt
     """
 
@@ -216,7 +245,7 @@ if (gridsearch == "custom"){
     else
       """
       echo $gridsearch
-      scones2 -p ${ped.baseName} -f $phenotype -n $net -e $eta -l $lambda
+      scones2 -p ${ped.baseName} -f $phenotype -n $net -e $eta -l $lambda -t $stat
       mv BRCA.scones.pmatrix.txt BRCA_${net.baseName}.scones.pmatrix.txt
       mv BRCA.scones.out.txt BRCA_${net.baseName}.scones.out.txt
       """
