@@ -6,6 +6,7 @@
 2. [State of the art](logbook/sota.md)
 3. [GENESIS](logbook/genesis_data.md)
 4. Playing with the simplest example: [1](logbook/simplest_example_1.ipynb) and [2](logbook/simplest_example_2.ipynb).
+5. Playing with little green men: [1](logbook/little_green_men_example_1.ipynb).
 
 ## Requirements
 
