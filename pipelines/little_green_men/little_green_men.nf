@@ -5,13 +5,13 @@ params.N = 3000
 params.rr = 30
 
 // params for genome generation
-params.numCausalGenes = 3
+params.numCausalGenes = 4
 params.numGenesPerPathway = 6
 params.numPathways = 30
-params.numSnpsPerGene = 4
-params.numChromosomes = 5
+params.numSnpsPerGene = 10
+params.numChromosomes = 6
 params.freqCrosstalk = 0.3
-params.freqCausalSnp = 0.8
+params.freqCausalSnp = 0.4
 
 if (params.population == "custom"){
 
@@ -22,7 +22,7 @@ if (params.population == "custom"){
 
     """
     #!/usr/bin/env Rscript
-    genome <- data.frame(id = paste0("g", 1:5), chr = c(1,1,1,2,2),
+    genome <- data.frame(geneId = paste0("g", 1:5), chr = c(1,1,1,2,2),
                          causalGene = c(F,T,F,F,T),
                          snps = c(2,3,2,4,4))
     genome\$ppi <- list(c("g2"), c("g1","g5"), c("g4"), c("g3","g5"), c("g4","g2))
@@ -32,7 +32,7 @@ if (params.population == "custom"){
   }
 } else if (params.population == "random") {
 
-  process generateRandomGenome {
+  process generateGenesChromosomesAndPPIs {
 
     output:
       file "genome.Rdata" into genome_ped, genome_map, genome_ppi
@@ -49,20 +49,20 @@ if (params.population == "custom"){
     numSnpsPerGene <- $params.numSnpsPerGene
     numChromosomes <- $params.numChromosomes
     freqCrosstalk <- $params.freqCrosstalk
-    freqCausalSnp <- $params.freqCausalSnp
 
     # create data frame
     numGenes <- numPathways * numGenesPerPathway
-    causalGenes <- paste0("g", sample(1:(2 * numCausalGenes), numCausalGenes))
+    causalGenes <- paste0("g", 1:numCausalGenes)
 
-    genome <- data.frame(id = paste0("g", 1:numGenes),
+    genome <- data.frame(geneId = paste0("g", 1:numGenes),
                          chr = sample(numChromosomes, numGenes, replace = TRUE)) %>%
-      mutate(causalGene = id %in% causalGenes,
+      mutate(causalGene = geneId %in% causalGenes,
              snps = numSnpsPerGene)
 
     # calculate ppi
-    # all combinations possible
-    # ppiPathway.model <- expand.grid(1:numGenesPerPathway, 1:numGenesPerPathway)
+    # clique of causal genes (all combinations are possible)
+    ppiCausal <- expand.grid(causalGenes, causalGenes, stringsAsFactors = FALSE) %>%
+      set_colnames(c("Gene1", "Gene2"))
 
     # sequential
     ppiPathway.model <- data.frame( Gene1 = (1:numGenesPerPathway)[-numGenesPerPathway],
@@ -79,8 +79,8 @@ if (params.population == "custom"){
       first <- 1 + numGenesPerPathway * (i - 1)
       last <- numGenesPerPathway * i
 
-      pwGenes <- genome\$id[first:last]
-      otherGenes <- genome\$id[-(first:last)]
+      pwGenes <- genome\$geneId[first:last]
+      otherGenes <- genome\$geneId[-(first:last)]
 
       possibleCrosstalk <- expand.grid(pwGenes, otherGenes)
 
@@ -89,7 +89,8 @@ if (params.population == "custom"){
       set_colnames(c("Gene1", "Gene2")) %>%
       mutate(Gene1 = as.character(Gene1), Gene2 = as.character(Gene2))
 
-    ppi <- rbind(ppiPathway, ppiCrosstalk)
+    ppi <- rbind(ppiCausal, ppiPathway, ppiCrosstalk)
+    # make it symmetrical
     ppi <- data.frame(Gene1 = c(ppi\$Gene1, ppi\$Gene2),
                       Gene2 = c(ppi\$Gene2, ppi\$Gene1))
 
@@ -104,7 +105,7 @@ if (params.population == "custom"){
 
 }
 
-process get_ped {
+process getGenotypes{
 
   publishDir ".", overwrite: true
 
@@ -119,39 +120,49 @@ process get_ped {
   library(magrittr)
   library(dplyr)
 
-  getGenotypes <- function(i, wt, alt, maf, N){
-    cases.chr1 <- rep(wt,N)
-    cases.chr1[runif(N) < maf] <- alt
-    cases.chr2 <- rep(wt,N)
-    cases.chr2[runif(N) < maf] <- alt
+  sampleCausalSNP <- function(i, ref, causal, rr, N){
+    L <- rr/(rr+1)
 
-    controls.chr1 <- rep(wt,N)
-    controls.chr1[runif(N) > maf] <- alt
-    controls.chr2 <- rep(wt,N)
-    controls.chr2[runif(N) > maf] <- alt
+    gt.cases <- rep(ref, 2 * N)
+    gt.cases[runif(2 * N) < L] <- causal
 
-    data.frame(chr1 = c(cases.chr1, controls.chr1),
-               chr2 = c(cases.chr2, controls.chr2))
+    gt.controls <- rep(ref, 2 * N)
+    gt.controls[runif(2 * N) > L] <- causal
+
+    data.frame(chr1 = c(gt.cases[1:N], gt.controls[1:N]),
+               chr2 = c(gt.cases[(N + 1):(2 * N)], gt.controls[(N + 1):(2 * N)]))
+  }
+
+  sampleNeutralSNP <- function(i, ref, alt, maf, N){
+
+    gt <- rep(ref, 4 * N)
+    gt[runif(4 * N) < maf] <- alt
+
+    data.frame(chr1 = gt[1:(2 * N)], chr2 = gt[(2 * N + 1):(4 * N)])
   }
 
   rr = $params.rr
   N = $params.N
-  maf = 0.4
+  freqCausalSnp <- $params.freqCausalSnp
+  maf = 0.25
 
   load("$genome_ped")
 
   # involved snps
+  numCausalSnps <- genome %>% filter(causalGene) %>% .\$snps %>% sum(.) * freqCausalSnp
+  numCausalSnps <- floor(numCausalSnps)
+
   # A = low risk allele
   # C = high risk allele
-  involvedSnps <- lapply(1:sum(genome\$snps[genome\$causalGene]), getGenotypes, "A", "C", rr/(rr+1), N) %>%
+  causalSNPs <- lapply(1:numCausalSnps, sampleCausalSNP, "A", "C", rr, N) %>%
     do.call("cbind", .)
 
   # neutral snps
   # T,G = alleles without impact
-  neutralSnps <- lapply(1:(sum(genome\$snps) - sum(genome\$snps[genome\$causalGene])), getGenotypes, "T", "G", maf, N) %>%
+  neutralSNPs <- lapply(1:(sum(genome\$snps) - numCausalSnps), sampleNeutralSNP, "T", "G", maf, N) %>%
     do.call("cbind", .)
 
-  snps <- cbind(involvedSnps,neutralSnps)
+  snps <- cbind(causalSNPs, neutralSNPs)
   ids <- 1:(2*N)
   data.frame(family = ids, indiv = ids,
              pater = as.integer(0), mater = as.integer(0),
@@ -164,7 +175,7 @@ process get_ped {
 
 }
 
-process get_map {
+process getSNPs {
 
   publishDir ".", overwrite: true
 
@@ -173,6 +184,7 @@ process get_map {
   output:
     file "genotypes.map" into map
     file "gene2snp.tsv" into gene2snp
+    file "truth.tsv" into truth
 
   """
   #!/usr/bin/env Rscript
@@ -186,46 +198,51 @@ process get_map {
   load("$genome_map")
   step <- 5000
 
-  df <- genome %>%
-    arrange(desc(causalGene), chr, id)
+  causal <- genome %>%
+    .[rep(row.names(.), .\$snps), ] %>%
+    group_by(geneId) %>%
+    mutate(causalSnp = causalGene * c(
+                                    rep(1, floor($params.freqCausalSnp * n())),
+                                    rep(0, n() - floor($params.freqCausalSnp * n()))),
+           causalSnp = sample(causalSnp)) %>%
+    ungroup %>%
+    arrange(desc(causalSnp)) %>%
+    mutate(rs = paste0("rs", 1:n())) %>%
+    arrange(chr, geneId) %>%
+    select(geneId, rs, causalSnp)
 
-  map <- df[rep(row.names(df), df\$snps), ] %>%
-    select(chr, id) %>%
-    mutate(name = paste0("rs", 1:n()),
-           geneticDistance = 0) %>%
+  pos <- genome %>%
+    .[rep(row.names(.), .\$snps), ] %>%
+    arrange(chr, geneId) %>%
     group_by(chr) %>%
-    mutate(position = step + 1:n() * step) %>%
-    ungroup
+    mutate(geneId = sample(geneId),
+           position = step + 1:n() * step,
+           geneticDistance = 0) %>%
+    ungroup %>%
+    select(chr, position, geneticDistance)
 
-  map %>%
-    select(chr, name, geneticDistance, position) %>%
+  snps <- cbind(pos, causal) %>%
+    mutate(snpNum = gsub("rs", "", rs) %>% as.numeric) %>%
+    arrange(snpNum)
+
+  snps %>%
+    write_tsv("truth.tsv")
+
+  snps %>%
+    select(chr, rs, geneticDistance, position) %>%
     write.table("genotypes.map", sep = "\\t", row.names = F, col.names = F, quote = F)
 
-  map %>%
-    select(name, id) %>%
-    rename(SNP = name, GENE = id) %>%
+  snps %>%
+    select(rs, geneId) %>%
+    unique %>%
+    rename(SNP = rs, GENE = geneId) %>%
     write_tsv("gene2snp.tsv")
 
   """
 
 }
 
-process get_phenotypes {
-
-  publishDir ".", overwrite: true
-
-  input:
-    file ped
-  output:
-    file "phenotype.txt" into pheno
-
-  """
-  echo FID IID TOY > phenotype.txt
-  cut -d' ' -f1,2,6 $ped >> phenotype.txt
-  """
-}
-
-process get_ppi {
+process getTAB {
 
   publishDir ".", overwrite: true
 
@@ -244,8 +261,8 @@ process get_ppi {
 
   genome %>%
     apply(1, function(gene){
-      lapply(gene[[5]], function(intx, id){
-        data.frame(OFFICIAL_SYMBOL_FOR_A = id, OFFICIAL_SYMBOL_FOR_B = intx)
+      lapply(gene[[5]], function(intx, geneId){
+        data.frame(OFFICIAL_SYMBOL_FOR_A = geneId, OFFICIAL_SYMBOL_FOR_B = intx)
         }, gene[[1]]) %>% do.call("rbind", .)
       }) %>% do.call("rbind", .) %>%
     mutate(INTERACTOR_A = "", INTERACTOR_B = "", ALIASES_FOR_A = "",
@@ -257,7 +274,7 @@ process get_ppi {
 
 }
 
-process get_snp_list {
+process getSnp_list {
 
   publishDir ".", overwrite: true
 
