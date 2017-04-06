@@ -2,13 +2,14 @@ params.rr = 1.2
 params.wd = "."
 params.N = 100
 params.numPathways = 30
+params.genewawd = "/share/data40T_v2/hclimente/genewa"
 
 wd = params.wd
-lgmScript = file("~/projects/genewa/pipelines/little_green_men/little_green_men.nf")
-snpNetworkscript = file("~/projects/genewa/pipelines/scones/get_snp_networks.nf")
-getPhenotypesScript = file("~/projects/genewa/pipelines/scones/get_phenotypes.nf")
-analyzePopulationScript = file("~/projects/genewa/pipelines/little_green_men/analyze_population.nf")
-getQualityMeasuresScript = file("~/projects/genewa/pipelines/scones/getQualityMeasures.R")
+lgmScript = file("$params.genewawd/pipelines/little_green_men/little_green_men.nf")
+snpNetworkscript = file("$params.genewawd/pipelines/scones/get_snp_networks.nf")
+getPhenotypesScript = file("$params.genewawd/pipelines/scones/get_phenotypes.nf")
+analyzePopulationScript = file("$params.genewawd/pipelines/little_green_men/analyze_population.nf")
+getQualityMeasuresScript = file("$params.genewawd/pipelines/scones/getQualityMeasures.R")
 
 process generatePopulation {
 
