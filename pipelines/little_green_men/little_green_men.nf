@@ -13,6 +13,9 @@ params.numChromosomes = 6
 params.freqCrosstalk = 0.3
 params.freqCausalSnp = 0.4
 
+// params for system generation
+params.out = "."
+
 if (params.population == "custom"){
 
   process getCustomGenome {
@@ -107,7 +110,7 @@ if (params.population == "custom"){
 
 process getGenotypes{
 
-  publishDir ".", overwrite: true
+  publishDir "$params.out", overwrite: true, mode: "copy"
 
   input:
     file genome_ped
@@ -177,7 +180,7 @@ process getGenotypes{
 
 process getSNPs {
 
-  publishDir ".", overwrite: true
+  publishDir "$params.out", overwrite: true, mode: "copy"
 
   input:
     file genome_map
@@ -244,7 +247,7 @@ process getSNPs {
 
 process getTAB {
 
-  publishDir ".", overwrite: true
+  publishDir "$params.out", overwrite: true, mode: "copy"
 
   input:
     file genome_ppi
@@ -276,7 +279,7 @@ process getTAB {
 
 process getSnp_list {
 
-  publishDir ".", overwrite: true
+  publishDir "$params.out", overwrite: true, mode: "copy"
 
   input:
     file map

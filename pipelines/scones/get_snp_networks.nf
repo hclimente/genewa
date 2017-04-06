@@ -1,14 +1,16 @@
 #!/usr/bin/env nextflow
 
+params.wd = "."
 params.tab = "ppi.tab"
 params.map = "genotypes.map"
+params.snp2gene = "gene2snp.tsv"
 
 map = file("$params.map")
 snp2gene = file("$params.snp2gene")
 tab = file("$params.tab")
 
 process get_GS {
-  publishDir ".", overwrite: true
+  publishDir "$params.wd", overwrite: true, mode: "copy"
 
   input:
     file map
@@ -50,7 +52,7 @@ process get_GS {
 gs.into { gs; gs_tmp }
 
 process get_GM {
-  publishDir ".", overwrite: true
+  publishDir "$params.wd", overwrite: true, mode: "copy"
 
   input:
     file snp2gene
@@ -103,7 +105,7 @@ process get_GM {
 gm.into { gm; gm_tmp }
 
 process get_GI {
-  publishDir ".", overwrite: true
+  publishDir "$params.wd", overwrite: true, mode: "copy"
 
   input:
     file tab

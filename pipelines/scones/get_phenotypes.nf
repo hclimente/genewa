@@ -1,8 +1,11 @@
+params.wd = "."
+params.ped = "genotypes.ped"
+
 ped = file("$params.ped")
 
 process get_phenotypes {
 
-  publishDir ".", overwrite: true
+  publishDir "$params.wd", overwrite: true, mode: "copy"
 
   input:
     file ped
