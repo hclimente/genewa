@@ -1,5 +1,7 @@
 params.rr = 1.2
 params.wd = "."
+params.N = 100
+params.numPathways = 30
 
 wd = params.wd
 lgmScript = file("/Users/hclimente/projects/genewa/pipelines/little_green_men/little_green_men.nf")
@@ -23,7 +25,8 @@ process generatePopulation {
     file "snp_list.csv" into snp_list
 
   """
-  nextflow run $lgmScript --rr $params.rr --population random --N 100
+  nextflow run $lgmScript --rr $params.rr --population random --N $params.N --numPathways $params.numPathways
+
   """
 }
 
