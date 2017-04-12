@@ -27,7 +27,6 @@ process generatePopulation {
 
   """
   nextflow run $lgmScript --rr $params.rr --population random --N $params.N --numPathways $params.numPathways
-
   """
 }
 
@@ -102,6 +101,7 @@ process joinResults {
 
   output:
     file "summary.RData" into summary
+  
   """
   #!/usr/bin/env Rscript
   library(magrittr)
