@@ -101,7 +101,7 @@ process joinResults {
 
   output:
     file "summary.RData" into summary
-
+ 
   """
   #!/usr/bin/env Rscript
   library(magrittr)
