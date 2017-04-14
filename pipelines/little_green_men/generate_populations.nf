@@ -27,7 +27,7 @@ process generatePopulation {
     file "snp_list.csv" into snp_list
 
   """
-  nextflow run $lgmScript --rr $params.rr --population random --N $params.N --numPathways $params.numPathways
+  nextflow run $lgmScript --rr $params.rr --population random --N $params.N --numPathways $params.numPathways -profile cluster
   """
 }
 
@@ -48,13 +48,13 @@ process getSconesFiles {
     file "phenotype.txt" into pheno
 
   """
-  nextflow run $snpNetworkscript
-  nextflow run $getPhenotypesScript
+  nextflow run $snpNetworkscript -profile cluster
+  nextflow run $getPhenotypesScript -profile cluster
   """
 
 }
 
-process readData{
+process readData {
 
   input:
     file readDataRScript
@@ -68,7 +68,7 @@ process readData{
     file "gwas.*.RData" into gwas_rdata
 
   """
-  nextflow run $readDataRScript --ped $ped --map $map --gi $gi --pheno $pheno --truth $truth
+  nextflow run $readDataRScript --ped $ped --map $map --gi $gi --pheno $pheno --truth $truth -profile cluster
   """
 }
 
@@ -83,7 +83,7 @@ process analyzePopulation {
     file "*.RData" into analyses
 
   """
-  nextflow run $analyzePopulationScript --rdata $gwas_rdata
+  nextflow run $analyzePopulationScript --rdata $gwas_rdata -profile bigmem
   """
 }
 
