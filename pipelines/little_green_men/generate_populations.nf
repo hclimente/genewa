@@ -27,7 +27,7 @@ process generatePopulation {
     file "snp_list.csv" into snp_list
 
   """
-  nextflow run $lgmScript --rr $params.rr --population random --N $params.N --numPathways $params.numPathways -profile cluster
+  nextflow run $lgmScript --rr $params.rr --population random --N $params.N --numPathways $params.numPathways -profile bigmem
   """
 }
 
@@ -68,7 +68,7 @@ process readData {
     file "gwas.*.RData" into gwas_rdata
 
   """
-  nextflow run $readDataRScript --ped $ped --map $map --gi $gi --pheno $pheno --truth $truth -profile cluster
+  nextflow run $readDataRScript --ped $ped --map $map --gi $gi --pheno $pheno --truth $truth -profile bigmem
   """
 }
 
@@ -83,11 +83,13 @@ process analyzePopulation {
     file "*.RData" into analyses
 
   """
-  nextflow run $analyzePopulationScript --rdata $gwas_rdata -profile bigmem
+  nextflow run $analyzePopulationScript --rdata $gwas_rdata -profile bigmem -resume
   """
 }
 
 process joinResults {
+
+  publishDir "$params.wd", overwrite: true, mode: "copy"
 
   input:
     file '*.RData' from analyses.collect()
@@ -98,10 +100,12 @@ process joinResults {
   """
   #!/usr/bin/env Rscript
   library(magrittr)
+  library(tidyverse)
 
   quality <- lapply(list.files(pattern = "*.RData"), function(f){
     load(f)
-    qual
+    qual %>%
+	mutate(rr = $params.rr)
     }) %>% do.call("rbind", .)
 
   save(quality, file = "summary.RData")
