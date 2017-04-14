@@ -8,6 +8,7 @@ wd = params.wd
 lgmScript = file("$params.genewawd/pipelines/little_green_men/little_green_men.nf")
 snpNetworkscript = file("$params.genewawd/pipelines/scones/get_snp_networks.nf")
 getPhenotypesScript = file("$params.genewawd/pipelines/scones/get_phenotypes.nf")
+readDataRScript = file("$params.genewawd/pipelines/scones/read_data_R.nf")
 analyzePopulationScript = file("$params.genewawd/pipelines/little_green_men/analyze_population.nf")
 getQualityMeasuresScript = file("$params.genewawd/pipelines/scones/getQualityMeasures.R")
 
@@ -56,26 +57,18 @@ process getSconesFiles {
 process readData{
 
   input:
+    file readDataRScript
     file ped
     file map
     file gi
     file pheno
     file truth
+    
   output:
     file "gwas.*.RData" into gwas_rdata
 
   """
-  #!/usr/bin/env Rscript
-  library(rscones2)
-  library(tidyverse)
-  gwas <- readBio("${ped.baseName}", "$pheno", "$gi", 0, 0.5)
-  id <- runif(1, 1, 10000000)
-
-  truth <- read_tsv("$truth", col_types = "iddccdd") %>%
-    .\$causalSnp %>%
-    as.integer
-
-  save(gwas, truth, id, file = paste0("gwas.", id, ".RData"))
+  nextflow run $readDataRScript --ped $ped --map $map --gi $gi --pheno $pheno --truth $truth
   """
 }
 
@@ -101,7 +94,7 @@ process joinResults {
 
   output:
     file "summary.RData" into summary
-  
+
   """
   #!/usr/bin/env Rscript
   library(magrittr)
