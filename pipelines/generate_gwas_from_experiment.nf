@@ -1,33 +1,67 @@
-params.rr = 1.2
 params.wd = "."
-params.N = 100
-params.numPathways = 30
-params.genewawd = "/share/data40T_v2/hclimente/genewa"
+params.genewawd = "~/projects/genewa"
+
+ped = file("$params.ped")
+real_map = file("$params.map")
+gene2snp = file("$params.gene2snp")
+tab = file("$params.tab")
+snp_list = file("$params.snp_list")
 
 wd = params.wd
-lgmScript = file("$params.genewawd/pipelines/little_green_men/little_green_men.nf")
 snpNetworkscript = file("$params.genewawd/pipelines/scones/get_snp_networks.nf")
 getPhenotypesScript = file("$params.genewawd/pipelines/scones/get_phenotypes.nf")
 readDataRScript = file("$params.genewawd/pipelines/scones/read_data_R.nf")
 analyzePopulationScript = file("$params.genewawd/pipelines/little_green_men/analyze_population.nf")
 getQualityMeasuresScript = file("$params.genewawd/pipelines/scones/getQualityMeasures.R")
 
-process generatePopulation {
+process generateBED {
+
+  container 'gauravkaushik/plink'
 
   input:
-    file lgmScript
+    file ped
+    file real_map
+
+  output:
+    file "${ped.baseName}.bed" into bed
+    file "${ped.baseName}.bim" into bim
+    file "${ped.baseName}.fam" into fam
+
+  '''
+  plink --file ${ped.baseName} --make-bed --out ${ped.baseName}
+  '''
+
+}
+
+process selectCausalSNPs {
+
+  input:
     each i from 1..10
 
   output:
-    file "genotypes.ped" into ped, ped2
-    file "genotypes.map" into map, map2
-    file "gene2snp.tsv" into gene2snp
-    file "truth.tsv" into truth
-    file "ppi.tab" into ppi
-    file "snp_list.csv" into snp_list
+    file "causal_snps.txt" into causalSnps
 
   """
-  nextflow run $lgmScript --rr $params.rr --population random --N $params.N --numPathways $params.numPathways -profile bigmem
+  """
+
+}
+
+process generatePopulation {
+
+  container 'biodckrdev/gcta'
+
+  input:
+    file bed
+    file bim
+    file fam
+    file causalSnps
+
+  output:
+
+    file "genotypes.map" into map, map2
+
+  """
+  gcta64 --bfile ${bed.baseName} --simu-cc 500 500 --simu-causal-loci $causalSnps --simu-hsq 0.5 --simu-k 0.1 --simu-rep 3 --out genotypes.map
   """
 }
 
@@ -63,7 +97,7 @@ process readData {
     file gi
     file pheno
     file truth
-    
+
   output:
     file "gwas.*.RData" into gwas_rdata
 
