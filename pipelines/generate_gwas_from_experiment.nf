@@ -1,68 +1,63 @@
 params.wd = "."
-params.genewawd = "~/projects/genewa"
+params.genewawd = "/Users/hclimente/projects/genewa"
 
-ped = file("$params.ped")
-real_map = file("$params.map")
+ped = file("${params.geno}.ped")
+map = file("${params.geno}.map")
 gene2snp = file("$params.gene2snp")
 tab = file("$params.tab")
-snp_list = file("$params.snp_list")
 
 wd = params.wd
-snpNetworkscript = file("$params.genewawd/pipelines/scones/get_snp_networks.nf")
-getPhenotypesScript = file("$params.genewawd/pipelines/scones/get_phenotypes.nf")
-readDataRScript = file("$params.genewawd/pipelines/scones/read_data_R.nf")
-analyzePopulationScript = file("$params.genewawd/pipelines/little_green_men/analyze_population.nf")
-getQualityMeasuresScript = file("$params.genewawd/pipelines/scones/getQualityMeasures.R")
+ped2bedScript = file("$params.genewawd/scripts/gwas_general/ped2bed.nf")
+simulatePhenoScript = file("$params.genewawd/scripts/gwas_general/simulate_phenotypes_from_ped.nf")
+snpNetworkscript = file("$params.genewawd/scripts/scones/get_snp_networks.nf")
+getPhenotypesScript = file("$params.genewawd/scripts/scones/get_phenotypes.nf")
+readDataRScript = file("$params.genewawd/scripts/scones/read_data_R.nf")
+analyzeGWASScript = file("$params.genewawd/scripts/scones/analyze_gwas.nf")
+getQualityMeasuresScript = file("$params.genewawd/scripts/scones/getQualityMeasures.R")
 
-process generateBED {
-
-  container 'gauravkaushik/plink'
+process ped2bed {
 
   input:
     file ped
-    file real_map
+    file map
+    file ped2bedScript
 
   output:
     file "${ped.baseName}.bed" into bed
     file "${ped.baseName}.bim" into bim
     file "${ped.baseName}.fam" into fam
 
-  '''
-  plink --file ${ped.baseName} --make-bed --out ${ped.baseName}
-  '''
-
-}
-
-process selectCausalSNPs {
-
-  input:
-    each i from 1..10
-
-  output:
-    file "causal_snps.txt" into causalSnps
-
   """
+  nextflow run $ped2bedScript --gen $ped.baseName
   """
 
 }
 
-process generatePopulation {
-
-  container 'biodckrdev/gcta'
+process simulatePhenotype {
 
   input:
+    each i from 1..1
+    file simulatePhenoScript
     file bed
     file bim
     file fam
-    file causalSnps
+    file ped
+    file gene2snp
+    file tab
+    file map
 
   output:
-
-    file "genotypes.map" into map, map2
+    file "${ped.baseName}.simupheno.ped" into simuPed, simuPed2
+    file "truth.tsv" into truth
 
   """
-  gcta64 --bfile ${bed.baseName} --simu-cc 500 500 --simu-causal-loci $causalSnps --simu-hsq 0.5 --simu-k 0.1 --simu-rep 3 --out genotypes.map
+  nextflow run $simulatePhenoScript \
+    --gen $ped.baseName \
+    --gene2snp $gene2snp \
+    --tab $tab \
+    --h2 0.8
   """
+
 }
 
 process getSconesFiles {
@@ -71,19 +66,17 @@ process getSconesFiles {
     file snpNetworkscript
     file getPhenotypesScript
     file gene2snp
-    file ped2
-    file map2
-    file ppi
+    file simuPed
+    file map
+    file tab
 
   output:
-    file "gs.txt" into gs
-    file "gm.txt" into gm
     file "gi.txt" into gi
     file "phenotype.txt" into pheno
 
   """
-  nextflow run $snpNetworkscript -profile cluster
-  nextflow run $getPhenotypesScript -profile cluster
+  nextflow run $snpNetworkscript -profile cluster --tab $tab --map $map --snp2gene $gene2snp
+  nextflow run $getPhenotypesScript -profile cluster --ped $ped
   """
 
 }
@@ -92,7 +85,7 @@ process readData {
 
   input:
     file readDataRScript
-    file ped
+    file simuPed2
     file map
     file gi
     file pheno
@@ -104,21 +97,23 @@ process readData {
   """
   nextflow run $readDataRScript --ped $ped --map $map --gi $gi --pheno $pheno --truth $truth -profile bigmem
   """
+
 }
 
 process analyzePopulation {
 
   input:
     file gwas_rdata
-    file analyzePopulationScript
+    file analyzeGWASScript
     file getQualityMeasuresScript
 
   output:
     file "*.RData" into analyses
 
   """
-  nextflow run $analyzePopulationScript --rdata $gwas_rdata -profile bigmem -resume
+  nextflow run $analyzeGWASScript --rdata $gwas_rdata -profile bigmem -resume
   """
+
 }
 
 process joinResults {
