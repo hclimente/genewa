@@ -28,7 +28,7 @@ process ped2bed {
     file "${ped.baseName}.fam" into fam
 
   """
-  nextflow run $ped2bedScript --gen $ped.baseName
+  nextflow run $ped2bedScript --gen $ped.baseName -profile cluster
   """
 
 }
@@ -55,7 +55,8 @@ process simulatePhenotype {
     --gen $ped.baseName \
     --gene2snp $gene2snp \
     --tab $tab \
-    --h2 0.8
+    --h2 0.8 \
+    -profile cluster
   """
 
 }

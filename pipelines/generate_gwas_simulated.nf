@@ -6,7 +6,7 @@ params.genewawd = "/share/data40T_v2/hclimente/genewa"
 
 wd = params.wd
 lgmScript = file("$params.genewawd/scripts/little_green_men/simulate_gwas.nf")
-snpNetworkscript = file("$params.genewawd/scripts/scones/get_snp_networks.nf")
+snpNetworkScript = file("$params.genewawd/scripts/scones/get_snp_networks.nf")
 getPhenotypesScript = file("$params.genewawd/scripts/scones/get_phenotypes.nf")
 readDataRScript = file("$params.genewawd/scripts/scones/read_data_R.nf")
 analyzePopulationScript = file("$params.genewawd/scripts/scones/analyze_gwas.nf")
@@ -34,7 +34,7 @@ process generatePopulation {
 process getSconesFiles {
 
   input:
-    file snpNetworkscript
+    file snpNetworkScript
     file getPhenotypesScript
     file gene2snp
     file ped2
@@ -48,7 +48,7 @@ process getSconesFiles {
     file "phenotype.txt" into pheno
 
   """
-  nextflow run $snpNetworkscript -profile cluster
+  nextflow run $snpNetworkScript -profile cluster
   nextflow run $getPhenotypesScript -profile cluster
   """
 

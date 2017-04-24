@@ -16,7 +16,7 @@ process ped2bed {
     file "${ped.baseName}.fam" into fam
 
   """
-  plink --file ${ped.baseName} --make-bed --out ${ped.baseName}
+  plink --noweb --file ${ped.baseName} --make-bed --out ${ped.baseName}
   """
 
 }

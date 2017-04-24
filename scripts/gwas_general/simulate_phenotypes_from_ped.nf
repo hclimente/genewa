@@ -62,8 +62,6 @@ process selectCausalSNPs {
 
 process simulatePhenotypes {
 
-  container 'biodckrdev/gcta'
-
   input:
     file bed
     file bim
@@ -126,7 +124,7 @@ process getSnpInfo {
 
   read_tsv("$map", col_names = FALSE) %>%
     set_colnames(c("chr","snp","cm","pos")) %>%
-    mutate(causalSnp = snp %in% causal) %>%
+    mutate(causalSnp = as.numeric(snp %in% causal)) %>%
     select(snp, causalSnp) %>%
     write_tsv("truth.tsv")
   """
