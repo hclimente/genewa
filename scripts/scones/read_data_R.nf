@@ -33,7 +33,9 @@ process readData {
   # generate random id for the experiment
   id <- runif(1, 1, 10000000)
 
-  truth <- read_tsv("$truth", col_types = "iddccdd") %>%
+  truth <- read_tsv("$truth", col_types = "cd") %>%
+    # reorder based of scones reading and remove filtered out snps
+    .[match(gwas\$ids, .\$snp),] %>%
     .\$causalSnp %>%
     as.integer
 
