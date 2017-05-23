@@ -1,0 +1,3 @@
+[submodule "libs/EIG"]
+	path = libs/EIG
+	url = git@github.com:DReichLab/EIG.git
