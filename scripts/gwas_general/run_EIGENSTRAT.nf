@@ -41,7 +41,8 @@ process plotPCA {
 
   ggplot(ev, aes(x = pc1, y = pc2, color = phenotype)) +
     geom_point() +
-    theme_minimal()
+    theme_minimal() +
+    labs(x = "PC1", y = "PC2", color = "Phenotype")
 
   ggsave("pca.png")
   """
