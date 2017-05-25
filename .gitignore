@@ -8,3 +8,6 @@ pipelines/*/.nextflow/*
 pipelines/*/work/*
 .nextflow.log*
 .nextflow
+*.ped
+*.map
+*.gds
