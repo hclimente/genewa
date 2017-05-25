@@ -1,65 +1,25 @@
+#!/usr/bin/env nextflow
+// files and working directories
 params.wd = "."
 params.genewawd = "/Users/hclimente/projects/genewa"
 
-ped = file("${params.geno}.ped")
-map = file("${params.geno}.map")
-gene2snp = file("$params.gene2snp")
-tab = file("$params.tab")
-
 wd = params.wd
-ped2bedScript = file("$params.genewawd/scripts/gwas_general/ped2bed.nf")
-simulatePhenoScript = file("$params.genewawd/scripts/gwas_general/simulate_phenotypes_from_ped.nf")
-snpNetworkscript = file("$params.genewawd/scripts/scones/get_snp_networks.nf")
-getPhenotypesScript = file("$params.genewawd/scripts/scones/get_phenotypes.nf")
-readDataRScript = file("$params.genewawd/scripts/scones/read_data_R.nf")
-analyzeGWASScript = file("$params.genewawd/scripts/scones/analyze_gwas.nf")
-getQualityMeasuresScript = file("$params.genewawd/scripts/scones/getQualityMeasures.R")
+genewawd = params.genewawd
+readDataRScript = file("$genewawd/scripts/scones/r_read_gwas.nf")
+simulatePhenoScript = file("$genewawd/scripts/gwas_general/simulate_phenotypes_from_ped.nf")
+snpNetworkscript = file("$genewawd/scripts/scones/get_snp_networks.nf")
+getPhenotypesScript = file("$genewawd/scripts/scones/get_phenotypes.nf")
+analyzeGWASScript = file("$genewawd/scripts/scones/analyze_gwas.nf")
+getQualityMeasuresScript = file("$genewawd/scripts/scones/getQualityMeasures.R")
 
-process ped2bed {
+// real GWAS files
+ped = file("$genewawd/${params.geno}.ped")
+map = file("$genewawd/${params.geno}.map")
+gene2snp = file("$genewawd/$params.gene2snp")
+tab = file("$genewawd/$params.tab")
 
-  input:
-    file ped
-    file map
-    file ped2bedScript
-
-  output:
-    file "${ped.baseName}.bed" into bed
-    file "${ped.baseName}.bim" into bim
-    file "${ped.baseName}.fam" into fam
-
-  """
-  nextflow run $ped2bedScript --gen $ped.baseName -profile cluster
-  """
-
-}
-
-process simulatePhenotype {
-
-  input:
-    each i from 1..1
-    file simulatePhenoScript
-    file bed
-    file bim
-    file fam
-    file ped
-    file gene2snp
-    file tab
-    file map
-
-  output:
-    file "${ped.baseName}.simupheno.ped" into simuPed, simuPed2
-    file "truth.tsv" into truth
-
-  """
-  nextflow run $simulatePhenoScript \
-    --gen $ped.baseName \
-    --gene2snp $gene2snp \
-    --tab $tab \
-    --h2 0.8 \
-    -profile cluster
-  """
-
-}
+// simulation parameters
+h2 = params.h2
 
 process getSconesFiles {
 
@@ -67,16 +27,16 @@ process getSconesFiles {
     file snpNetworkscript
     file getPhenotypesScript
     file gene2snp
-    file simuPed
+    file ped
     file map
     file tab
 
   output:
-    file "gi.txt" into gi
+    file "gi.txt" into net
     file "phenotype.txt" into pheno
 
   """
-  nextflow run $snpNetworkscript -profile cluster --tab $tab --map $map --snp2gene $gene2snp
+  nextflow run $snpNetworkscript -profile bigmem --tab $tab --map $map --snp2gene $gene2snp
   nextflow run $getPhenotypesScript -profile cluster --ped $ped
   """
 
@@ -86,17 +46,33 @@ process readData {
 
   input:
     file readDataRScript
-    file simuPed2
+    file ped
     file map
-    file gi
+    file net
     file pheno
-    file truth
 
   output:
     file "gwas.*.RData" into gwas_rdata
 
   """
-  nextflow run $readDataRScript --ped $ped --map $map --gi $gi --pheno $pheno --truth $truth -profile bigmem
+  nextflow run $readDataRScript --ped $ped --map $map --gi $net --pheno $pheno -profile bigmem
+  """
+
+}
+
+process simulatePhenotype {
+
+  input:
+    each i from 1..10
+    file simulatePhenoScript
+    file gwas_rdata
+
+  output:
+    file "simu*RData" into sgwas_rdata
+    file "causal*RData" into scausal_rdata
+
+  """
+  nextflow run $simulatePhenoScript --h2 $h2 --n 1283 --gwas $gwas_rdata --i $i -profile bigmem --nAssociatedSnps 20
   """
 
 }
@@ -104,7 +80,8 @@ process readData {
 process analyzePopulation {
 
   input:
-    file gwas_rdata
+    file sgwas_rdata
+    file scausal_rdata
     file analyzeGWASScript
     file getQualityMeasuresScript
 
@@ -112,7 +89,7 @@ process analyzePopulation {
     file "*.RData" into analyses
 
   """
-  nextflow run $analyzeGWASScript --rdata $gwas_rdata -profile bigmem -resume
+  nextflow run $analyzeGWASScript --rgwas $sgwas_rdata --rcausal $scausal_rdata -profile bigmem -resume
   """
 
 }
@@ -135,7 +112,7 @@ process joinResults {
   quality <- lapply(list.files(pattern = "*.RData"), function(f){
     load(f)
     qual %>%
-	mutate(rr = $params.rr)
+      mutate(h2 = $h2)
     }) %>% do.call("rbind", .)
 
   save(quality, file = "summary.RData")

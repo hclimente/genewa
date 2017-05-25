@@ -20,7 +20,7 @@ process readData {
 
   """
   #!/usr/bin/env Rscript
-  library(rscones2)
+  library(martini)
   library(tidyverse)
 
   # make consistent names for ped and map
