@@ -32,10 +32,10 @@ process getSconesFiles {
 
   output:
     file "gi.txt" into gi
-    file "phenotype.txt" into pheno
+    file "phenotype.txt" into phen
 
   """
-  nextflow run $snpNetworkscript -profile cluster --tab $tab --map $map --snp2gene $gene2snp
+  nextflow run $snpNetworkscript -profile bigmem --tab $tab --map $map --snp2gene $gene2snp
   nextflow run $getPhenotypesScript -profile cluster --ped $ped
   """
 
@@ -48,13 +48,17 @@ process runScones {
     file ped
     file map
     file gi
-    file pheno
+    file phen
 
   output:
-    file "gwas.*.RData" into gwas_rdata
+    file "pmatrix.txt" into pmatrix
+    file "selected_snps.txt" into selected_snps
 
   """
   nextflow run $runSconesScript -profile bigmem \
+    --gen ${ped.baseName}\
+    --phen $phen \
+    --net $gi \
     --association_score $association_score \
     --model_selection $model_selection \
     --depth 3 \
@@ -62,7 +66,7 @@ process runScones {
     --lambda -1 \
     --eta -1 \
     --outdir . \
-    --encoding 0 \
+    --encoding additive \
     --pc 0 \
     --seed 0
   """
