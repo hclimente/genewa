@@ -11,3 +11,6 @@ pipelines/*/work/*
 *.ped
 *.map
 *.gds
+*.net
+.ipynb_checkpoints
+phenotype.txt
