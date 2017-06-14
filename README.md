@@ -2,16 +2,19 @@
 
 ## Logbook
 
-1. [Data simulation](logbook/gwas_simulation.md)
-2. [State of the art](logbook/sota.md)
-3. GENESIS dataset
+1. GENESIS dataset
 
     * [Description](logbook/genesis_data.md)
     * [Data overview](logbook/genesis_exploration_1.ipynb)
 
-4. GIN
+2. GIN
     * Playing with the simplest example: [1](logbook/simplest_example_1.ipynb) and [2](logbook/simplest_example_2.ipynb).
     * Playing with little green men: [1](logbook/little_green_men_example_1.ipynb).
+
+3. Epistasis
+    * [Data simulation](logbook/gwas_simulation.md)
+    * [State of the art](logbook/sota.md)
+
 
 ## Requirements
 
