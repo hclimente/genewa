@@ -1,13 +1,17 @@
 # genewa project
 
-## Index
+## Logbook
 
 1. [Data simulation](logbook/gwas_simulation.md)
 2. [State of the art](logbook/sota.md)
-3. [GENESIS](logbook/genesis_data.md)
-4. Playing with the simplest example: [1](logbook/simplest_example_1.ipynb) and [2](logbook/simplest_example_2.ipynb).
-5. Playing with little green men: [1](logbook/little_green_men_example_1.ipynb).
-6. Exploring the GENESIS data set: [1](logbook/genesis.ipynb)
+3. GENESIS dataset
+
+    * [Description](logbook/genesis_data.md)
+    * [Data overview](logbook/genesis_exploration_1.ipynb)
+
+4. GIN
+    * Playing with the simplest example: [1](logbook/simplest_example_1.ipynb) and [2](logbook/simplest_example_2.ipynb).
+    * Playing with little green men: [1](logbook/little_green_men_example_1.ipynb).
 
 ## Requirements
 

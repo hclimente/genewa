@@ -21,4 +21,4 @@ This step included the removal of indels and the converstion to ATCG format.
 
 ### QC
 
-Christine already performed a QC on the data. Nonetheless, we looked for population structure in the data. There seems to be no hidden population structure (genomic inflation factor λ = 1.048, first 2 PC available [here](../pipelines/imputation/genesis.processed.plot.pdf)).
+Christine already performed a QC on the data. Nonetheless, we looked for population structure in the data. There seems to be no hidden population structure (genomic inflation factor λ = 1.048, first 2 PC available [here](genesis_exploration_1.ipynb).
