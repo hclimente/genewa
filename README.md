@@ -5,7 +5,7 @@
 1. GENESIS dataset
 
     * [Description](logbook/genesis_data.md)
-    * [Data overview](logbook/genesis_exploration_1.ipynb)
+    * [Data overview + SConES](logbook/genesis_exploration_1.ipynb)
 
 2. GIN
     * Playing with the simplest example: [1](logbook/simplest_example_1.ipynb) and [2](logbook/simplest_example_2.ipynb).
