@@ -38,6 +38,3 @@ $$ \chi^2_{adjusted} = \chi^2/\lambda $$
 EIGENSTRAT is a method to detect and correct for population stratification. First it infers continuous axis of genetic variation by applying a PCA to the genotype data. Then it adjusts through linear regressions genotypes and phenotypes attributable to ancestry along each axis. Lastly, it computes association statistics using ancestry-adjusted genotypes and phenotypes.
 
 Using EIGENSTRAT on GENESIS we confirmed that there is no confounding effect due to population structure. [Here](genesis_exploration_1.ipynb) we show that the two principal components do not allow to split the data in cases and controls, although we can assess the presence of structure. If there was this confounding effect, the largest sources of variance would be related to it. Additionally, the estimated λ = 1.048 is close to 1. As we see [here](genesis_exploration_1.ipynb), the observed distribution of χ<sup>2</sup> follows the expected distribution.
-
-
-Christine already performed a QC on the data. Nonetheless, we looked for population structure in the data. There seems to be no hidden population structure (genomic inflation factor λ = 1.048, first 2 PC available [here](genesis_exploration_1.ipynb).
