@@ -28,7 +28,7 @@ if (params.population == "custom"){
     genome <- data.frame(geneId = paste0("g", 1:5), chr = c(1,1,1,2,2),
                          causalGene = c(F,T,F,F,T),
                          snps = c(2,3,2,4,4))
-    genome\$ppi <- list(c("g2"), c("g1","g5"), c("g4"), c("g3","g5"), c("g4","g2))
+    genome\$ppi <- list(c("g2"), c("g1","g5"), c("g4"), c("g3","g5"), c("g4","g2"))
 
     save(genome, file = "genome.Rdata")
     """

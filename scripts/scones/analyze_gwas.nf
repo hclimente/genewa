@@ -12,7 +12,7 @@ AICcn = 4
 rgwas = file("$params.rgwas")
 rcausal = file("$params.rcausal")
 
-process runGin_SKAT_AICc {
+process run_shake_SKAT_AICc {
 
   publishDir "$params.wd", overwrite: true
 
@@ -32,7 +32,7 @@ process runGin_SKAT_AICc {
   load("$rcausal")
 
   test <- "gin_SKAT_AICc"
-  fit <- runGin(gwas\$X, gwas\$Y, gwas\$net, list(test_statistic = $SKAT,
+  fit <- run_shake(gwas\$X, gwas\$Y, gwas\$net, list(test_statistic = $SKAT,
                                                      gridsearch_depth = 3,
                                                      selection_criterion = $AICc))
   qual <- getQualityMeasures(fit\$indicator, as.numeric(causal), test)
@@ -42,7 +42,7 @@ process runGin_SKAT_AICc {
 
 }
 
-process runGin_CHISQ_AICc {
+process run_shake_CHISQ_AICc {
 
   publishDir "$params.wd", overwrite: true
 
@@ -62,7 +62,7 @@ process runGin_CHISQ_AICc {
   load("$rcausal")
 
   test <- "gin_CHISQ_AICc"
-  fit <- runGin(gwas\$X, gwas\$Y, gwas\$net, list(test_statistic = $CHISQ,
+  fit <- run_shake(gwas\$X, gwas\$Y, gwas\$net, list(test_statistic = $CHISQ,
                                                      gridsearch_depth = 3,
                                                      selection_criterion = $AICc))
   qual <- getQualityMeasures(fit\$indicator, as.numeric(causal), test)
@@ -72,7 +72,7 @@ process runGin_CHISQ_AICc {
 
 }
 
-process runGin_SKAT_CONSISTENCY {
+process run_shake_SKAT_CONSISTENCY {
 
   publishDir "$params.wd", overwrite: true
 
@@ -92,7 +92,7 @@ process runGin_SKAT_CONSISTENCY {
   load("$rcausal")
 
   test <- "gin_SKAT_CONSISTENCY"
-  fit <- runGin(gwas\$X, gwas\$Y, gwas\$net, list(test_statistic = $SKAT,
+  fit <- run_shake(gwas\$X, gwas\$Y, gwas\$net, list(test_statistic = $SKAT,
                                                      gridsearch_depth = 3,
                                                      selection_criterion = $CONSISTENCY))
   qual <- getQualityMeasures(fit\$indicator, as.numeric(causal), test)
@@ -102,7 +102,7 @@ process runGin_SKAT_CONSISTENCY {
 
 }
 
-process runGin_CHISQ_CONSISTENCY {
+process run_shake_CHISQ_CONSISTENCY {
 
   publishDir "$params.wd", overwrite: true
 
@@ -122,7 +122,7 @@ process runGin_CHISQ_CONSISTENCY {
   load("$rcausal")
 
   test <- "gin_CHISQ_CONSISTENCY"
-  fit <- runGin(gwas\$X, gwas\$Y, gwas\$net, list(test_statistic = $CHISQ,
+  fit <- run_shake(gwas\$X, gwas\$Y, gwas\$net, list(test_statistic = $CHISQ,
                                                      gridsearch_depth = 3,
                                                      selection_criterion = $CONSISTENCY))
   qual <- getQualityMeasures(fit\$indicator, as.numeric(causal), test)
