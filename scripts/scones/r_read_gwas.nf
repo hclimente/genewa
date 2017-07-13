@@ -1,7 +1,8 @@
 ped = file("$params.ped")
 map = file("$params.map")
-gi = file("$params.gi")
-pheno = file("$params.pheno")
+snp2gene = file("$params.snp2gene")
+tab = file("$params.tab")
+net = "$params.net"
 params.out = "."
 
 process readGWAS {
@@ -11,8 +12,6 @@ process readGWAS {
   input:
     file ped
     file map
-    file gi
-    file pheno
   output:
     file "gwas.*.RData" into gwas_rdata
 
@@ -21,17 +20,48 @@ process readGWAS {
   library(martini)
   library(tidyverse)
 
-  # make consistent names for ped and map
-  file.rename("$ped", "genotype.ped")
-  file.rename("$map", "genotype.map")
-
-  # read data
-  gwas <- readGWAS("genotype", "$pheno", "$gi", 0, 0.05)
+  gwas <- read.pedfile("$ped", snps = "$map")
 
   # generate random id for the experiment
-  id <- runif(1, 1, 10000000)
+  id <- floor(runif(1, 1, 10000000))
 
   save(gwas, id, file = paste0("gwas.", id, ".RData"))
+  """
+
+}
+
+process getNetwork {
+
+  publishDir "$params.out", overwrite: true, mode: "copy"
+
+  input:
+    file gwas_rdata
+    file tab
+    file snp2gene
+  output:
+    file "net.*.RData" into net_rdata
+
+  """
+  #!/usr/bin/env Rscript
+  library(martini)
+  library(tidyverse)
+
+  load("$gwas_rdata")
+
+  if ("$net" == "gs") {
+    net <- get_GS_network(gwas)
+  } else if ("$net" == "gm") {
+    snp2gene <- read_tsv("$snp2gene")
+    net <- get_GM_network(gwas, snp2gene)
+  } else if ("$net" == "gi") {
+    snp2gene <- read_tsv("$snp2gene")
+    tab <- read_tsv("$tab")
+    net <- get_GI_network(gwas, snp2gene, tab)
+  } else {
+    error("Option not recognized.")
+  }
+
+  save(net, id, file = paste0("net.", id, ".RData"))
   """
 
 }

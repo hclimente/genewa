@@ -1,4 +1,8 @@
 params.wd = "."
+params.scones = true
+params.shake = false
+params.lasso = false
+
 getQualityMeasuresScript = file("getQualityMeasures.R")
 
 SKAT = 0
@@ -12,7 +16,122 @@ AICcn = 4
 rgwas = file("$params.rgwas")
 rcausal = file("$params.rcausal")
 
-process run_shake_SKAT_AICc {
+if (params.hasProperty('shake') && params.shake) {
+
+  process run_shake_SKAT_BIC {
+
+    publishDir "$params.wd", overwrite: true
+
+    input:
+      file rgwas
+      file rcausal
+      file getQualityMeasuresScript
+
+    output:
+      file "shake.skat.bic.*.RData" into shake_skat_bic_rdata
+
+    """
+    #!/usr/bin/env Rscript
+    library(martini)
+    source("$getQualityMeasuresScript")
+    load("$rgwas")
+    load("$rcausal")
+
+    test <- "shake_SKAT_BIC"
+    map <- shake(gwas, net, test_statistic = $SKAT, selection_criterion = $BIC, gridsearch_depth = 3)
+    qual <- getQualityMeasures(as.numeric(map\$selected), as.numeric(causal), test)
+
+    save(test, map, qual, file = paste(test, id, "RData", sep = "."))
+    """
+
+  }
+
+  process run_shake_CHISQ_BIC {
+
+    publishDir "$params.wd", overwrite: true
+
+    input:
+      file rgwas
+      file rcausal
+      file getQualityMeasuresScript
+
+    output:
+      file "shake.chisq.bic.*.RData" into shake_chisq_bic_rdata
+
+    """
+    #!/usr/bin/env Rscript
+    library(martini)
+    source("$getQualityMeasuresScript")
+    load("$rgwas")
+    load("$rcausal")
+
+    test <- "shake_CHISQ_BIC"
+    map <- shake(gwas, net, test_statistic = $CHISQ, selection_criterion = $BIC, gridsearch_depth = 3)
+    qual <- getQualityMeasures(as.numeric(map\$selected), as.numeric(causal), test)
+
+    save(test, map, qual, file = paste(test, id, "RData", sep = "."))
+    """
+
+  }
+
+  process run_shake_SKAT_CONSISTENCY {
+
+    publishDir "$params.wd", overwrite: true
+
+    input:
+      file rgwas
+      file rcausal
+      file getQualityMeasuresScript
+
+    output:
+      file "shake.skat.consistency.*.RData" into shake_skat_consistency_rdata
+
+    """
+    #!/usr/bin/env Rscript
+    library(martini)
+    source("$getQualityMeasuresScript")
+    load("$rgwas")
+    load("$rcausal")
+
+    test <- "shake_SKAT_CONSISTENCY"
+    map <- shake(gwas, net, test_statistic = $SKAT, selection_criterion = $CONSISTENCY, gridsearch_depth = 3)
+    qual <- getQualityMeasures(as.numeric(map\$selected), as.numeric(causal), test)
+
+    save(test, map, qual, file = paste(test, id, "RData", sep = "."))
+    """
+
+  }
+
+  process run_shake_CHISQ_CONSISTENCY {
+
+    publishDir "$params.wd", overwrite: true
+
+    input:
+      file rgwas
+      file rcausal
+      file getQualityMeasuresScript
+
+    output:
+      file "shake.chisq.consistency.*.RData" into shake_chisq_consistency_rdata
+
+    """
+    #!/usr/bin/env Rscript
+    library(martini)
+    source("$getQualityMeasuresScript")
+    load("$rgwas")
+    load("$rcausal")
+
+    test <- "shake_CHISQ_CONSISTENCY"
+    map <- shake(gwas, net, test_statistic = $CHISQ, selection_criterion = $CONSISTENCY, gridsearch_depth = 3)
+    qual <- getQualityMeasures(as.numeric(map\$selected), as.numeric(causal), test)
+
+    save(test, map, qual, file = paste(test, id, "RData", sep = "."))
+    """
+
+  }
+}
+
+process run_scones {
 
   publishDir "$params.wd", overwrite: true
 
@@ -22,7 +141,7 @@ process run_shake_SKAT_AICc {
     file getQualityMeasuresScript
 
   output:
-    file "gin.skat.aic.*.RData" into gin_skat_aic_rdata
+    file "scones.*.RData" into shake_chisq_consistency_rdata
 
   """
   #!/usr/bin/env Rscript
@@ -31,134 +150,47 @@ process run_shake_SKAT_AICc {
   load("$rgwas")
   load("$rcausal")
 
-  test <- "gin_SKAT_AICc"
-  fit <- run_shake(gwas\$X, gwas\$Y, gwas\$net, list(test_statistic = $SKAT,
-                                                     gridsearch_depth = 3,
-                                                     selection_criterion = $AICc))
-  qual <- getQualityMeasures(fit\$indicator, as.numeric(causal), test)
+  test <- "scones"
+  map <- shake(gwas, net)
+  qual <- getQualityMeasures(as.numeric(map\$selected), as.numeric(causal), test)
 
-  save(test, fit, qual, file = paste0("gin.skat.aic.", id, ".RData"))
+  save(test, map, qual, file = paste(test, id, "RData", sep = "."))
   """
-
 }
 
-process run_shake_CHISQ_AICc {
+if (params.hasProperty('others') && params.others) {
 
-  publishDir "$params.wd", overwrite: true
+  process runLasso {
 
-  input:
-    file rgwas
-    file rcausal
-    file getQualityMeasuresScript
+    publishDir "$params.wd", overwrite: true
 
-  output:
-    file "gin.chisq.aic.*.RData" into gin_chisq_aic_rdata
+    input:
+      file rgwas
+      file rcausal
+      file getQualityMeasuresScript
 
-  """
-  #!/usr/bin/env Rscript
-  library(martini)
-  source("$getQualityMeasuresScript")
-  load("$rgwas")
-  load("$rcausal")
+    output:
+      file "lasso.*.RData" into lasso_rdata
 
-  test <- "gin_CHISQ_AICc"
-  fit <- run_shake(gwas\$X, gwas\$Y, gwas\$net, list(test_statistic = $CHISQ,
-                                                     gridsearch_depth = 3,
-                                                     selection_criterion = $AICc))
-  qual <- getQualityMeasures(fit\$indicator, as.numeric(causal), test)
+    """
+    #!/usr/bin/env Rscript
+    library(glmnet)
+    library(snpStats)
+    source("$getQualityMeasuresScript")
+    load("$rgwas")
+    load("$rcausal")
 
-  save(test, fit, qual, file = paste0("gin.chisq.aic.", id, ".RData"))
-  """
+    test <- "LASSO"
 
-}
+    X <- as(gwas\$genotypes, "numeric")
+    Y <- gwas\$fam\$affected
+    fit.cv <- cv.glmnet(X, Y, family = "binomial", type.measure = "auc")
+    fit <- glmnet(X, Y, lambda = fit.cv\$lambda.1se)
 
-process run_shake_SKAT_CONSISTENCY {
+    qual <- getQualityMeasures(as.numeric(fit\$beta != 0), as.numeric(causal), test)
 
-  publishDir "$params.wd", overwrite: true
+    save(test, fit.cv, fit, qual, file = paste(test, id, "RData", sep = "."))
+    """
 
-  input:
-    file rgwas
-    file rcausal
-    file getQualityMeasuresScript
-
-  output:
-    file "gin.skat.consistency.*.RData" into gin_skat_consistency_rdata
-
-  """
-  #!/usr/bin/env Rscript
-  library(martini)
-  source("$getQualityMeasuresScript")
-  load("$rgwas")
-  load("$rcausal")
-
-  test <- "gin_SKAT_CONSISTENCY"
-  fit <- run_shake(gwas\$X, gwas\$Y, gwas\$net, list(test_statistic = $SKAT,
-                                                     gridsearch_depth = 3,
-                                                     selection_criterion = $CONSISTENCY))
-  qual <- getQualityMeasures(fit\$indicator, as.numeric(causal), test)
-
-  save(test, fit, qual, file = paste0("gin.skat.consistency.", id, ".RData"))
-  """
-
-}
-
-process run_shake_CHISQ_CONSISTENCY {
-
-  publishDir "$params.wd", overwrite: true
-
-  input:
-    file rgwas
-    file rcausal
-    file getQualityMeasuresScript
-
-  output:
-    file "gin.chisq.consistency.*.RData" into gin_chisq_consistency_rdata
-
-  """
-  #!/usr/bin/env Rscript
-  library(martini)
-  source("$getQualityMeasuresScript")
-  load("$rgwas")
-  load("$rcausal")
-
-  test <- "gin_CHISQ_CONSISTENCY"
-  fit <- run_shake(gwas\$X, gwas\$Y, gwas\$net, list(test_statistic = $CHISQ,
-                                                     gridsearch_depth = 3,
-                                                     selection_criterion = $CONSISTENCY))
-  qual <- getQualityMeasures(fit\$indicator, as.numeric(causal), test)
-
-  save(test, fit, qual, file = paste0("gin.chisq.consistency.", id, ".RData"))
-  """
-
-}
-
-
-process runLasso {
-
-  publishDir "$params.wd", overwrite: true
-
-  input:
-    file rgwas
-    file rcausal
-    file getQualityMeasuresScript
-
-  output:
-    file "lasso.*.RData" into lasso_rdata
-
-  """
-  #!/usr/bin/env Rscript
-  library(glmnet)
-  source("$getQualityMeasuresScript")
-  load("$rgwas")
-  load("$rcausal")
-
-  test <- "LASSO"
-  fit.cv <- cv.glmnet(gwas\$X, gwas\$Y, family = "binomial", type.measure = "auc")
-  fit <- glmnet(gwas\$X, gwas\$Y, lambda = fit.cv\$lambda.1se)
-
-  qual <- getQualityMeasures(as.numeric(fit\$beta != 0), as.numeric(causal), test)
-
-  save(test, fit.cv, fit, qual, file = paste0("lasso.", id, ".RData"))
-  """
-
+  }
 }

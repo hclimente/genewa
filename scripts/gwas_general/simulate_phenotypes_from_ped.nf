@@ -5,12 +5,12 @@ nAssociatedSnps = params.nAssociatedSnps
 h2 = params.h2
 n = params.n
 
-
 // File info
-params.i = 1
+params.k = 1
 
-i = params.i
+k = params.k
 gwas_rdata = file("$params.gwas")
+net_rdata = file("$params.net")
 params.out = "."
 
 process simulatePhenotypes {
@@ -19,6 +19,7 @@ process simulatePhenotypes {
 
   input:
     file gwas_rdata
+    file net_rdata
 
   output:
 
@@ -30,18 +31,21 @@ process simulatePhenotypes {
   library(martini)
 
   load("$gwas_rdata")
+  load("$net_rdata")
 
-  causal <- simulateCausalSNPs(gwas\$net, $nAssociatedSnps)
-  simulNum <- $i
+  causalSnps <- simulate_causal_snps(gwas, net, $nAssociatedSnps)
+  k <- $k
 
   # get their effect sizes from a normal distribution and simulate the phenotype
-  effectSizes <- rnorm(sum(causal))
-  gwas\$Y <- simulatePhenotype(gwas\$X, causal,
-                               h2 = 1,
-                               effectSize = effectSizes,
-                               qualitative = TRUE, ncases = $n, ncontrols = $n)
+  effectSizes <- rnorm(length(causalSnps))
+  gwas\$fam\$affected <- simulate_phenotype(gwas, causalSnps,
+                                            h2 = $h2,
+                                            effectSize = effectSizes,
+                                            qualitative = TRUE,
+                                            ncases = $n, ncontrols = $n)
 
-  save(gwas, id, file = paste("simu", id, simulNum, "RData", sep = "."))
-  save(causal, id, file = paste("causal", id, simulNum, "RData", sep = "."))
+  causal <- gwas\$map\$snp.names %in% causalSnps
+  save(gwas, net, id, file = paste("simu", id, k, "RData", sep = "."))
+  save(causal, id, file = paste("causal", id, k, "RData", sep = "."))
   """
 }

@@ -15,32 +15,17 @@ getQualityMeasuresScript = file("$genewawd/scripts/scones/getQualityMeasures.R")
 // real GWAS files
 ped = file("$genewawd/${params.geno}.ped")
 map = file("$genewawd/${params.geno}.map")
-gene2snp = file("$genewawd/$params.gene2snp")
+snp2gene = file("$genewawd/$params.snp2gene")
 tab = file("$genewawd/$params.tab")
+net = "$params.net"
 
 // simulation parameters
+params.permutations = 10
+params.n = 1283
+
 h2 = params.h2
-
-process getSconesFiles {
-
-  input:
-    file snpNetworkscript
-    file getPhenotypesScript
-    file gene2snp
-    file ped
-    file map
-    file tab
-
-  output:
-    file "gi.txt" into net
-    file "phenotype.txt" into pheno
-
-  """
-  nextflow run $snpNetworkscript -profile bigmem --tab $tab --map $map --snp2gene $gene2snp
-  nextflow run $getPhenotypesScript -profile cluster --ped $ped
-  """
-
-}
+n = params.n
+permutations = params.permutations
 
 process readData {
 
@@ -48,14 +33,15 @@ process readData {
     file readDataRScript
     file ped
     file map
-    file net
-    file pheno
+    file snp2gene
+    file tab
 
   output:
     file "gwas.*.RData" into gwas_rdata
+    file "net.*.RData" into net_rdata
 
   """
-  nextflow run $readDataRScript --ped $ped --map $map --gi $net --pheno $pheno -profile bigmem
+  nextflow run $readDataRScript --ped $ped --map $map --net $net --snp2gene $snp2gene --tab $tab -profile bigmem
   """
 
 }
@@ -63,16 +49,17 @@ process readData {
 process simulatePhenotype {
 
   input:
-    each i from 1..10
+    each k from 1..permutations
     file simulatePhenoScript
     file gwas_rdata
+    file net_rdata
 
   output:
-    file "simu*RData" into sgwas_rdata
-    file "causal*RData" into scausal_rdata
+    file "simu*RData" into simgwas_rdata
+    file "causal*RData" into simcausal_rdata
 
   """
-  nextflow run $simulatePhenoScript --h2 $h2 --n 1283 --gwas $gwas_rdata --i $i -profile bigmem --nAssociatedSnps 20
+  nextflow run $simulatePhenoScript --h2 $h2 --n $n --gwas $gwas_rdata --net $net_rdata --k $k -profile bigmem --nAssociatedSnps 20
   """
 
 }
@@ -80,8 +67,8 @@ process simulatePhenotype {
 process analyzePopulation {
 
   input:
-    file sgwas_rdata
-    file scausal_rdata
+    file simgwas_rdata
+    file simcausal_rdata
     file analyzeGWASScript
     file getQualityMeasuresScript
 
@@ -89,7 +76,7 @@ process analyzePopulation {
     file "*.RData" into analyses
 
   """
-  nextflow run $analyzeGWASScript --rgwas $sgwas_rdata --rcausal $scausal_rdata -profile bigmem -resume
+  nextflow run $analyzeGWASScript --rgwas $simgwas_rdata --rcausal $simcausal_rdata -profile bigmem -resume
   """
 
 }
