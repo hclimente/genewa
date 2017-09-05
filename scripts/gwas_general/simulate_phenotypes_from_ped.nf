@@ -33,7 +33,7 @@ process simulatePhenotypes {
   load("$gwas_rdata")
   load("$net_rdata")
 
-  causalSnps <- simulate_causal_snps(gwas, net, $nAssociatedSnps)
+  causalSnps <- simulate_causal_snps(net, $nAssociatedSnps)
   k <- $k
 
   # get their effect sizes from a normal distribution and simulate the phenotype
@@ -44,7 +44,7 @@ process simulatePhenotypes {
                                             qualitative = TRUE,
                                             ncases = $n, ncontrols = $n)
 
-  causal <- gwas\$map\$snp.names %in% causalSnps
+  causal <- gwas\$map\$snp.names %in% names(causalSnps)
   save(gwas, net, id, file = paste("simu", id, k, "RData", sep = "."))
   save(causal, id, file = paste("causal", id, k, "RData", sep = "."))
   """

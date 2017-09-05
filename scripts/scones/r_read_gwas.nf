@@ -55,7 +55,8 @@ process getNetwork {
     net <- get_GM_network(gwas, snp2gene)
   } else if ("$net" == "gi") {
     snp2gene <- read_tsv("$snp2gene")
-    tab <- read_tsv("$tab")
+    tab <- read_tsv("$tab") %>%
+      select(OFFICIAL_SYMBOL_FOR_A, OFFICIAL_SYMBOL_FOR_B)
     net <- get_GI_network(gwas, snp2gene, tab)
   } else {
     error("Option not recognized.")
