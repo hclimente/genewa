@@ -1,11 +1,8 @@
 params.wd = "."
-params.scones = true
-params.evo = true
-params.lasso = true
 
 getQualityMeasuresScript = file("getQualityMeasures.R")
 
-associationScores = ["chisq"]
+associationScores = ["chi2"]
 modelScores = ["bic", "aic", "consistency"]
 
 rgwas = file("$params.rgwas")
@@ -32,7 +29,7 @@ process run_evo {
   load("$rgwas")
   load("$rcausal")
 
-  test <- "evo_${c}_${m}"
+  test <- "evo.$c.$m"
   map <- search_cones(gwas, net, associationScore = "$c", modelScore = "$m")
   qual <- getQualityMeasures(as.numeric(map\$selected), as.numeric(causal), test)
 
@@ -88,7 +85,7 @@ process runLasso {
   load("$rgwas")
   load("$rcausal")
 
-  test <- "LASSO"
+  test <- "lasso"
 
   X <- as(gwas\$genotypes, "numeric")
   Y <- gwas\$fam\$affected

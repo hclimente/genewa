@@ -18,6 +18,7 @@ process readGWAS {
   """
   #!/usr/bin/env Rscript
   library(martini)
+  library(snpStats)
   library(tidyverse)
 
   gwas <- read.pedfile("$ped", snps = "$map")
