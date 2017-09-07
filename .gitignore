@@ -4,10 +4,6 @@ populations/gametes/models/*
 data/*
 libs/*
 pipelines/*.png.*
-pipelines/*/.nextflow/*
-pipelines/*/work/*
-.nextflow.log*
-.nextflow
 *.ped
 *.map
 *.gds
@@ -15,3 +11,5 @@ pipelines/*/work/*
 .ipynb_checkpoints
 phenotype.txt
 .DS_Store
+*work*
+*.nextflow*
