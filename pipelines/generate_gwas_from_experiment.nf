@@ -89,20 +89,21 @@ process joinResults {
     file '*.RData' from analyses.collect()
 
   output:
-    file "summary.RData" into summary
+    file "qualityMeasures.RData" into qualityMeasures
 
   """
   #!/usr/bin/env Rscript
   library(magrittr)
   library(tidyverse)
 
-  quality <- lapply(list.files(pattern = "*.RData"), function(f){
+  qMeasures <- lapply(list.files(pattern = "*.RData"), function(f){
     load(f)
     qual %>%
-      mutate(h2 = $h2)
+      mutate(h2 = $h2,
+             time = time.taken)
     }) %>% do.call("rbind", .)
 
-  save(quality, file = "summary.RData")
+  save(qMeasures, file = "qualityMeasures.RData")
   """
 
 }
