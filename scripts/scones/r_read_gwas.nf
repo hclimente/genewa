@@ -60,7 +60,7 @@ process getNetwork {
       select(OFFICIAL_SYMBOL_FOR_A, OFFICIAL_SYMBOL_FOR_B)
     net <- get_GI_network(gwas, snpMapping = snp2gene, ppi = tab)
   } else {
-    error("Option not recognized.")
+    stop("network type not recognized.")
   }
 
   save(net, id, file = paste0("net.", id, ".RData"))
