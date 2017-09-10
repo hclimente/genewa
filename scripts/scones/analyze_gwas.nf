@@ -107,8 +107,10 @@ process runLasso {
   time.taken <- end.time - start.time
 
   qual <- getQualityMeasures(as.numeric(fit\$beta != 0), as.numeric(causal), test)
+  cones <- gwas\$map
+  cones\$selected <- fit\$beta != 0
 
-  save(test, fit.cv, fit, qual, time.taken, file = paste(test, id, "RData", sep = "."))
+  save(test, fit.cv, fit, cones, qual, time.taken, file = paste(test, id, "RData", sep = "."))
   """
 
 }

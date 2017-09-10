@@ -96,14 +96,23 @@ process joinResults {
   library(magrittr)
   library(tidyverse)
 
-  qMeasures <- lapply(list.files(pattern = "*.RData"), function(f){
+  results <- list.files(pattern = "*.RData")
+
+  qMeasures <- lapply(results, function(f){
     load(f)
     qual %>%
       mutate(h2 = $h2,
              time = time.taken)
     }) %>% do.call("rbind", .)
 
-  save(qMeasures, file = "qualityMeasures.RData")
+  cones <- lapply(results, function(f){
+      load(f)
+      cones\$selected
+  }) %>% do.call("rbind", .)
+
+  model <- gsub(".RData", "", results)
+
+  save(qMeasures, cones, model, file = "qualityMeasures.RData")
   """
 
 }
