@@ -59,7 +59,7 @@ process simulatePhenotype {
     file "causal*RData" into simcausal_rdata
 
   """
-  nextflow run $simulatePhenoScript --h2 $h2 --n $n --gwas $gwas_rdata --net $net_rdata --k $k -profile bigmem --nAssociatedSnps 20
+  nextflow run $simulatePhenoScript --h2 $h2 --n $n --gwas $gwas_rdata --net $net_rdata --k $k -profile bigmem --nAssociatedSnps 100
   """
 
 }
