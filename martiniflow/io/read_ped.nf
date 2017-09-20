@@ -45,9 +45,7 @@ process readGWAS {
 
   """
   #!/usr/bin/env Rscript
-  library(martini)
   library(snpStats)
-  library(tidyverse)
 
   info <- list(
     origin = "experiment",
