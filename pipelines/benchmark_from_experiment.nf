@@ -1,95 +1,104 @@
 #!/usr/bin/env nextflow
+
 // files and working directories
 params.wd = "."
 params.genewawd = "/Users/hclimente/projects/genewa"
 
 wd = params.wd
 genewawd = params.genewawd
-readDataRScript = file("$genewawd/scripts/scones/r_read_gwas.nf")
-simulatePhenoScript = file("$genewawd/scripts/gwas_general/simulate_phenotypes_from_ped.nf")
-snpNetworkscript = file("$genewawd/scripts/scones/get_snp_networks.nf")
-getPhenotypesScript = file("$genewawd/scripts/scones/get_phenotypes.nf")
-analyzeGWASScript = file("$genewawd/scripts/scones/analyze_gwas.nf")
-getQualityMeasuresScript = file("$genewawd/scripts/scones/getQualityMeasures.R")
+srcReadPed = file("$genewawd/martiniflow/io/read_ped.nf")
+srcGetNetwork = file("$genewawd/martiniflow/io/get_network.nf")
+srcSimuGWAS = file("$genewawd/martiniflow/simulations/simulate_phenotypes.nf")
+srcAnalyzeGWAS = file("$genewawd/martiniflow/analyze/analyze_gwas.nf")
+srcBenchmark = file("$genewawd/martiniflow/qc/stats_simulations.nf")
+srcQualityMeasures = file("$genewawd/martiniflow/qc/getQualityMeasures.R")
 
 // real GWAS files
 ped = file("$genewawd/${params.geno}.ped")
 map = file("$genewawd/${params.geno}.map")
 snp2gene = file("$genewawd/$params.snp2gene")
 tab = file("$genewawd/$params.tab")
-net = "$params.net"
 
 // simulation parameters
+params.p = 2
 params.permutations = 10
 params.n = 1283
 
-h2 = params.h2
+heritabilities = [0.25, 0.5, 0.75, 1]
+nets = ["gs", "gm", "gi"]
 n = params.n
+p = params.p
 permutations = params.permutations
 
-process readData {
+process readGWAS {
 
   input:
-    file readDataRScript
+    file srcReadPed
     file ped
     file map
+
+  output:
+    file "gwas.RData" into rgwas
+
+  """
+  nextflow run $srcReadPed --ped $ped --map $map -profile bigmem
+  """
+
+}
+
+rgwas.into { rgwas_getNetwork; rgwas_simulate }
+
+process getNetwork {
+
+  input:
+    file srcGetNetwork
+    val net from nets
+    file rgwas_getNetwork
     file snp2gene
     file tab
 
   output:
-    file "gwas.*.RData" into gwas_rdata
-    file "net.*.RData" into net_rdata
+    file "net.RData" into rnet
 
   """
-  nextflow run $readDataRScript --ped $ped --map $map --net $net --snp2gene $snp2gene --tab $tab -profile bigmem
+  nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab -profile cluster
   """
 
 }
 
-process simulatePhenotype {
+process benchmarkSimulation {
 
   input:
+    file srcSimuGWAS
+    file srcAnalyzeGWAS
+    file srcBenchmark
+    file srcQualityMeasures
     each k from 1..permutations
-    file simulatePhenoScript
-    file gwas_rdata
-    file net_rdata
+    each h2 from heritabilities
+    file net from rnet
+    file rgwas_simulate
 
   output:
-    file "simu*RData" into simgwas_rdata
-    file "causal*RData" into simcausal_rdata
+    file "cones.RData" into cones
+    file "benchmark.RData" into simulationBenchmarks
 
   """
-  nextflow run $simulatePhenoScript --h2 $h2 --n $n --gwas $gwas_rdata --net $net_rdata --k $k -profile bigmem --nAssociatedSnps 100
+  nextflow run $srcSimuGWAS --rgwas $rgwas_simulate --rnet $net  --h2 $h2 --n $n --nAssociatedSnps $p -profile cluster
+  nextflow run $srcAnalyzeGWAS --rgwas simGwas.RData --rnet $net -profile bigmem
+  nextflow run $srcBenchmark --rcausal causal.RData -profile cluster
   """
 
 }
 
-process analyzePopulation {
-
-  input:
-    file simgwas_rdata
-    file simcausal_rdata
-    file analyzeGWASScript
-    file getQualityMeasuresScript
-
-  output:
-    file "*.RData" into analyses
-
-  """
-  nextflow run $analyzeGWASScript --rgwas $simgwas_rdata --rcausal $simcausal_rdata -profile bigmem -resume
-  """
-
-}
-
-process joinResults {
+process joinBenchmarks {
 
   publishDir "$params.wd", overwrite: true, mode: "copy"
 
   input:
-    file '*.RData' from analyses.collect()
+    file '*.RData' from simulationBenchmarks.collect()
 
   output:
-    file "qualityMeasures.RData" into qualityMeasures
+    file "benchmark.RData" into benchmark
 
   """
   #!/usr/bin/env Rscript
@@ -98,21 +107,12 @@ process joinResults {
 
   results <- list.files(pattern = "*.RData")
 
-  qMeasures <- lapply(results, function(f){
+  benchmark <- lapply(results, function(f){
     load(f)
-    qual %>%
-      mutate(h2 = $h2,
-             time = time.taken)
-    }) %>% do.call("rbind", .)
-
-  cones <- lapply(results, function(f){
-      load(f)
-      cones\$selected
+    benchmark
   }) %>% do.call("rbind", .)
 
-  model <- gsub(".RData", "", results)
-
-  save(qMeasures, cones, model, file = "qualityMeasures.RData")
+  save(benchmark, file = "benchmark.RData")
   """
 
 }
