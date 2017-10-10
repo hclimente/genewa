@@ -14,7 +14,7 @@
 
 3. EVO: rewriting easyGWAS for extension and mantainability.
 
-    * [Benchmark](results/heritability/benchmark.ipynb) at h<sup>2</sup> = 1 to pick the best experimental conditions, which turned out to be chi2 and consistency.
+    * [Benchmark](results/heritability/benchmark_1cluster.ipynb) to pick the best experimental conditions. (Preliminary benchmark at h<sup>2</sup> = 1 [here](results/heritability/benchmark.ipynb).)
     * [Evo on GENESIS](results/evo/evo_analysis.ipynb)
 
 4. Epistasis
