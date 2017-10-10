@@ -35,7 +35,7 @@ if (params.help){
     exit 0
 }
 
-gwas_rdata = file("$params.gwas")
+rgwas = file("$params.gwas")
 snp2gene = file("$params.snp2gene")
 tab = file("$params.tab")
 net = "$params.net"
@@ -46,18 +46,18 @@ process getNetwork {
   publishDir "$params.out", overwrite: true, mode: "copy"
 
   input:
-    file gwas_rdata
+    file rgwas
     file tab
     file snp2gene
   output:
-    file "net.RData" into net_rdata
+    file "net.RData" into rnet
 
   """
   #!/usr/bin/env Rscript
   library(martini)
   library(tidyverse)
 
-  load("$gwas_rdata")
+  load("$rgwas")
   netType <- "$net"
 
   if (netType == "gs") {
@@ -76,5 +76,36 @@ process getNetwork {
 
   save(net, netType, file = "net.RData")
   """
+
+}
+
+if (params.hasProperty('rld') && params.rld) {
+
+  rld = file("$params.rld")
+
+  process ld_weight {
+
+    publishDir "$params.out", overwrite: true, mode: "copy"
+
+    input:
+      file rld
+      file rnet
+
+    output:
+      file "net.RData" into rldnet
+
+    """
+    #!/usr/bin/env Rscript
+    library(martini)
+    library(tidyverse)
+
+    load("$rnet")
+    load("$rld")
+
+    net <- ldweight_edges(net, ld)
+    save(net, netType, file = "net.RData")
+    """
+
+  }
 
 }

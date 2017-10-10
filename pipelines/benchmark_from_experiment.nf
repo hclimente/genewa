@@ -17,6 +17,7 @@ srcQualityMeasures = file("$genewawd/martiniflow/qc/getQualityMeasures.R")
 ped = file("$genewawd/${params.geno}.ped")
 map = file("$genewawd/${params.geno}.map")
 snp2gene = file("$genewawd/$params.snp2gene")
+ld = file("$params.ld")
 tab = file("$genewawd/$params.tab")
 
 // simulation parameters
@@ -48,21 +49,48 @@ process readGWAS {
 
 rgwas.into { rgwas_getNetwork; rgwas_simulate }
 
-process getNetwork {
+if (params.hasProperty('rld') && params.rld) {
 
-  input:
-    file srcGetNetwork
-    val net from nets
-    file rgwas_getNetwork
-    file snp2gene
-    file tab
+  rld = file("$params.rld")
 
-  output:
-    file "net.RData" into rnet
+  process getNetwork {
 
-  """
-  nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab -profile bigmem
-  """
+    input:
+      file srcGetNetwork
+      val net from nets
+      file rgwas_getNetwork
+      file snp2gene
+      file tab
+      file rld
+
+    output:
+      file "net.RData" into rnet
+
+    """
+    nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab --ld $rld -profile bigmem
+    """
+
+  }
+
+} else {
+
+  process getNetwork {
+
+    input:
+      file srcGetNetwork
+      val net from nets
+      file rgwas_getNetwork
+      file snp2gene
+      file tab
+
+    output:
+      file "net.RData" into rnet
+
+    """
+    nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab -profile bigmem
+    """
+
+  }
 
 }
 
