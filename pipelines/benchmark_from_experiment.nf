@@ -25,8 +25,11 @@ params.p = 2
 params.permutations = 10
 params.n = 1283
 
-heritabilities = [0.25, 0.5, 0.75, 1]
-nets = ["gs", "gm", "gi"]
+params.heritabilities = [0.25, 0.5, 0.75, 1]
+params.nets = ["gs", "gm", "gi"]
+
+heritabilities = params.heritabilities
+nets = params.nets
 n = params.n
 p = params.p
 permutations = params.permutations
