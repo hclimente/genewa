@@ -17,7 +17,6 @@ srcQualityMeasures = file("$genewawd/martiniflow/qc/getQualityMeasures.R")
 ped = file("$genewawd/${params.geno}.ped")
 map = file("$genewawd/${params.geno}.map")
 snp2gene = file("$genewawd/$params.snp2gene")
-ld = file("$params.ld")
 tab = file("$genewawd/$params.tab")
 
 // simulation parameters
