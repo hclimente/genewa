@@ -61,7 +61,7 @@ process getNetwork {
     file "net.RData" into rnet
 
   """
-  nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab -profile cluster
+  nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab -profile bigmem
   """
 
 }
@@ -83,7 +83,7 @@ process benchmarkSimulation {
     file "benchmark.RData" into simulationBenchmarks
 
   """
-  nextflow run $srcSimuGWAS --rgwas $rgwas_simulate --rnet $net  --h2 $h2 --n $n --nAssociatedSnps $p -profile cluster
+  nextflow run $srcSimuGWAS --rgwas $rgwas_simulate --rnet $net  --h2 $h2 --n $n --nAssociatedSnps $p -profile bigmem
   nextflow run $srcAnalyzeGWAS --rgwas simGwas.RData --rnet $net -profile bigmem
   nextflow run $srcBenchmark --rcausal causal.RData -profile cluster
   """

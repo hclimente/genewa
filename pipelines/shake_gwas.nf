@@ -1,6 +1,7 @@
 #!/usr/bin/env nextflow
 // files and working directories
 params.wd = "."
+params.out = "."
 params.genewawd = "/Users/hclimente/projects/genewa"
 
 wd = params.wd
@@ -30,7 +31,7 @@ process readData {
     file "gwas.RData" into rgwas
 
   """
-  nextflow run $srcReadPed --ped $ped --map $map -profile cluster
+  nextflow run $srcReadPed --ped $ped --map $map -profile bigmem
   """
 
 }
@@ -50,7 +51,7 @@ process getNetwork {
     file "net.RData" into rnets
 
   """
-  nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab -profile cluster
+  nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab -profile bigmem
   """
 
 }
@@ -58,21 +59,25 @@ process getNetwork {
 process run_evo {
 
   publishDir "$params.out", overwrite: true, mode: "copy"
+  executor = 'pbs'
+  queue = 'batch'
+  time = '2d'
+  clusterOptions = '-l mem=40G'
 
   input:
-    file rgwas_evo.first()
+    file rgwas_evo
     file rnet from rnets
 
   output:
-    file "*.RData" into analyses
+    file "cones.*.RData" into analyses
 
     """
     #!/usr/bin/env Rscript
     library(martini)
-    load("$rgwas")
+    load("$rgwas_evo")
     load("$rnet")
 
-    test <- "evo.${net.baseName}"
+    test <- "evo.${rnet.baseName}"
 
     start.time <- Sys.time()
     cones <- search_cones(gwas, net, associationScore = "$associationScore", modelScore = "$modelScore")
