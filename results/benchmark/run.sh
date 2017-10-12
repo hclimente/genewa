@@ -1,1 +1,3 @@
-benchmark_from_experiment.nf --geno datasets/genesis/genesis.processed --snp2gene datasets/genesis/gene2snp.hg19 --net gm --tab datasets/genesis/BIOGRID-ORGANISM-Homo_sapiens-3.4.138.tab.txt --genewawd /data/users/hcliment/projects/genewa --permutations 10 --p 100 --n 1283 -resume
+#!/bin/bash
+
+benchmark_from_experiment.nf --geno datasets/genesis/genesis.processed --snp2gene datasets/genesis/gene2snp.hg19 --tab datasets/genesis/BIOGRID-ORGANISM-Homo_sapiens-3.4.138.tab.txt --cases 636 --controls 637 --permutations 10 --rld datasets/genesis/ld.RData --genewawd /data/users/hcliment/projects/genewa --ngenes 20 -resume
