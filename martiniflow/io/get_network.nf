@@ -25,6 +25,7 @@ PARAMETERS:
   --tab         Path to a PPI information table in TAB format.
   --net         Type of network to generate (gs, gm, gi).
 - Optional
+  --rld         Path to a file with LD information.
   --out         Path where the results to be saved [Default: '.']. Outputs:
 
 """
@@ -34,6 +35,8 @@ if (params.help){
     log.info helpMessage
     exit 0
 }
+
+params.rld = "None"
 
 rgwas = file("$params.gwas")
 snp2gene = file("$params.snp2gene")
@@ -59,6 +62,7 @@ process getNetwork {
 
   load("$rgwas")
   netType <- "$net"
+  LD <- FALSE
 
   if (netType == "gs") {
     net <- get_GS_network(gwas)
@@ -74,12 +78,12 @@ process getNetwork {
     stop("network type not recognized.")
   }
 
-  save(net, netType, file = "net.RData")
+  save(net, netType, LD, file = "net.RData")
   """
 
 }
 
-if (params.hasProperty('rld') && params.rld) {
+if (params.rld != "None") {
 
   rld = file("$params.rld")
 
@@ -103,7 +107,9 @@ if (params.hasProperty('rld') && params.rld) {
     load("$rld")
 
     net <- ldweight_edges(net, ld)
-    save(net, netType, file = "net.RData")
+    LD <- TRUE
+
+    save(net, netType, LD, file = "net.RData")
     """
 
   }

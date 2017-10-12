@@ -20,17 +20,22 @@ snp2gene = file("$genewawd/$params.snp2gene")
 tab = file("$genewawd/$params.tab")
 
 // simulation parameters
-params.p = 2
+params.ngenes = 20
+params.psnps = 1
 params.permutations = 10
-params.n = 1283
+params.cases = 636
+params.controls = 637
+params.rld = "None"
 
-params.heritabilities = [0.25, 0.5, 0.75, 1]
+params.heritabilities = [0.25, 1]
 params.nets = ["gs", "gm", "gi"]
 
 heritabilities = params.heritabilities
 nets = params.nets
-n = params.n
-p = params.p
+cases = params.cases
+controls = params.controls
+ngenes = params.ngenes
+psnps = params.psnps
 permutations = params.permutations
 
 process readGWAS {
@@ -49,13 +54,31 @@ process readGWAS {
 
 }
 
-rgwas.into { rgwas_getNetwork; rgwas_simulate }
+rgwas.into { rgwas_getNetwork; rgwas_simulate_net; rgwas_simulate }
 
-if (params.hasProperty('rld') && params.rld) {
+process getNetwork {
+
+  input:
+    file srcGetNetwork
+    val net from nets
+    file rgwas_getNetwork
+    file snp2gene
+    file tab
+
+  output:
+    file "net.RData" into rnotldnet
+
+  """
+  nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab -profile bigmem
+  """
+
+}
+
+if (params.rld != "None") {
 
   rld = file("$params.rld")
 
-  process getNetwork {
+  process getLDNetwork {
 
     input:
       file srcGetNetwork
@@ -66,54 +89,66 @@ if (params.hasProperty('rld') && params.rld) {
       file rld
 
     output:
-      file "net.RData" into rnet
+      file "net.RData" into rldnet
 
     """
-    nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab --ld $rld -profile bigmem
-    """
-
-  }
-
-} else {
-
-  process getNetwork {
-
-    input:
-      file srcGetNetwork
-      val net from nets
-      file rgwas_getNetwork
-      file snp2gene
-      file tab
-
-    output:
-      file "net.RData" into rnet
-
-    """
-    nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab -profile bigmem
+    nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab --rld $rld -profile bigmem
     """
 
   }
 
+  rnotldnet.mix(rldnet).set{rnet}
+}
+
+process getGI4Simulations {
+
+  input:
+    file srcGetNetwork
+    file snp2gene
+    file tab
+    file rgwas_simulate_net
+
+  output:
+    file "net.RData" into gi
+
+  """
+  nextflow run $srcGetNetwork --gwas $rgwas_simulate_net --net gi --snp2gene $snp2gene --tab $tab -profile bigmem
+  """
+
+}
+
+process simulatePhenotype {
+
+  input:
+    file srcSimuGWAS
+    file gi
+    file rgwas_simulate
+    each k from 1..permutations
+    each h2 from heritabilities
+
+  output:
+    set file("simGwas.RData"), file("causal.RData") into rgwas_simulated
+
+  """
+  nextflow run $srcSimuGWAS --rgwas $rgwas_simulate --rnet $gi  --h2 $h2 --cases $cases --controls $controls --ngenes $ngenes --psnps $psnps -profile bigmem
+  """
 }
 
 process benchmarkSimulation {
 
   input:
-    file srcSimuGWAS
+
     file srcAnalyzeGWAS
     file srcBenchmark
     file srcQualityMeasures
-    each k from 1..permutations
-    each h2 from heritabilities
-    file net from rnet
-    file rgwas_simulate
+    each net from rnet
+    set file(rgwas), file(rcausal) from rgwas_simulated
 
   output:
     file "cones.RData" into cones
     file "benchmark.RData" into simulationBenchmarks
 
   """
-  nextflow run $srcSimuGWAS --rgwas $rgwas_simulate --rnet $net  --h2 $h2 --n $n --nAssociatedSnps $p -profile bigmem
   nextflow run $srcAnalyzeGWAS --rgwas simGwas.RData --rnet $net -profile bigmem
   nextflow run $srcBenchmark --rcausal causal.RData -profile cluster
   """

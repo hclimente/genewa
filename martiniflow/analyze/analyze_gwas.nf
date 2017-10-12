@@ -61,14 +61,16 @@ process run_evo {
   load("$rgwas")
   load("$rnet")
 
-  test <- "evo.$c.$m"
-
   start.time <- Sys.time()
   cones <- search_cones(gwas, net, associationScore = "$c", modelScore = "$m")
   end.time <- Sys.time()
-  time.taken <- end.time - start.time
 
-  save(test, info, cones, time.taken, file = paste("cones", test, info\$id, "RData", sep = "."))
+  info\$test <- "evo.$c.$m"
+  info\$net <- netType
+  info\$LD <- LD
+  info\$runtime <- end.time - start.time
+
+  save(info, cones, file = paste("cones", info\$test, info\$id, "RData", sep = "."))
   """
 
 }
@@ -90,14 +92,16 @@ process run_scones {
   load("$rgwas")
   load("$rnet")
 
-  test <- "scones"
-
   start.time <- Sys.time()
   cones <- find_cones(gwas, net)
   end.time <- Sys.time()
-  time.taken <- end.time - start.time
 
-  save(test, info, cones, time.taken, file = paste("cones", test, info\$id, "RData", sep = "."))
+  info\$test <- "scones"
+  info\$net <- netType
+  info\$LD <- LD
+  info\$runtime <- end.time - start.time
+
+  save(info, cones, file = paste("cones", info\$test, info\$id, "RData", sep = "."))
   """
 }
 
@@ -107,6 +111,7 @@ process runLasso {
 
   input:
     file rgwas
+    file rnet
 
   output:
     file "cones.lasso.*.RData" into lasso_rdata
@@ -116,8 +121,7 @@ process runLasso {
   library(glmnet)
   library(snpStats)
   load("$rgwas")
-
-  test <- "lasso"
+  load("$rnet")
 
   X <- as(gwas\$genotypes, "numeric")
   Y <- gwas\$fam\$affected
@@ -126,12 +130,16 @@ process runLasso {
   fit.cv <- cv.glmnet(X, Y, family = "binomial", type.measure = "auc")
   fit <- glmnet(X, Y, lambda = fit.cv\$lambda.1se)
   end.time <- Sys.time()
-  time.taken <- end.time - start.time
 
   cones <- gwas\$map
   cones\$selected <- fit\$beta != 0
 
-  save(test, info, fit.cv, fit, cones, time.taken, file = paste("cones", test, info\$id, "RData", sep = "."))
+  info\$test <- "lasso"
+  info\$net <- netType
+  info\$LD <- LD
+  info\$runtime <- end.time - start.time
+
+  save(info, fit.cv, fit, cones, file = paste("cones", info\$test, info\$id, "RData", sep = "."))
   """
 
 }

@@ -66,15 +66,18 @@ process benchmark {
   benchmark <- lapply(list.files(pattern = "cones.+RData"), function(f){
     load(f)
 
-    getQualityMeasures(as.numeric(cones\$selected), as.numeric(causal), test) %>%
-      mutate(time = time.taken,
-             test = test,
+    getQualityMeasures(as.numeric(cones\$selected), as.numeric(causal), info\$test) %>%
+      mutate(time = info\$runtime,
+             test = info\$test,
              id = as.numeric(info\$id),
              solutionSize = sum(cones\$selected),
-             causalSnps = as.numeric(info\$nsnps),
+             realSolutionSize = as.numeric(info\$realSolutionSize),
+             numCausalGenes = as.numeric(info\$numCausalGenes),
+             proportionCausalSnps = as.numeric(info\$proportionCausalSnps),
              h2 = as.numeric(info\$h2),
-             net = info\$network)
-    }) %>% do.call("rbind", .)
+             net = info\$net,
+             LD = info\$LD)
+  }) %>% do.call("rbind", .)
 
   save(benchmark, file = "benchmark.RData")
   write_tsv(benchmark, path = "benchmark.tsv")
@@ -105,7 +108,7 @@ process getCones {
 
   tests <- lapply(results, function(f) {
       load(f)
-      test
+      info\$test
   }) %>% do.call("c", .)
 
   save(cones, tests, file = "cones.RData")
