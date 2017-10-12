@@ -76,7 +76,7 @@ process getNetwork {
 
 if (params.rld != "None") {
 
-  rld = file("$params.rld")
+  rld = file("$genewawd/$params.rld")
 
   process getLDNetwork {
 
