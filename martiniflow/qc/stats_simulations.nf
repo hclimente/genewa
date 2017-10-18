@@ -70,13 +70,15 @@ process benchmark {
       mutate(time = info\$runtime,
              test = info\$test,
              id = as.numeric(info\$id),
-             solutionSize = sum(cones\$selected),
-             realSolutionSize = as.numeric(info\$realSolutionSize),
-             numCausalGenes = as.numeric(info\$numCausalGenes),
-             proportionCausalSnps = as.numeric(info\$proportionCausalSnps),
              h2 = as.numeric(info\$h2),
              net = info\$net,
-             LD = info\$LD)
+             LD = info\$LD,
+             realSnps = as.numeric(info\$realSolutionSize),
+             realGenes = as.numeric(info\$numCausalGenes),
+             realPSnps = as.numeric(info\$proportionCausalSnps),
+             detectedSnps = sum(cones\$selected),
+             detectedGenes = length(detectedGenes),
+             detectedPGenes = length(intersect(detectedGenes, causalGenes))/length(causalGenes))
   }) %>% do.call("rbind", .)
 
   save(benchmark, file = "benchmark.RData")

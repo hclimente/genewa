@@ -58,6 +58,7 @@ process run_evo {
   """
   #!/usr/bin/env Rscript
   library(martini)
+  library(igraph)
   load("$rgwas")
   load("$rnet")
 
@@ -65,12 +66,14 @@ process run_evo {
   cones <- search_cones(gwas, net, associationScore = "$c", modelScore = "$m")
   end.time <- Sys.time()
 
+  detectedGenes <- subvert(net, 'name', cones\$snp[cones\$selected])\$gene %>% unique
+
   info\$test <- "evo.$c.$m"
   info\$net <- netType
   info\$LD <- LD
   info\$runtime <- end.time - start.time
 
-  save(info, cones, file = paste("cones", info\$test, info\$id, "RData", sep = "."))
+  save(info, cones, detectedGenes, file = paste("cones", info\$test, info\$id, "RData", sep = "."))
   """
 
 }
@@ -89,6 +92,7 @@ process run_scones {
   """
   #!/usr/bin/env Rscript
   library(martini)
+  library(igraph)
   load("$rgwas")
   load("$rnet")
 
@@ -96,12 +100,14 @@ process run_scones {
   cones <- find_cones(gwas, net)
   end.time <- Sys.time()
 
+  detectedGenes <- subvert(net, 'name', cones\$snp[cones\$selected])\$gene %>% unique
+
   info\$test <- "scones"
   info\$net <- netType
   info\$LD <- LD
   info\$runtime <- end.time - start.time
 
-  save(info, cones, file = paste("cones", info\$test, info\$id, "RData", sep = "."))
+  save(info, cones, detectedGenes, file = paste("cones", info\$test, info\$id, "RData", sep = "."))
   """
 }
 
@@ -118,8 +124,10 @@ process runLasso {
 
   """
   #!/usr/bin/env Rscript
+  library(igraph)
   library(glmnet)
   library(snpStats)
+	library(martini)
   load("$rgwas")
   load("$rnet")
 
@@ -132,14 +140,16 @@ process runLasso {
   end.time <- Sys.time()
 
   cones <- gwas\$map
-  cones\$selected <- fit\$beta != 0
+  cones\$selected <- as.logical(fit\$beta != 0)
+
+  detectedGenes <- subvert(net, 'name', cones\$snp.names[cones\$selected])\$gene %>% unique
 
   info\$test <- "lasso"
   info\$net <- netType
   info\$LD <- LD
   info\$runtime <- end.time - start.time
 
-  save(info, fit.cv, fit, cones, file = paste("cones", info\$test, info\$id, "RData", sep = "."))
+  save(info, fit.cv, fit, cones, detectedGenes, file = paste("cones", info\$test, info\$id, "RData", sep = "."))
   """
 
 }

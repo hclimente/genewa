@@ -70,6 +70,7 @@ process simulatePhenotypes {
   """
   #!/usr/bin/env Rscript
   library(martini)
+  library(igraph)
 
   load("$rgwas")
   load("$rnet")
@@ -93,7 +94,8 @@ process simulatePhenotypes {
                h2 = $h2)
 
   causal <- gwas\$map\$snp.names %in% names(causalSnps)
+    causalGenes <- V(net)\$gene[causalSnps] %>% unique
   save(gwas, info, netType, file = "simGwas.RData")
-  save(causal, info, file = "causal.RData")
+  save(causal, causalGenes, info, file = "causal.RData")
   """
 }
