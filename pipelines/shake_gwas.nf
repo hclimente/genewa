@@ -16,9 +16,12 @@ snp2gene = file("$genewawd/$params.snp2gene")
 tab = file("$genewawd/$params.tab")
 
 // evo params
+params.encoding = "additive"
+
 nets = ["gs","gm","gi"]
 associationScore = "chi2"
 modelScore = "consistency"
+encoding = params.encoding
 
 process readData {
 
@@ -80,7 +83,10 @@ process run_evo {
     test <- "evo.${rnet.baseName}"
 
     start.time <- Sys.time()
-    cones <- search_cones(gwas, net, associationScore = "$associationScore", modelScore = "$modelScore")
+    cones <- search_cones(gwas, net,
+													associationScore = "$associationScore",
+													modelScore = "$modelScore",
+													encoding = "$encoding")
     end.time <- Sys.time()
     time.taken <- end.time - start.time
 
