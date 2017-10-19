@@ -78,7 +78,7 @@ process benchmark {
              realPSnps = as.numeric(info\$proportionCausalSnps),
              detectedSnps = sum(cones\$selected),
              detectedGenes = length(detectedGenes),
-             detectedPGenes = length(intersect(detectedGenes, causalGenes))/length(causalGenes))
+             detectedPGenes = as.numeric(length(intersect(detectedGenes, causalGenes))/length(causalGenes)))
   }) %>% do.call("rbind", .)
 
   save(benchmark, file = "benchmark.RData")
