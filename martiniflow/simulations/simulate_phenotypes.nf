@@ -98,7 +98,7 @@ process simulatePhenotypes {
                h2 = $h2)
 
   causal <- gwas\$map\$snp.names %in% names(causalSnps)
-    causalGenes <- V(net)\$gene[causalSnps] %>% unique
+  causalGenes <- V(net)\$gene[causalSnps] %>% unique
   save(gwas, info, netType, file = "simGwas.RData")
   save(causal, causalGenes, info, file = "causal.RData")
   """
