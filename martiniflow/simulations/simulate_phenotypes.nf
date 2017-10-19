@@ -30,6 +30,7 @@ PARAMETERS
   --h2                   Heritability for the simulation.
   --cases                Number of cases.
   --controls             Number of controls.
+	--prevalence           Prevalence of the disease in the population.
 - Optional:
   --out                  Path where the results to be saved [Default: '.'].
 """
@@ -48,6 +49,7 @@ psnps = params.psnps
 h2 = params.h2
 cases = params.cases
 controls = params.controls
+prevalence = params.prevalence
 
 // File info
 rgwas = file("$params.rgwas")
@@ -83,7 +85,9 @@ process simulatePhenotypes {
                              h2 = $h2,
                              effectSize = effectSizes,
                              qualitative = TRUE,
-                             ncases = $cases, ncontrols = $controls)
+                             ncases = $cases,
+														 ncontrols = $controls,
+														 prevalence = $prevalence)
 
   # generate random info for the simulation
   info <- list(origin = "simulation",

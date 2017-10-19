@@ -25,18 +25,21 @@ params.psnps = 1
 params.permutations = 10
 params.cases = 636
 params.controls = 637
+params.prevalence = 0.5
 params.rld = "None"
 
 params.heritabilities = [0.25, 1]
 params.nets = ["gs", "gm", "gi"]
 
-heritabilities = params.heritabilities
-nets = params.nets
-cases = params.cases
-controls = params.controls
 ngenes = params.ngenes
 psnps = params.psnps
 permutations = params.permutations
+cases = params.cases
+controls = params.controls
+prevalence = params.prevalence
+
+heritabilities = params.heritabilities
+nets = params.nets
 
 process readGWAS {
 
@@ -130,7 +133,7 @@ process simulatePhenotype {
     set file("simGwas.RData"), file("causal.RData") into rgwas_simulated
 
   """
-  nextflow run $srcSimuGWAS --rgwas $rgwas_simulate --rnet $gi  --h2 $h2 --cases $cases --controls $controls --ngenes $ngenes --psnps $psnps -profile bigmem
+  nextflow run $srcSimuGWAS --rgwas $rgwas_simulate --rnet $gi  --h2 $h2 --cases $cases --controls $controls --ngenes $ngenes --psnps $psnps --prevalence $prevalence -profile bigmem
   """
 }
 
