@@ -1,0 +1,1 @@
+nextflow run ~/projects/genewa/pipelines/shake_gwas.nf --genewawd /cbio/donnees/hclimente/projects/genewa --geno data/genesis/genesis.processed --snp2gene data/genesis/gene2snp.hg19 --tab data/genesis/BIOGRID-ORGANISM-Homo_sapiens-3.4.138.tab.txt --encoding recessive -resume
