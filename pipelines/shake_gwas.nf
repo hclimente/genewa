@@ -63,11 +63,7 @@ process getNetwork {
 process run_evo {
 
   publishDir "$params.out", overwrite: true, mode: "copy"
-  executor = 'pbs'
-  queue = 'batch'
-  time = '2d'
-  clusterOptions = '-l mem=40G'
-
+	
   input:
     file rgwas_evo
     file rnet from rnets
@@ -77,7 +73,7 @@ process run_evo {
     file "cones.*.RData" into analyses
 
     """
-		nextflow run $srcRunEvo --rgwas $rgwas_evo --rnet $rnet --associationScore $associationScore --modelScore $modelScore --encoding $encoding -profile bigmem    
+		nextflow run $srcRunEvo --rgwas $rgwas_evo --rnet $rnet --associationScore $associationScore --modelScore $modelScore --encoding $encoding -profile bigmem
     """
 
 }
