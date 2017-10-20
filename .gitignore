@@ -2,7 +2,7 @@ populations/gametes/h*
 populations/gametes/map*
 populations/gametes/models/*
 data/*
-libs/*
+bin/*
 pipelines/*.png.*
 *.ped
 *.map
