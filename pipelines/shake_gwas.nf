@@ -77,7 +77,7 @@ process run_evo {
     file "cones.*.RData" into analyses
 
     """
-		nextflow run $srcRunEvo --gwas $rgwas_evo --net $rnet --associationScore $associationScore --modelScore $modelScore --encoding $encoding -profile bigmem    
+		nextflow run $srcRunEvo --rgwas $rgwas_evo --rnet $rnet --associationScore $associationScore --modelScore $modelScore --encoding $encoding -profile bigmem    
     """
 
 }
