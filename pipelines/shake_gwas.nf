@@ -8,6 +8,7 @@ wd = params.wd
 genewawd = params.genewawd
 srcReadPed = file("$genewawd/martiniflow/io/read_ped.nf")
 srcGetNetwork = file("$genewawd/martiniflow/io/get_network.nf")
+srcRunEvo = file("$genewawd/martiniflow/analyze/quick_evo.nf")
 
 // GWAS files
 ped = file("$genewawd/${params.geno}.ped")
@@ -70,27 +71,13 @@ process run_evo {
   input:
     file rgwas_evo
     file rnet from rnets
+		file srcRunEvo
 
   output:
     file "cones.*.RData" into analyses
 
     """
-    #!/usr/bin/env Rscript
-    library(martini)
-    load("$rgwas_evo")
-    load("$rnet")
-
-    test <- "evo.${rnet.baseName}"
-
-    start.time <- Sys.time()
-    cones <- search_cones(gwas, net,
-													associationScore = "$associationScore",
-													modelScore = "$modelScore",
-													encoding = "$encoding")
-    end.time <- Sys.time()
-    time.taken <- end.time - start.time
-
-    save(test, info, cones, time.taken, file = paste("cones", test, info\$id, "RData", sep = "."))
+		nextflow run $srcRunEvo --gwas $rgwas_evo --net $rnet --associationScore $associationScore --modelScore $modelScore --encoding $encoding -profile bigmem    
     """
 
 }
