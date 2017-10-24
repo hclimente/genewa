@@ -76,10 +76,10 @@ process run_mbmdr_3 {
 		file mbmdrIn_3
 
 	output:
-		file "perm_*.txt" into permutFiles
+		file "perm_*" into permutFiles
 
 	"""
-	mbmdr.out --binary --gammastep3 -q $i -o perm_ -t $topFile_3 $mbmdrIn_3
+	mbmdr.out --binary --gammastep3 -q $i -o perm_$i -t $topFile_3 $mbmdrIn_3
 	"""
 
 }
