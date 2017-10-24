@@ -87,7 +87,7 @@ process run_mbmdr_3 {
 process run_mbmdr_4 {
 
 	input:
-		file "perm_*.txt" from permutFiles.collect()
+		file "perm_*" from permutFiles.collect()
 		file topFile_4
 		file mbmdrIn_4
 
