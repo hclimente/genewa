@@ -71,7 +71,7 @@ process run_evo {
 
   detectedGenes <- subvert(net, 'name', cones\$snp[cones\$selected])\$gene %>% unique
 
-  info\$test <- "evo.${associationScore}.${modelScore}.${encoding}"
+  info\$test <- paste0("evo.${associationScore}.${modelScore}.${encoding}.", netType)
   info\$net <- netType
   info\$runtime <- end.time - start.time
 
