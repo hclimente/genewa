@@ -24,7 +24,7 @@ Curated collection of tools compiled from [several](https://www.ncbi.nlm.nih.gov
     * [SNPInterForest](https://gwas.biosciencedbc.jp/SNPInterForest/index.html)
     * **[GWGGI](https://github.com/changshuaiwei/gwggi)**
   * Bayesian network-based
-    * **[BEAM](http://sites.stat.psu.edu/~yuzhang/)**: reference among Bayesian-based classifiers. Needed to compile the Linux version.
+    * **[BEAM](http://www.people.fas.harvard.edu/%7Ejunliu/BEAM/)**: reference among Bayesian-based classifiers. Needed to compile the Linux version.
     * EpiBN: *apparently outperforms BEAM. However, we couldn't find any download links on the paper or on the internet.*
     * DASSO-MB: *also outperforms BEAM and is nowhere to be found.*
   * Ant colony optimization
