@@ -1,7 +1,9 @@
 ped = file("$params.ped")
 map = file("$params.map")
+params.out = "."
+params.N = 10
 
-N = 10
+N = params.N
 
 process addMapHeader {
 
@@ -76,15 +78,17 @@ process run_mbmdr_3 {
 		file mbmdrIn_3
 
 	output:
-		file "perm_*.txt" into permutFiles
+		file "perm_*" into permutFiles
 
 	"""
-	mbmdr.out --binary --gammastep3 -q $i -o perm_ -t $topFile_3 $mbmdrIn_3
+	mbmdr.out --binary --gammastep3 -q $i -o perm_${i}.txt -t $topFile_3 $mbmdrIn_3
 	"""
 
 }
 
 process run_mbmdr_4 {
+	
+	publishDir "$params.out", overwrite: true
 
 	input:
 		file "perm_*.txt" from permutFiles.collect()
@@ -95,7 +99,7 @@ process run_mbmdr_4 {
 		file "*_output.txt" into output
 
 	"""
-	mbmdr.out --binary --gammastep4 -c perm_ -q ${permutFiles.toList().size()} -t $topFile_4 $mbmdrIn_4
+	mbmdr.out --binary --gammastep4 -c perm_ -q $N -t $topFile_4 $mbmdrIn_4
 	"""
 
 }
