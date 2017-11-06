@@ -87,8 +87,8 @@ process run_mbmdr_3 {
 }
 
 process run_mbmdr_4 {
-	
-	publishDir "$params.out", overwrite: true
+
+	publishDir "$params.out", overwrite: true, mode: "copy"
 
 	input:
 		file "perm_*.txt" from permutFiles.collect()

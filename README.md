@@ -18,3 +18,4 @@
 4. Epistasis
     * [Data simulation](logbook/gwas_simulation.md)
     * [State of the art](logbook/sota.md)
+	* [Epistasis in GENESIS](results/epistasis/genesis_epistasis.ipynb)
