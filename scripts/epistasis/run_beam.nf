@@ -1,8 +1,8 @@
 ped = file("$params.ped")
 map = file("$params.map")
 
-p = Channel.
-	.from(map)
+p = Channel
+	.fromPath("$params.map")
 	.splitText()
 	.count()
 
@@ -18,25 +18,23 @@ process ped2beam {
 	"""
 	#!/usr/bin/env Rscript
 	library(tidyverse)
+	library(snpStats)
 
-	snps <- read_tsv("$ped", col_names = F) %>%
-	  # remove columns related to family, individual, father, mother and sex
-	  select(-X1, -X2, -X3, -X4, -X5) %>%
-	  # cases are 1 and controls are 0
-	  as.matrix
-	snps <- snps - 1L
+	gwas <- read.pedfile("$ped", snps = "$map")
+	X <- as(gwas\$genotypes, "numeric") %>% t
+	X1 <- matrix(0, nrow(X), ncol(X))
+	colnames(X1) <- paste0("h1",1:ncol(X1))
+	X2 <- X1
+	colnames(X2) <- paste0("h2",1:ncol(X2))
 
-	# fetch phenotype information and remove that column
-	phenotypes <- snps[,1] %>% rep(each=2)
-	snps <- snps[,-1]
-
-	# take separately the two sets of chromosomes
-	haplo1 <- snps[,c(T,F)] %>% t %>% as.data.frame %>% set_colnames(., paste0("h1",1:dim(.)[2]))
-	haplo2 <- snps[,c(F,T)] %>% t %>% as.data.frame %>% set_colnames(., paste0("h2",1:dim(.)[2]))
+	X1[X > 0] <- 1
+	X2[X == 2] <- 1
+	
+	phenotypes <- (gwas\$fam\$affected - 1)  %>% rep(each=2)
 
 	# combine the data to create beam format
-	intertwinedCols <- paste0(c("h1","h2"),rep(1:dim(haplo2)[2], each=2))
-	cbind(haplo1, haplo2) %>%
+	intertwinedCols <- paste0(c("h1","h2"),rep(1:ncol(X1), each=2))
+	cbind(X1, X2) %>%
 	  .[,intertwinedCols] %>%
 	  rbind(phenotypes, .) %>%
 	  write.table("${ped.baseName}.beam", col.names = F, sep = " ", quote = F, row.names = F)
@@ -46,14 +44,11 @@ process ped2beam {
 
 process get_parameters {
 
-	input:
-		file beamIn
-
 	output:
-		file "parameters.txt" into params
+		file "parameters.txt" into beamParams
 
 	"""
-	cat << EOF
+	cat << EOF >parameters.txt
 	[RUNNING PARAMETER]
 	CHAIN					100						// number of MCMC chains
 	BURNIN				0							// number of burnin updates
@@ -70,7 +65,7 @@ process get_parameters {
 															// this should be a positive number. to disable autorestart, set this value high (e.g., 1000000)
 
 	[INPUT FORMAT]
-	INPFILE				$beamIn				// input file name for case-control data
+	INPFILE				${ped.baseName}.beam				// input file name for case-control data
 	INC_SNP_ID		0							// input file includes SNP ID, e.g., rs329040
 	INC_SNP_POS		0							// input file includes SNP locations (in bytes), e.g., Chr10  1042329
 
@@ -86,7 +81,7 @@ process run_beam {
 
 	input:
 		file beamIn
-		file params
+		file beamParams
 
 	output:
 		file "${ped.baseName}.beam.txt" into beamOut
