@@ -84,6 +84,8 @@ process get_parameters {
 
 process run_beam {
 
+	publishDir "$params.out", overwrite: true, mode: "copy"
+
 	input:
 		file beamIn
 		file params
