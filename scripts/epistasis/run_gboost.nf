@@ -3,44 +3,100 @@
 ped = file("$params.ped")
 map = file("$params.map")
 params.out = "."
+params.genewawd = "/cbio/donnees/hclimente/projects/genewa"
 
-srcReadPed = file("$genewawd/martiniflow/io/read_ped.nf")
+srcReadPed = file("$params.genewawd/martiniflow/io/read_ped.nf")
 
-process ped2boost {
+p = Channel
+        .fromPath("$params.map")
+        .splitText()
+        .count()
+
+process ped2r {
 
 	input:
-		file ped
-		file map
+                file ped
+                file map
+
+	output:
+		file "gwas.RData" into rdata
+
+	"""
+	nextflow run $srcReadPed --ped $ped --map $map
+	"""
+
+}
+
+process r2boost {
+
+	input:
+		file rdata
 
 	output:
 		file "genotypes.boost" into boostIn
 
-	beforeScript: "nextflow run $srcReadPed --ped $ped --map $map"
-
-	script:
 	"""
 	#!/usr/bin/env Rscript
 
 	library(snpStats)
 	library(tidyverse)
-	load("gwas.RData")
+	load("$rdata")
 
 	X <- as(gwas\$genotypes, "numeric")
-	Y <- ifelse(gwas\$fam\$affected == 2, 1, 2)
+	Y <- gwas\$fam\$affected - 1
 
-	cbind(Y,X) %>% write_delim("genotypes.boost")
+	cbind(Y,X) %>% as.data.frame %>% write_delim("genotypes.boost", col_names = F)
 	"""
 
 }
 
 process runBOOST {
-
+	
 	input:
 		file boostIn
+	
+	output:
+		file "tempInteractionRecords.txt" into interactions
 
 	"""
 	echo $boostIn >listFile
-	GBOOST -i listFile -wm GPU -o gboost.
+	GBOOST -i listFile -wm GPU
+	"""
+
+}
+
+process calculatePValues {
+
+        publishDir "$params.out", overwrite: true, mode: "copy"
+
+	input:
+		file map
+		file interactions
+		val p
+
+	output:
+		file "${ped.baseName}.boost.txt" into epistasis
+
+	"""
+	#!/usr/bin/env Rscript
+	
+	library(tidyverse)
+	library(magrittr)
+
+	map <- read_tsv("$map", col_names = F) %>%
+		set_colnames(c("chr", "snp", "pos", "gpos"))
+	
+	read_tsv("$interactions", col_names = F) %>%
+		set_colnames(c("index","SNP1","SNP2","singlelocusAssoc1","singlelocusAssoc2","InteractionBOOST","InteractionPLINK")) %>%
+		mutate(SNP1 = map\$snp[SNP1],
+		       SNP2 = map\$snp[SNP2],
+		       p_singlelocusAssoc1 = pchisq(singlelocusAssoc1, 2, lower.tail = F),
+		       p_singlelocusAssoc2 = pchisq(singlelocusAssoc2, 2, lower.tail = F),
+		       p_InteractionBOOST = pchisq(InteractionBOOST, 4, lower.tail = F),
+		       padj_singlelocusAssoc1 = p.adjust(p_singlelocusAssoc1, n = $p),
+                       padj_singlelocusAssoc2 = p.adjust(p_singlelocusAssoc2, n = $p),
+                       padj_InteractionBOOST = p.adjust(p_InteractionBOOST, n = $p*($p - 1)/2)) %>%
+		write_tsv("${ped.baseName}.boost.txt")
 	"""
 
 }
