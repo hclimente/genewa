@@ -1,1 +1,1 @@
-nextflow run ../../scripts/epistasis/run_gboost.nf --ped ../../data/genesis/genesis.processed.ped --map ../../data/genesis/genesis.processed.map -resume
+nextflow run ../../scripts/epistasis/run_gboost.nf --rdata ../../data/genesis/genesis.RData --map ../../data/genesis/genesis.processed.map -resume
