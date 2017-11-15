@@ -18,9 +18,10 @@ process r2aes {
 	#!/usr/bin/env Rscript
 
 	library(tidyverse)
-	load("$data")
+	library(snpStats)
+	load("$rdata")
 
-	X <- as(gwas\$genotypes, "numeric") %>% t
+	X <- as(gwas\$genotypes, "numeric")
 	Y <- gwas\$fam\$affected - 1
 
 	cbind(X,Y) %>% as.data.frame %>% write_csv("genotypes.aes")

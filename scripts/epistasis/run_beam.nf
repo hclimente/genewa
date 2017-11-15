@@ -1,48 +1,61 @@
 ped = file("$params.ped")
 map = file("$params.map")
+params.out = "."
+params.genewawd = "/cbio/donnees/hclimente/projects/genewa"
+
+srcReadPed = file("$params.genewawd/martiniflow/io/read_ped.nf")
 
 p = Channel
 	.fromPath("$params.map")
 	.splitText()
 	.count()
 
-process ped2beam {
+process ped2r {
+
+        input:
+                file ped
+                file map
+
+        output:
+                file "gwas.RData" into rdata
+
+        """
+        nextflow run $srcReadPed --ped $ped --map $map
+        """
+
+}
+
+process r2beam {
 
 	input:
-		file ped
-		file map
+		file rdata
 
 	output:
-		file "${ped.baseName}.beam" into beamIn
+		file "genotypes.beam" into beamIn
 
 	"""
 	#!/usr/bin/env Rscript
 	library(tidyverse)
 	library(snpStats)
+	load("$rdata")
 
-	gwas <- read.pedfile("$ped", snps = "$map")
-	X <- as(gwas\$genotypes, "numeric") %>% t
-	X1 <- matrix(0, nrow(X), ncol(X))
-	colnames(X1) <- paste0("h1",1:ncol(X1))
-	X2 <- X1
-	colnames(X2) <- paste0("h2",1:ncol(X2))
-
-	X1[X > 0] <- 1
-	X2[X == 2] <- 1
+	X <- as(gwas\$genotypes, "numeric")
+	Y <- gwas\$fam\$affected - 1
 	
-	phenotypes <- (gwas\$fam\$affected - 1)  %>% rep(each=2)
-
-	# combine the data to create beam format
-	intertwinedCols <- paste0(c("h1","h2"),rep(1:ncol(X1), each=2))
-	cbind(X1, X2) %>%
-	  .[,intertwinedCols] %>%
-	  rbind(phenotypes, .) %>%
-	  write.table("${ped.baseName}.beam", col.names = F, sep = " ", quote = F, row.names = F)
+	cbind(Y, X) %>% 
+		as.data.frame %>% 
+		arrange(-Y) %>%
+		t %>%
+		as.data.frame %>%
+		write_delim("genotypes.beam", col_names = F)
 	"""
 
 }
 
 process get_parameters {
+
+	input:
+		val p
 
 	output:
 		file "parameters.txt" into beamParams
@@ -65,7 +78,7 @@ process get_parameters {
 															// this should be a positive number. to disable autorestart, set this value high (e.g., 1000000)
 
 	[INPUT FORMAT]
-	INPFILE				${ped.baseName}.beam				// input file name for case-control data
+	INPFILE				genotypes.beam				// input file name for case-control data
 	INC_SNP_ID		0							// input file includes SNP ID, e.g., rs329040
 	INC_SNP_POS		0							// input file includes SNP locations (in bytes), e.g., Chr10  1042329
 
@@ -89,7 +102,7 @@ process run_beam {
 		file "${ped.baseName}.beam.txt" into beamOut
 
 	"""
-	BEAM $beamIn
+	BEAM
 	"""
 
 }
