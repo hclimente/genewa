@@ -1,58 +1,73 @@
-ped = file("$params.ped")
-map = file("$params.map")
+rdata = file("$params.rdata")
+params.out = "."
 
-process ped2beam {
+p = Channel
+        .fromPath("$params.map")
+        .splitText()
+        .count()
+
+process r2aes {
 
 	input:
-		file ped
-		file map
+		file rdata
 
 	output:
-		file "${ped.baseName}.aes" into aesIn
+		file "genotypes.aes" into aesIn
 
 	"""
 	#!/usr/bin/env Rscript
 
 	library(tidyverse)
-	library(dplyr)
-	library(magrittr)
+	load("$data")
 
-	# read files
-	map <- read_tsv("$map", col_names = F) %>%
-	  set_colnames(c("chr","snp","cm","pos")) %>%
-	  select(snp)
-	ped <- read_delim("$ped", " ", col_names = F)
+	X <- as(gwas\$genotypes, "numeric") %>% t
+	Y <- gwas\$fam\$affected - 1
 
-	class <- as.integer(ped\$X6 - 1)
+	cbind(X,Y) %>% as.data.frame %>% write_csv("genotypes.aes")
+	"""
 
-	# artificially phase the genotypes
-	chr1 <- ped %>%
-	  select(-num_range("X", 1:6)) %>%
-	  .[,c(T,F)] %>%
-	  set_colnames(map\$snp)
+}
 
-	chr2 <- ped %>%
-	  select(-num_range("X", 1:6)) %>%
-	  .[,c(F,T)] %>%
-	  set_colnames(map\$snp)
+process makeParameters {
 
-	# get mode
-	mode <- rbind(chr1, chr2) %>%
-	  apply(2, function(x) {
-	    ux <- unique(x)
-	    ux[which.max(tabulate(match(x, ux)))]})
+	input:
+		val p
 
-	# get # different alleles per snp
-	nalleles <- rbind(chr1, chr2) %>%
-	  apply(2, function(x) {length(unique(x))})
+	output:
+		file "parameters.txt" into parameters
 
-	aes <- (chr1 == mode) + (chr2 == mode) %>%
-	  as.data.frame %>%
-	  # remove those snps with more than 2 alleles (cannot be encoded as 0,1,2)
-	  subset(select=(nalleles <= 2))
-	aes\$class = class
+	"""
+	cat << EOF >parameters.txt
+	iAntCount	1000    		//number of ants
+	iItCountLarge	${p * 0.1}  //number of iterations for the large haplotypes
+	iItCountSmall	${p * 0.05}	//number of iterations for the small haplotypes
+	alpha	1               	//weight given to pheromone deposited by ants
+	iTopModel	1000     		//number of top ranking haplotypes in the first stage
+	iTopLoci	200      		//number of loci with top ranking pheromone in the first stage
+	rou	0.05       				//evaporation rate in Ant Colony Optimizaion
+	phe	100        				//initial pheromone level for each locus
+	largehapsize	6 			//size of the large haplotypes
+	smallhapsize	3 			//size of the small haplotypes
+	iEpiModel	2     			//number of SNPs in an epistatic interaction
+	pvalue	0.01   				//p value threshold (after Bonferroni correction)
+	INPFILE	genotypes.aes		//input file name for case-control genotype data
+	OUTFILE result.txt 			//output file name for detected epistatic interactions
+	EOF
+	"""
 
-	write_csv(aes, "${ped.baseName}.aes")
+}
+
+process runAntEpiSeeker {
+
+	input:
+		file aesIn
+		file parameters
+
+	output:
+		file "result.txt" into aesOut
+
+	"""
+	AntEpiSeeker
 	"""
 
 }
