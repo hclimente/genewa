@@ -1,31 +1,13 @@
 #!/usr/bin/env nextflow
 
-ped = file("$params.ped")
+rdata = file("$params.rdata")
 map = file("$params.map")
 params.out = "."
-params.genewawd = "/cbio/donnees/hclimente/projects/genewa"
-
-srcReadPed = file("$params.genewawd/martiniflow/io/read_ped.nf")
 
 p = Channel
         .fromPath("$params.map")
         .splitText()
         .count()
-
-process ped2r {
-
-	input:
-                file ped
-                file map
-
-	output:
-		file "gwas.RData" into rdata
-
-	"""
-	nextflow run $srcReadPed --ped $ped --map $map
-	"""
-
-}
 
 process r2boost {
 
@@ -51,10 +33,10 @@ process r2boost {
 }
 
 process runBOOST {
-	
+
 	input:
 		file boostIn
-	
+
 	output:
 		file "tempInteractionRecords.txt" into interactions
 
@@ -79,13 +61,13 @@ process calculatePValues {
 
 	"""
 	#!/usr/bin/env Rscript
-	
+
 	library(tidyverse)
 	library(magrittr)
 
 	map <- read_tsv("$map", col_names = F) %>%
 		set_colnames(c("chr", "snp", "pos", "gpos"))
-	
+
 	read_tsv("$interactions", col_names = F) %>%
 		set_colnames(c("index","SNP1","SNP2","singlelocusAssoc1","singlelocusAssoc2","InteractionBOOST","InteractionPLINK")) %>%
 		mutate(SNP1 = map\$snp[SNP1],
