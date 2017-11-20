@@ -1,4 +1,5 @@
 rdata = file("$params.rdata")
+map = file("$params.map")
 params.out = "."
 
 p = Channel
@@ -60,6 +61,8 @@ process makeParameters {
 
 process runAntEpiSeeker {
 
+	validExitStatus 0,1
+
 	input:
 		file aesIn
 		file parameters
@@ -69,6 +72,23 @@ process runAntEpiSeeker {
 
 	"""
 	AntEpiSeeker
+	"""
+
+}
+
+process processResults {
+
+	publishDir "$params.out", overwrite: true, mode: "copy"
+
+	input:
+		file aesOut
+
+	output:
+		file "${map.baseName}.aes.txt" into epistasis
+
+	"""
+	echo -e "snp1\tsnp2\tstatistic\tp" >${map.baseName}.aes.txt
+	sed -E 's/[0-9]+\\(//g' $aesOut | sed 's/)//g' | sed -E 's/[ \t]+/\t/g' | cut -f4 >>${map.baseName}.aes.txt
 	"""
 
 }
