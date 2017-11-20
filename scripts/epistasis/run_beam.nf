@@ -22,12 +22,16 @@ process r2beam {
 
 	X <- as(gwas\$genotypes, "numeric")
 	Y <- gwas\$fam\$affected - 1
+	snps <- gwas\$map[,c(2,1,4)]
+	snps[,1] <- as.character(snps[,1])
+	snps <- rbind(c("ID","Chr", "Pos"), snps)
 
 	cbind(Y, X) %>%
 		as.data.frame %>%
 		arrange(-Y) %>%
 		t %>%
 		as.data.frame %>%
+		cbind(snps, .) %>%
 		write_delim("genotypes.beam", col_names = F)
 	"""
 
@@ -60,8 +64,8 @@ process get_parameters {
 
 	[INPUT FORMAT]
 	INPFILE				genotypes.beam	// input file name for case-control data
-	INC_SNP_ID			0				// input file includes SNP ID, e.g., rs329040
-	INC_SNP_POS			0				// input file includes SNP locations (in bytes), e.g., Chr10  1042329
+	INC_SNP_ID			1				// input file includes SNP ID, e.g., rs329040
+	INC_SNP_POS			1				// input file includes SNP locations (in bytes), e.g., Chr10  1042329
 
 	[OUTPUT FORMAT]
 	OUTFILE				${ped.baseName}.beam.txt 	// output file name for posterior distributions and detected associations
