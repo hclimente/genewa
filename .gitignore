@@ -13,3 +13,4 @@ phenotype.txt
 .DS_Store
 *work*
 *.nextflow*
+*RData
