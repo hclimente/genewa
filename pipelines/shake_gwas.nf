@@ -26,17 +26,17 @@ encoding = params.encoding
 
 process readData {
 
-  input:
-    file srcReadPed
-    file ped
-    file map
+    input:
+        file srcReadPed
+        file ped
+        file map
 
-  output:
-    file "gwas.RData" into rgwas
+    output:
+        file "gwas.RData" into rgwas
 
-  """
-  nextflow run $srcReadPed --ped $ped --map $map -profile bigmem
-  """
+    """
+    nextflow run $srcReadPed --ped $ped --map $map -profile bigmem
+    """
 
 }
 
@@ -44,36 +44,36 @@ rgwas.into { rgwas_getNetwork; rgwas_evo }
 
 process getNetwork {
 
-  input:
-    file srcGetNetwork
-    val net from nets
-    file rgwas_getNetwork
-    file snp2gene
-    file tab
+    input:
+        file srcGetNetwork
+        val net from nets
+        file rgwas_getNetwork
+        file snp2gene
+        file tab
 
-  output:
-    file "net.RData" into rnets
+    output:
+        file "net.RData" into rnets
 
-  """
-  nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab -profile bigmem
-  """
+    """
+    nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab -profile bigmem
+    """
 
 }
 
 process run_evo {
 
-  publishDir "$params.out", overwrite: true, mode: "copy"
-	
-  input:
-    file rgwas_evo
-    file rnet from rnets
-		file srcRunEvo
+    publishDir "$params.out", overwrite: true, mode: "copy"
 
-  output:
-    file "cones.*.RData" into analyses
+    input:
+        file rgwas_evo
+        file rnet from rnets
+        file srcRunEvo
+
+    output:
+        file "cones.*.RData" into analyses
 
     """
-		nextflow run $srcRunEvo --rgwas $rgwas_evo --rnet $rnet --associationScore $associationScore --modelScore $modelScore --encoding $encoding -profile bigmem
+	nextflow run $srcRunEvo --rgwas $rgwas_evo --rnet $rnet --associationScore $associationScore --modelScore $modelScore --encoding $encoding -profile bigmem
     """
 
 }

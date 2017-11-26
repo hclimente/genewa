@@ -49,7 +49,7 @@ process runBOOST {
 
 process calculatePValues {
 
-        publishDir "$params.out", overwrite: true, mode: "copy"
+    publishDir "$params.out", overwrite: true, mode: "copy"
 
 	input:
 		file map

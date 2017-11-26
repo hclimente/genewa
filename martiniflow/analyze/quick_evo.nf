@@ -65,8 +65,10 @@ process run_evo {
   load("$rnet")
 
   start.time <- Sys.time()
-  cones <- search_cones(gwas, net, associationScore = "$associationScore",
-												modelScore = "$modelScore", encoding = "$encoding")
+  cones <- search_cones(gwas, net,
+                        associationScore = "$associationScore",
+                        modelScore = "$modelScore",
+                        encoding = "$encoding")
   end.time <- Sys.time()
 
   detectedGenes <- subvert(net, 'name', cones\$snp[cones\$selected])\$gene %>% unique
