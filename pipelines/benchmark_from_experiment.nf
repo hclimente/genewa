@@ -184,3 +184,28 @@ process joinBenchmarks {
   """
 
 }
+
+process joinCones {
+
+    publishDir "$params.wd", overwrite: true, mode: "copy"
+
+    input:
+      file '*.RData' from cones.collect()
+
+    output:
+      file "cones.RData" into benchmark
+
+  """
+  #!/usr/bin/env Rscript
+
+  results <- list.files(pattern = "*.RData")
+
+  cones <- lapply(results, function(f){
+    load(f)
+    colnames(cones) <- tests
+    cones
+  }) %>% do.call("cbind", .)
+
+  save(cones, file = "cones.RData")
+  """
+}
