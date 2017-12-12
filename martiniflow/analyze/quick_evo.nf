@@ -56,6 +56,7 @@ process run_evo {
 
   output:
     file "cones.evo.${associationScore}.${modelScore}.${encoding}.*.RData" into evo_rdata
+    file "cones.evo.${associationScore}.${modelScore}.${encoding}.*.tsv" into evo_cones
 
   """
   #!/usr/bin/env Rscript
@@ -71,13 +72,14 @@ process run_evo {
                         encoding = "$encoding")
   end.time <- Sys.time()
 
-  detectedGenes <- subvert(net, 'name', cones\$snp[cones\$selected])\$gene %>% unique
+  detectedGenes <- martini:::subvert(net, 'name', cones\$snp[cones\$selected])\$gene %>% unique
 
   info\$test <- paste0("evo.${associationScore}.${modelScore}.${encoding}.", netType)
   info\$net <- netType
   info\$runtime <- end.time - start.time
 
   save(info, cones, detectedGenes, file = paste("cones", info\$test, info\$id, "RData", sep = "."))
+  write_tsv(cones, paste("cones", info\$test, info\$id, "RData", sep = "."))
   """
 
 }
