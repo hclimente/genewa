@@ -69,7 +69,7 @@ process getNetwork {
     file tab
 
   output:
-    file "net.RData" into rnotldnet
+    file "net.RData" into rnet
 
   """
   nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab -profile bigmem
@@ -100,7 +100,8 @@ if (params.rld != "None") {
 
   }
 
-  rnotldnet.mix(rldnet).set{rnet}
+  rnet.mix(rldnet).set{rnet}
+
 }
 
 process getGI4Simulations {
@@ -130,7 +131,7 @@ process simulatePhenotype {
     each h2 from heritabilities
 
   output:
-    set file("simGwas.RData"), file("causal.RData") into rgwas_simulated
+    set file("simGwas.RData"), file("causal.RData") into simulations
 
   """
   nextflow run $srcSimuGWAS --rgwas $rgwas_simulate --rnet $gi  --h2 $h2 --cases $cases --controls $controls --ngenes $ngenes --psnps $psnps --prevalence $prevalence -profile bigmem
@@ -145,10 +146,10 @@ process benchmarkSimulation {
     file srcBenchmark
     file srcQualityMeasures
     each net from rnet
-    set file(rgwas), file(rcausal) from rgwas_simulated
+    set file(rgwas), file(rcausal) from simulations
 
   output:
-    file "cones.RData" into cones
+    file "cones.RData" into simulationCones
     file "benchmark.RData" into simulationBenchmarks
 
   """
@@ -166,11 +167,10 @@ process joinBenchmarks {
     file '*.RData' from simulationBenchmarks.collect()
 
   output:
-    file "benchmark.RData" into benchmark
+    file "benchmark.tsv" into benchmark
 
   """
   #!/usr/bin/env Rscript
-  library(magrittr)
   library(tidyverse)
 
   results <- list.files(pattern = "*.RData")
@@ -180,23 +180,25 @@ process joinBenchmarks {
     benchmark
   }) %>% do.call("rbind", .)
 
-  save(benchmark, file = "benchmark.RData")
+  write_tsv(benchmark, "benchmark.tsv")
   """
 
 }
 
 process joinCones {
 
-    publishDir "$params.wd", overwrite: true, mode: "copy"
+  publishDir "$params.wd", overwrite: true, mode: "copy"
 
-    input:
-      file '*.RData' from cones.collect()
+  input:
+    file "*.RData" from simulationCones.collect()
 
-    output:
-      file "cones.RData" into benchmark
+  output:
+    file "cones.tsv" into cones
 
   """
   #!/usr/bin/env Rscript
+  library(magrittr)
+  library(tidyverse)
 
   results <- list.files(pattern = "*.RData")
 
@@ -204,8 +206,9 @@ process joinCones {
     load(f)
     colnames(cones) <- tests
     cones
-  }) %>% do.call("cbind", .)
+  }) %>% do.call("cbind", .) %>%
+	as.data.frame
 
-  save(cones, file = "cones.RData")
+  write_tsv(cones, "cones.tsv")
   """
 }
