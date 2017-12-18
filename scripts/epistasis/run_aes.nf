@@ -87,8 +87,8 @@ process processResults {
 		file "${map.baseName}.aes.txt" into epistasis
 
 	"""
-	echo -e "snp1\tsnp2\tstatistic\tp" >${map.baseName}.aes.txt
-	sed -E 's/[0-9]+\\(//g' $aesOut | sed 's/)//g' | sed -E 's/[ \t]+/\t/g' | cut -f4 >>${map.baseName}.aes.txt
+	echo -e "snp1\\tsnp2\\tchi2\\tp" >${map.baseName}.aes.txt
+	tail -n+3 $aesOut | sed -E 's/[0-9]+\\(//g' | sed 's/)//g' | sed -E 's/[ \\t]+/\\t/g' >>${map.baseName}.aes.txt
 	"""
 
 }
