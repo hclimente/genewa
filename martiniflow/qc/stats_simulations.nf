@@ -92,6 +92,7 @@ process getCones {
   publishDir "$params.out", overwrite: true
 
   input:
+    file rcausal
     file "cones*.RData" from rcones_conesData.collect()
 
   output:
@@ -105,13 +106,17 @@ process getCones {
 
   cones <- lapply(results, function(f) {
       load(f)
-      cones\$selected
-  }) %>% do.call("cbind", .)
+      as.numeric(cones\$selected)
+  }) %>% do.call(cbind, .)
 
   tests <- lapply(results, function(f) {
       load(f)
-      info\$test
+      paste(info\$test, info\$h2, info\$net, info\$id, sep = ".")
   }) %>% do.call("c", .)
+
+  load("$rcausal")
+  cones <- cbind(as.numeric(causal), cones)
+  tests <- c(paste("solution", info\$id, sep = "."), tests)
 
   save(cones, tests, file = "cones.RData")
   """

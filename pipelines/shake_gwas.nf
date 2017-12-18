@@ -70,7 +70,8 @@ process run_evo {
         file srcRunEvo
 
     output:
-        file "cones.*.RData" into analyses
+        file "cones.*.RData" into rcones
+        file "cones.*.tsv" into cones
 
     """
 	nextflow run $srcRunEvo --rgwas $rgwas_evo --rnet $rnet --associationScore $associationScore --modelScore $modelScore --encoding $encoding -profile bigmem
