@@ -1,5 +1,6 @@
 rdata = file("$params.rdata")
 params.out = "."
+map = file("$params.map")
 
 p = Channel
 	.fromPath("$params.map")
@@ -12,7 +13,7 @@ process r2beam {
 		file rdata
 
 	output:
-		file "genotypes.beam" into beamIn
+		file "genotypes.pre.beam" into beamIn
 
 	"""
 	#!/usr/bin/env Rscript
@@ -23,6 +24,7 @@ process r2beam {
 	X <- as(gwas\$genotypes, "numeric")
 	Y <- gwas\$fam\$affected - 1
 	snps <- gwas\$map[,c(2,1,4)]
+	snps\$V1 <- paste0("Chr", snps\$V1)
 	snps[,1] <- as.character(snps[,1])
 	snps <- rbind(c("ID","Chr", "Pos"), snps)
 
@@ -32,7 +34,7 @@ process r2beam {
 		t %>%
 		as.data.frame %>%
 		cbind(snps, .) %>%
-		write_delim("genotypes.beam", col_names = F)
+		write_tsv("genotypes.pre.beam", col_names = F)
 	"""
 
 }
@@ -68,7 +70,7 @@ process get_parameters {
 	INC_SNP_POS			1				// input file includes SNP locations (in bytes), e.g., Chr10  1042329
 
 	[OUTPUT FORMAT]
-	OUTFILE				${ped.baseName}.beam.txt 	// output file name for posterior distributions and detected associations
+	OUTFILE				${map.baseName}.beam.txt 	// output file name for posterior distributions and detected associations
 	P_THRESHOLD 		1
 	EOF
 	"""
@@ -84,9 +86,10 @@ process run_beam {
 		file beamParams
 
 	output:
-		file "${ped.baseName}.beam.txt" into beamOut
+		file "${map.baseName}.beam.txt" into beamOut
 
 	"""
+	sed 's/\t/ /g4' $beamIn >genotypes.beam
 	BEAM
 	"""
 

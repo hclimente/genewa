@@ -40,6 +40,9 @@ mbmdrIn.into { mbmdrIn_1; mbmdrIn_2; mbmdrIn_3; mbmdrIn_4 }
 
 process run_mbmdr_1 {
 
+	errorStrategy 'retry'
+	maxRetries 3
+
 	input:
 		each i from 1..N
 		file mbmdrIn_1
@@ -71,6 +74,9 @@ process run_mbmdr_2 {
 topFile.into { topFile_3; topFile_4 }
 
 process run_mbmdr_3 {
+
+	errorStrategy 'retry'
+	maxRetries 3
 
 	input:
 		each i from 1..N
