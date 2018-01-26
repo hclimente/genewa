@@ -69,6 +69,8 @@ process benchmark {
     getQualityMeasures(as.numeric(cones\$selected), as.numeric(causal), info\$test) %>%
       mutate(time = info\$runtime,
              test = info\$test,
+             statistic = info\$statistic,
+             selection = info\$selection,
              id = as.numeric(info\$id),
              h2 = as.numeric(info\$h2),
              net = info\$net,
@@ -111,7 +113,7 @@ process getCones {
 
   tests <- lapply(results, function(f) {
       load(f)
-      paste(info\$test, info\$h2, info\$net, info\$id, sep = ".")
+      paste(info\$test, info\$statistic, info\$selection, info\$h2, info\$net, info\$id, sep = ".")
   }) %>% do.call("c", .)
 
   load("$rcausal")

@@ -68,7 +68,9 @@ process run_evo {
 
   detectedGenes <- martini:::subvert(net, 'name', cones\$snp[cones\$selected])\$gene %>% unique
 
-  info\$test <- "evo.$c.$m"
+  info\$test <- "evo"
+  info\$statistic <- "$c"
+  info\$selection <- "$m"
   info\$net <- netType
   info\$LD <- LD
   info\$runtime <- end.time - start.time
@@ -111,7 +113,9 @@ process runLasso {
 
   detectedGenes <- martini:::subvert(net, 'name', cones\$snp.names[cones\$selected])\$gene %>% unique
 
-  info\$test <- "lasso"
+  info\$test <- "LASSO"
+  info\$statistic <- "LASSO"
+  info\$selection <- "LASSO"
   info\$net <- netType
   info\$LD <- LD
   info\$runtime <- end.time - start.time
