@@ -74,6 +74,15 @@ process getNetwork {
     tab <- read_tsv("$tab") %>%
       select(OFFICIAL_SYMBOL_FOR_A, OFFICIAL_SYMBOL_FOR_B)
     net <- get_GI_network(gwas, snpMapping = snp2gene, ppi = tab)
+  } else if (netType == "gi2") {
+    snp2gene <- read_tsv("$snp2gene")
+    tab <- read_tsv("$tab") %>%
+      select(OFFICIAL_SYMBOL_FOR_A, OFFICIAL_SYMBOL_FOR_B)
+    gi <- get_GI_network(gwas, snpMapping = snp2gene, ppi = tab)
+    gm <- get_GM_network(gwas, snpMapping = snp2gene)
+    gs <- get_GS_network(gwas)
+
+    net <- gi - gm + gs
   } else {
     stop("network type not recognized.")
   }
