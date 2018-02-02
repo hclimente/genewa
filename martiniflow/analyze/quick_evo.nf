@@ -80,7 +80,7 @@ process run_evo {
   info\$runtime <- end.time - start.time
 
   save(info, cones, detectedGenes, file = paste("cones", info\$test, info\$id, "RData", sep = "."))
-  write_tsv(cones, paste("cones", info\$test, info\$id, "RData", sep = "."))
+  write_tsv(cones, paste("cones", info\$test, info\$id, "tsv", sep = "."))
   """
 
 }
