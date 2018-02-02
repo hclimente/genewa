@@ -142,7 +142,7 @@ process simulatePhenotype {
   """
 }
 
-process benchmarkSimulation {
+process benchmarkHyperparameters {
 
   input:
 

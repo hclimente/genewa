@@ -1,0 +1,1 @@
+shake_gwas.nf --geno data/genesis/genesis.processed --snp2gene data/genesis/gene2snp.hg19 --tab data/genesis/BIOGRID-ORGANISM-Homo_sapiens-3.4.138.tab.txt --genewawd /data/users/hcliment/projects/genewa --nets gi2 -resume

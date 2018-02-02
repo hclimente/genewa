@@ -59,6 +59,7 @@ process getNetwork {
   #!/usr/bin/env Rscript
   library(martini)
   library(tidyverse)
+  library(igraph)
 
   load("$rgwas")
   netType <- "$net"
@@ -83,6 +84,7 @@ process getNetwork {
     gs <- get_GS_network(gwas)
 
     net <- gi - gm + gs
+    net <- set_edge_attr(net, "weight", value = 1)	
   } else {
     stop("network type not recognized.")
   }

@@ -18,8 +18,9 @@ tab = file("$genewawd/$params.tab")
 
 // evo params
 params.encoding = "additive"
+params.nets = "gs,gm,gi"
 
-nets = ["gs","gm","gi"]
+nets = params.nets.split(",")
 associationScore = "chi2"
 modelScore = "consistency"
 encoding = params.encoding
@@ -74,7 +75,7 @@ process run_evo {
         file "cones.*.tsv" into cones
 
     """
-	nextflow run $srcRunEvo --rgwas $rgwas_evo --rnet $rnet --associationScore $associationScore --modelScore $modelScore --encoding $encoding -profile bigmem
+    nextflow run $srcRunEvo --rgwas $rgwas_evo --rnet $rnet --associationScore $associationScore --modelScore $modelScore --encoding $encoding -profile bigmem
     """
 
 }

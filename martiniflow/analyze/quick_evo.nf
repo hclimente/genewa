@@ -62,6 +62,7 @@ process run_evo {
   #!/usr/bin/env Rscript
   library(martini)
   library(igraph)
+  library(tidyverse)
   load("$rgwas")
   load("$rnet")
 

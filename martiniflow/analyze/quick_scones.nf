@@ -57,8 +57,7 @@ process run_evo {
     file rnet
 
   output:
-    file "cones.evo.${associationScore}.${encoding}.*.RData" into evo_rdata
-    file "cones.evo.${associationScore}.${encoding}.*.tsv" into evo_cones
+    file "cones.SConES.*.RData" into evo_rdata
 
   """
   #!/usr/bin/env Rscript
@@ -68,26 +67,31 @@ process run_evo {
   load("$rnet")
 
   X <- as(gwas\$genotypes, "numeric")
-  X <- martini:::encode_gwas(X, $encoding)
+  X <- martini:::encode_gwas(X, "$encoding")
   Y <- gwas\$fam\$affected
   W <- igraph::as_adj(net)
 
   start.time <- Sys.time()
-  settings <- martini:::get_evo_settings(etas = 10e$eta, lambdas = 10e$lambda)
-  cones <- martini:::evo(X, Y, W, settings)
+  settings <- martini:::get_evo_settings(etas = 1e${eta}, lambdas = 1e${lambda})
+  test <- martini:::evo(X, Y, W, settings)
   end.time <- Sys.time()
+
+  cones <- gwas\$map
+  colnames(cones) <- c("chr","snp","cm","pos","allele.1", "allele.2")
+  cones\$c <- test\$c
+  cones\$selected <- as.logical(test\$selected)
+  cones <- martini:::get_snp_modules(cones, net)
 
   detectedGenes <- martini:::subvert(net, 'name', cones\$snp[cones\$selected])\$gene %>% unique
 
   info\$test <- "SConES"
   info\$statistic <- "$associationScore"
-  info\$selection <- "L10e${lambda}-E10e${eta}"
+  info\$selection <- "L1e${lambda}-E1e${eta}"
   info\$net <- netType
   info\$LD <- LD
   info\$runtime <- end.time - start.time
 
   save(info, cones, detectedGenes, file = paste("cones", info\$test, info\$id, "RData", sep = "."))
-  write_tsv(cones, paste("cones", info\$test, info\$id, "RData", sep = "."))
   """
 
 }

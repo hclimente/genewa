@@ -38,7 +38,7 @@ if (params.help){
 params.out = "."
 rcausal = file("$params.rcausal")
 Channel
-  .fromPath("cones*.RData")
+  .fromPath("cones.*.RData")
   .into { rcones_benchmark; rcones_conesData }
 
 srcQualityMeasures = file("getQualityMeasures.R")
@@ -48,7 +48,7 @@ process benchmark {
   publishDir "$params.out", overwrite: true
 
   input:
-    file "cones*.RData" from rcones_benchmark.collect()
+    file "cones.*.RData" from rcones_benchmark.collect()
     file rcausal
     file srcQualityMeasures
 
@@ -63,7 +63,7 @@ process benchmark {
 
   load("$rcausal")
 
-  benchmark <- lapply(list.files(pattern = "cones.+RData"), function(f){
+  benchmark <- lapply(list.files(pattern = "cones.+.RData"), function(f){
     load(f)
 
     getQualityMeasures(as.numeric(cones\$selected), as.numeric(causal), info\$test) %>%
@@ -95,7 +95,7 @@ process getCones {
 
   input:
     file rcausal
-    file "cones*.RData" from rcones_conesData.collect()
+    file "cones.*.RData" from rcones_conesData.collect()
 
   output:
     file "cones.RData" into rsumcones
