@@ -28,10 +28,10 @@ params.controls = 637
 params.prevalence = 0.5
 params.rld = "None"
 
-params.heritabilities = [0.25, 1]
-params.nets = ["gs", "gm", "gi"]
-params.etas = -5..5
-params.lambdas = -5..5
+params.heritabilities = "0.25,1"
+params.nets = "gs,gm,gi"
+params.etas = "-5,5"
+params.lambdas = "-5,5"
 
 ngenes = params.ngenes
 psnps = params.psnps
@@ -40,10 +40,12 @@ cases = params.cases
 controls = params.controls
 prevalence = params.prevalence
 
-heritabilities = params.heritabilities
-nets = params.nets
-etas = params.etas
-lambdas = params.lambdas
+heritabilities = params.heritabilities.split(",")
+nets = params.nets.split(",")
+etas = params.etas.split(",")
+etas = etas[0].toInteger()..etas[1].toInteger()
+lambdas = params.lambdas.split(",")
+lambdas = lambdas[0].toInteger()..lambdas[1].toInteger()
 
 process readGWAS {
 
