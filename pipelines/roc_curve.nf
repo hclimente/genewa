@@ -42,10 +42,8 @@ prevalence = params.prevalence
 
 heritabilities = params.heritabilities.split(",")
 nets = params.nets.split(",")
-etas = params.etas.split(",")
-etas = etas[0].toInteger()..etas[1].toInteger()
-lambdas = params.lambdas.split(",")
-lambdas = lambdas[0].toInteger()..lambdas[1].toInteger()
+etas = Channel.from(params.etas.split(",")).map{ it.toFloat() }.toList()
+lambdas = Channel.from(params.lambdas.split(",")).map{ it.toFloat() }.toList()
 
 process readGWAS {
 
