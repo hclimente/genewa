@@ -15,3 +15,4 @@ phenotype.txt
 *.nextflow*
 *RData
 results/fishy_gi/
+*trace.txt*

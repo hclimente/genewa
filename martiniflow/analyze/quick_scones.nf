@@ -15,7 +15,7 @@ INPUT
 - rgwas                 snpMatrix with a GWAS experiment and an info list.
 - rnet                  An igraph network and a netType.
 - associationScore      Association score (chi2 or skat).
-- encoding				Genetic model (additive, recessive, dominant, codominant)
+- encoding		Genetic model (additive, recessive, dominant, codominant)
 - lambda                Lambda value.
 - eta                   Eta value.
 
@@ -72,7 +72,7 @@ process run_evo {
   W <- igraph::as_adj(net)
 
   start.time <- Sys.time()
-  settings <- martini:::get_evo_settings(etas = 1e${eta}, lambdas = 1e${lambda})
+  settings <- martini:::get_evo_settings(etas = 10^${eta}, lambdas = 10^${lambda})
   test <- martini:::evo(X, Y, W, settings)
   end.time <- Sys.time()
 
