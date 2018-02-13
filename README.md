@@ -14,8 +14,9 @@
 
     * [Benchmark](results/benchmark/benchmark_1cluster.ipynb) to pick the best experimental conditions. (Preliminary benchmark at h<sup>2</sup> = 1 [here](results/heritability/benchmark.ipynb).)
 		* [Problems in the GI network](results/fishy_gi/fishy_gi_study.ipynb)
-    * [Evo on GENESIS](results/evo/evo_analysis.ipynb)
-	* [Genetic models](results/genetic_models/genetic_models.ipynb)
+    * GENESIS
+		* [Additive model](results/genesis/additive_analysis.ipynb)
+		* [Different genetic models](results/genesis/genetic_models.ipynb)
 
 4. Epistasis
     * [Data simulation](logbook/gwas_simulation.md)
