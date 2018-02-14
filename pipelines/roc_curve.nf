@@ -174,7 +174,7 @@ process joinBenchmarks {
     file '*.RData' from simulationBenchmarks.collect()
 
   output:
-    file "benchmark.tsv" into benchmark
+    file "roc.tsv" into benchmark
 
   """
   #!/usr/bin/env Rscript
@@ -187,7 +187,7 @@ process joinBenchmarks {
     benchmark
   }) %>% do.call("rbind", .)
 
-  write_tsv(benchmark, "benchmark.tsv")
+  write_tsv(benchmark, "roc.tsv")
   """
 
 }
