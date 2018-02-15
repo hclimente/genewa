@@ -15,6 +15,7 @@ ped = file("$genewawd/${params.geno}.ped")
 map = file("$genewawd/${params.geno}.map")
 snp2gene = file("$genewawd/$params.snp2gene")
 tab = file("$genewawd/$params.tab")
+params.rld = "None"
 
 // evo params
 params.encoding = "additive"
@@ -43,22 +44,50 @@ process readData {
 
 rgwas.into { rgwas_getNetwork; rgwas_evo }
 
-process getNetwork {
+if (params.rld != "None") {
+
+  rld = file("$genewawd/$params.rld")
+
+  process getLDNetwork {
 
     input:
-        file srcGetNetwork
-        val net from nets
-        file rgwas_getNetwork
-        file snp2gene
-        file tab
+      file srcGetNetwork
+      val net from nets
+      file rgwas_getNetwork
+      file snp2gene
+      file tab
+      file rld
 
     output:
-        file "net.RData" into rnets
+      file "net.RData" into rnets
 
     """
-    nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab -profile bigmem
+    nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab --rld $rld -profile bigmem
     """
 
+  }
+
+  rnet.mix(rldnet).set{rnet}
+
+} else {
+
+    process getNetwork {
+
+        input:
+            file srcGetNetwork
+            val net from nets
+            file rgwas_getNetwork
+            file snp2gene
+            file tab
+
+        output:
+            file "net.RData" into rnets
+
+        """
+        nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab -profile bigmem
+        """
+
+    }
 }
 
 process run_evo {

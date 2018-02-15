@@ -84,7 +84,7 @@ process getNetwork {
     gs <- get_GS_network(gwas)
 
     net <- gi - gm + gs
-    net <- set_edge_attr(net, "weight", value = 1)	
+    net <- set_edge_attr(net, "weight", value = 1)
   } else {
     stop("network type not recognized.")
   }
@@ -117,7 +117,7 @@ if (params.rld != "None") {
     load("$rnet")
     load("$rld")
 
-    net <- ldweight_edges(net, ld)
+    net <- ldweight_edges(net, ld, method = "sigmoid")
     LD <- TRUE
 
     save(net, netType, LD, file = "net.RData")
