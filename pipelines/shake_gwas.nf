@@ -67,8 +67,6 @@ if (params.rld != "None") {
 
   }
 
-  rnet.mix(rldnet).set{rnet}
-
 } else {
 
     process getNetwork {
