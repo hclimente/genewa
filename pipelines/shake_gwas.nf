@@ -106,3 +106,37 @@ process run_evo {
     """
 
 }
+
+if (associationScore == "chi2") {
+
+    process ld_clump {
+
+        publishDir "$params.out", overwrite: true, mode: "copy"
+
+        input:
+            file ped
+            file map
+            file cones
+
+        output:
+            file '${cones.baseName}.clumped_markers.fwf' into markers
+
+        """
+        #!/usr/bin/env Rscript
+
+        library(tidyverse)
+
+        read_tsv("$cones") %>%
+            filter(selected) %>%
+            mutate(p = pchisq(c, 1, lower.tail = FALSE)) %>%
+            rename(SNP = snp, P = p) %>%
+            select(SNP, P) %>%
+            write_tsv("report.tsv")
+
+        system2("plink", c("--file", "${ped.baseName}", "--filter-controls", "--clump", "report.tsv"))
+        file.rename("plink.clumped", "${cones.baseName}.clumped_markers.fwf")
+        """
+
+    }
+
+}
