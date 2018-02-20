@@ -20,8 +20,10 @@ params.rld = "None"
 // evo params
 params.encoding = "additive"
 params.nets = "gs,gm,gi"
+params.prune = "FALSE"
 
 nets = params.nets.split(",")
+prune = params.prune
 associationScore = "chi2"
 modelScore = "consistency"
 encoding = params.encoding
@@ -62,7 +64,7 @@ if (params.rld != "None") {
       file "net.RData" into rnets
 
     """
-    nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab --rld $rld -profile bigmem
+    nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab --prune $prune --rld $rld -profile bigmem
     """
 
   }
@@ -82,7 +84,7 @@ if (params.rld != "None") {
             file "net.RData" into rnets
 
         """
-        nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab -profile bigmem
+        nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab --prune $prune -profile bigmem
         """
 
     }
