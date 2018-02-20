@@ -21,11 +21,13 @@ params.rld = "None"
 params.encoding = "additive"
 params.nets = "gs,gm,gi"
 params.prune = "FALSE"
+params.associationScore = "chi2"
+params.modelScore = "consistency"
 
 nets = params.nets.split(",")
 prune = params.prune
-associationScore = "chi2"
-modelScore = "consistency"
+associationScore = params.associationScore
+modelScore = params.modelScore
 encoding = params.encoding
 
 process readData {
