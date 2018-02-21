@@ -38,7 +38,7 @@ process readData {
         file map
 
     output:
-        file "gwas.RData" into rgwas
+        file "gwas*.RData" into rgwas
 
     """
     nextflow run $srcReadPed --ped $ped --map $map -profile bigmem
@@ -63,7 +63,7 @@ if (params.rld != "None") {
       file rld
 
     output:
-      file "net.RData" into rnets
+      file "net*.RData" into rnets
 
     """
     nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab --prune $prune --rld $rld -profile bigmem
@@ -83,7 +83,7 @@ if (params.rld != "None") {
             file tab
 
         output:
-            file "net.RData" into rnets
+            file "net*.RData" into rnets
 
         """
         nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab --prune $prune -profile bigmem
