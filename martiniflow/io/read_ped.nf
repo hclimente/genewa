@@ -6,11 +6,11 @@ Read a PED file into a snpMatrix.
 
 Usage: nextflow martiniflow/io/read_gwas.nf --ped genotype.ped --map genotype.map
 
-(ped,map[,causal]) -> (gwas.RData[,causal.Rdata])
+(ped,map[,causal]) -> (gwas.\$ped.RData[,causal.Rdata])
 
 OUTPUT
 
-- gwas.RData. A snpMatrix with the GWAS.
+- gwas.\$ped.RData. A snpMatrix with the GWAS.
 - causal.RData. A logical vector with causal information.
 
 PARAMETERS
@@ -41,7 +41,7 @@ process readGWAS {
     file ped
     file map
   output:
-    file "gwas.RData" into gwas_rdata
+    file "gwas.${ped}.RData" into gwas_rdata
 
   """
   #!/usr/bin/env Rscript
@@ -49,11 +49,12 @@ process readGWAS {
 
   info <- list(
     origin = "experiment",
+    file = "$ped",
     id = floor(runif(1, 1, 10000000)))
 
   gwas <- read.pedfile("$ped", snps = "$map")
 
-  save(gwas, info, file = "gwas.RData")
+  save(gwas, info, file = paste('gwas', '$ped', 'RData', sep = '.')
   """
 
 }

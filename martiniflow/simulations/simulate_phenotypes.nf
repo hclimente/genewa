@@ -8,7 +8,7 @@ Usage:
 
   nextflow martiniflow/simulations/simulate_phenotypes.nf --rgwas gwas.RData --rnet net.RData --ngenes 20 --h2 1 --n 1283
 
-(rgwas, rnet, ngenes, h2, n) -> (simu*RData, causal*RData)
+(rgwas, rnet, ngenes, h2, n) -> (gwas.simulated.RData, causal.RData)
 
 INPUT
 
@@ -18,7 +18,7 @@ INPUT
 OUTPUT
 
 - causal.RData           Logical vector with the SNPs selected as causal. Contains a vector with the unique info of the simulation.
-- simGwas.RData          snpMatrix identical to rgwas, with the new simulated phenotypes. Contains a vector with the unique info of the simulation.
+- gwas.simulated.RData          snpMatrix identical to rgwas, with the new simulated phenotypes. Contains a vector with the unique info of the simulation.
 
 PARAMETERS
 
@@ -66,7 +66,7 @@ process simulatePhenotypes {
 
   output:
 
-    file "simGwas.RData" into srgwas
+    file "gwas.simulated.RData" into srgwas
     file "causal.RData" into scausal_rdata
 
   """
@@ -99,7 +99,7 @@ process simulatePhenotypes {
 
   causal <- gwas\$map\$snp.names %in% names(causalSnps)
   causalGenes <- V(net)\$gene[causalSnps] %>% unique
-  save(gwas, info, netType, file = "simGwas.RData")
+  save(gwas, info, netType, file = "gwas.simulated.RData")
   save(causal, causalGenes, info, file = "causal.RData")
   """
 }

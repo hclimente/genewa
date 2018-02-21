@@ -49,7 +49,7 @@ process readGWAS {
     file map
 
   output:
-    file "gwas.RData" into rgwas
+    file "gwas*.RData" into rgwas
 
   """
   nextflow run $srcReadPed --ped $ped --map $map -profile bigmem
@@ -69,7 +69,7 @@ process getNetwork {
     file tab
 
   output:
-    file "net.RData" into rnet
+    file "net*.RData" into rnet
 
   """
   nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab -profile bigmem
@@ -92,7 +92,7 @@ if (params.rld != "None") {
       file rld
 
     output:
-      file "net.RData" into rldnet
+      file "net*.RData" into rldnet
 
     """
     nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab --rld $rld -profile bigmem
@@ -113,7 +113,7 @@ process getGI4Simulations {
     file rgwas_simulate_net
 
   output:
-    file "net.RData" into gi
+    file "net*.RData" into gi
 
   """
   nextflow run $srcGetNetwork --gwas $rgwas_simulate_net --net gi --snp2gene $snp2gene --tab $tab -profile bigmem
@@ -131,7 +131,7 @@ process simulatePhenotype {
     each h2 from heritabilities
 
   output:
-    set file("simGwas.RData"), file("causal.RData") into simulations
+    set file("gwas.simulated.RData"), file("causal.RData") into simulations
 
   """
   nextflow run $srcSimuGWAS --rgwas $rgwas_simulate --rnet $gi  --h2 $h2 --cases $cases --controls $controls --ngenes $ngenes --psnps $psnps --prevalence $prevalence -profile bigmem
@@ -153,8 +153,8 @@ process benchmarkSimulation {
     file "benchmark.RData" into simulationBenchmarks
 
   """
-  nextflow run $srcAnalyzeGWAS --rgwas simGwas.RData --rnet $net -profile bigmem
-  nextflow run $srcBenchmark --rcausal causal.RData -profile cluster
+  nextflow run $srcAnalyzeGWAS --rgwas $rgwas --rnet $net -profile bigmem
+  nextflow run $srcBenchmark --rcausal $rcausal -profile cluster
   """
 
 }

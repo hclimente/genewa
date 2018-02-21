@@ -116,7 +116,7 @@ if (params.rld != "None") {
       file rnet
 
     output:
-      file "net.RData" into rldnet
+      file "net*.RData" into rldnet
 
     """
     #!/usr/bin/env Rscript
@@ -129,7 +129,7 @@ if (params.rld != "None") {
     net <- ldweight_edges(net, ld, method = "sigmoid")
     LD <- TRUE
 
-    save(net, netType, LD, file = "net.RData")
+    save(net, netType, LD, file = paste('net', netType, 'RData', sep = '.'))
     """
 
   }
