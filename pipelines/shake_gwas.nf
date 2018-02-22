@@ -123,7 +123,7 @@ if (associationScore == "chi2") {
             file cones
 
         output:
-            file '${cones.baseName}.clumped_markers.fwf' into markers
+            file "${cones.baseName}.clumped_markers.fwf" into markers
 
         """
         #!/usr/bin/env Rscript
