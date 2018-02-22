@@ -54,7 +54,7 @@ process readGWAS {
 
   gwas <- read.pedfile("$ped", snps = "$map")
 
-  save(gwas, info, file = paste('gwas', '$ped', 'RData', sep = '.')
+  save(gwas, info, file = paste('gwas', '$ped', 'RData', sep = '.'))
   """
 
 }
