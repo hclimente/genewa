@@ -130,7 +130,7 @@ if (associationScore == "chi2") {
 
         library(tidyverse)
 
-        read_tsv("$cones") %>%
+        read_tsv("$cones", col_types="ciiiccdld") %>%
             filter(selected) %>%
             mutate(p = pchisq(c, 1, lower.tail = FALSE)) %>%
             rename(SNP = snp, P = p) %>%
