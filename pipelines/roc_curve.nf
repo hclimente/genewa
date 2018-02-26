@@ -144,6 +144,9 @@ process simulatePhenotype {
 
 process benchmarkHyperparameters {
 
+  errorStrategy 'retry'
+  maxRetries 2
+
   input:
 
     file srcRunSConES
