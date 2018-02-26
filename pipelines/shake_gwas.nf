@@ -38,7 +38,7 @@ process readData {
         file map
 
     output:
-        file "gwas.RData" into rgwas
+        file "gwas*.RData" into rgwas
 
     """
     nextflow run $srcReadPed --ped $ped --map $map -profile bigmem
@@ -63,7 +63,7 @@ if (params.rld != "None") {
       file rld
 
     output:
-      file "net.RData" into rnets
+      file "net*.RData" into rnets
 
     """
     nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab --prune $prune --rld $rld -profile bigmem
@@ -83,7 +83,7 @@ if (params.rld != "None") {
             file tab
 
         output:
-            file "net.RData" into rnets
+            file "net*.RData" into rnets
 
         """
         nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab --prune $prune -profile bigmem
@@ -123,14 +123,14 @@ if (associationScore == "chi2") {
             file cones
 
         output:
-            file '${cones.baseName}.clumped_markers.fwf' into markers
+            file "${cones.baseName}.clumped_markers.fwf" into markers
 
         """
         #!/usr/bin/env Rscript
 
         library(tidyverse)
 
-        read_tsv("$cones") %>%
+        read_tsv("$cones", col_types="ciiiccdld") %>%
             filter(selected) %>%
             mutate(p = pchisq(c, 1, lower.tail = FALSE)) %>%
             rename(SNP = snp, P = p) %>%

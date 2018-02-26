@@ -44,7 +44,7 @@ rgwas = file("$params.gwas")
 snp2gene = file("$params.snp2gene")
 tab = file("$params.tab")
 net = "$params.net"
-prune = params.prune
+prune = "$params.prune"
 params.out = "."
 
 process getNetwork {
@@ -89,8 +89,8 @@ process getNetwork {
         net <- set_edge_attr(net, "weight", value = 1)
     }
 
-    if ($prune) {
-        ppiGenes <- unique(c(ppi\$OFFICIAL_SYMBOL_FOR_A, ppi\$OFFICIAL_SYMBOL_FOR_B))
+    if ("true" == "$prune") {
+        ppiGenes <- unique(c(tab\$OFFICIAL_SYMBOL_FOR_A, tab\$OFFICIAL_SYMBOL_FOR_B))
         net <- martini:::subnet(net, "gene", ppiGenes)
     }
 
@@ -116,7 +116,7 @@ if (params.rld != "None") {
       file rnet
 
     output:
-      file "net.RData" into rldnet
+      file "net*.RData" into rldnet
 
     """
     #!/usr/bin/env Rscript
@@ -129,7 +129,7 @@ if (params.rld != "None") {
     net <- ldweight_edges(net, ld, method = "sigmoid")
     LD <- TRUE
 
-    save(net, netType, LD, file = "net.RData")
+    save(net, netType, LD, file = paste('net', netType, 'RData', sep = '.'))
     """
 
   }
