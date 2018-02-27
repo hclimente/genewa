@@ -12,6 +12,7 @@
 
 3. EVO: rewriting easyGWAS for extension and mantainability.
 
+	* [Precision-recall](results/benchmark/roc.ipynb) in SConES.
     * [Benchmark](results/benchmark/benchmark_1cluster.ipynb) to pick the best experimental conditions. (Preliminary benchmark at h<sup>2</sup> = 1 [here](results/heritability/benchmark.ipynb).)
 		* [Problems in the GI network](results/fishy_gi/fishy_gi_study.ipynb)
     * GENESIS
