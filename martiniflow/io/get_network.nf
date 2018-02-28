@@ -73,7 +73,7 @@ process getNetwork {
   } else if (netType == "gm") {
     snp2gene <- read_tsv("$snp2gene")
     net <- get_GM_network(gwas, snpMapping = snp2gene)
-  } else if (netType %in% c("gi","gi2")) {
+  } else if (netType %in% c('gi', 'gi2', 'ppi')) {
       snp2gene <- read_tsv("$snp2gene")
       tab <- read_tsv("$tab") %>%
         select(OFFICIAL_SYMBOL_FOR_A, OFFICIAL_SYMBOL_FOR_B)
@@ -87,19 +87,19 @@ process getNetwork {
 
         net <- gi - gm + gs
         net <- set_edge_attr(net, "weight", value = 1)
-    }
+      } else if (netType == "ppi") {
+        gi <- get_GI_network(gwas, snpMapping = snp2gene, ppi = tab)
+        gm <- get_GM_network(gwas, snpMapping = snp2gene)
+
+        net <- gi - gm
+        net <- set_edge_attr(net, "weight", value = 1)
+      }
 
     if ("true" == "$prune") {
         ppiGenes <- unique(c(tab\$OFFICIAL_SYMBOL_FOR_A, tab\$OFFICIAL_SYMBOL_FOR_B))
         net <- martini:::subnet(net, "gene", ppiGenes)
     }
 
-  } else if (netType == "ppi") {
-    gi <- get_GI_network(gwas, snpMapping = snp2gene, ppi = tab)
-    gm <- get_GM_network(gwas, snpMapping = snp2gene)
-
-    net <- gi - gm
-    net <- set_edge_attr(net, "weight", value = 1)
   } else {
     stop("network type not recognized.")
   }
