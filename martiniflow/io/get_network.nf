@@ -87,6 +87,12 @@ process getNetwork {
 
         net <- gi - gm + gs
         net <- set_edge_attr(net, "weight", value = 1)
+    } else if (netType == "ppi") {
+      gi <- get_GI_network(gwas, snpMapping = snp2gene, ppi = tab)
+      gm <- get_GM_network(gwas, snpMapping = snp2gene)
+
+      net <- gi - gm
+      net <- set_edge_attr(net, "weight", value = 1)
     }
 
     if ("true" == "$prune") {
