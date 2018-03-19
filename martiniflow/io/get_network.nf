@@ -74,9 +74,11 @@ process getNetwork {
     snp2gene <- read_tsv("$snp2gene")
     net <- get_GM_network(gwas, snpMapping = snp2gene)
   } else if (netType %in% c('gi', 'gi2', 'ppi')) {
-      snp2gene <- read_tsv("$snp2gene")
+      snp2gene <- read_tsv("$snp2gene") %>%
+        rename(snp = SNP, gene = GENE)
       tab <- read_tsv("$tab") %>%
-        select(OFFICIAL_SYMBOL_FOR_A, OFFICIAL_SYMBOL_FOR_B)
+        rename(gene1 = OFFICIAL_SYMBOL_FOR_A, gene2 = OFFICIAL_SYMBOL_FOR_B) %>%
+        select(gene1, gene2)
 
       if (netType == "gi") {
         net <- get_GI_network(gwas, snpMapping = snp2gene, ppi = tab)
@@ -96,7 +98,7 @@ process getNetwork {
       }
 
     if ("true" == "$prune") {
-        ppiGenes <- unique(c(tab\$OFFICIAL_SYMBOL_FOR_A, tab\$OFFICIAL_SYMBOL_FOR_B))
+        ppiGenes <- unique(c(tab\$gene1, tab\$gene2))
         net <- martini:::subnet(net, "gene", ppiGenes)
     }
 
