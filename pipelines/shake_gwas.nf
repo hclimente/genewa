@@ -46,7 +46,7 @@ process readData {
 
 }
 
-rgwas.into { rgwas_getNetwork; rgwas_prune }
+rgwas.into { rgwas_getNetwork; rgwas_evo }
 
 if (params.rld != "None") {
 
