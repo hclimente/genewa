@@ -1,1 +1,1 @@
-shake_gwas.nf --geno data/genesis/genesis.processed.biogrid_pruned --snp2gene data/genesis/gene2snp.hg19 --tab data/genesis/BIOGRID-ORGANISM-Homo_sapiens-3.4.138.tab.txt --genewawd /data/users/hcliment/projects/genewa --nets gi,gi2 --genewawd /cbio/donnees/hclimente/projects/genewa -resume
+shake_gwas.nf --geno data/genesis/genesis.processed.biogrid_pruned --snp2gene data/genesis/snp2hgnc.tsv --tab data/genesis/BIOGRID-ORGANISM-Homo_sapiens-3.4.160.tab.txt --genewawd /data/users/hcliment/projects/genewa --nets gi,gi2 --genewawd /cbio/donnees/hclimente/projects/genewa -resume
