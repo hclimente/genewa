@@ -154,11 +154,11 @@ process get_GI {
       select(chr,snp,pos)
 
   ppi <- read_tsv("$tab") %>%
-    select(OFFICIAL_SYMBOL_FOR_A,OFFICIAL_SYMBOL_FOR_B,ALIASES_FOR_A,ALIASES_FOR_B) %>%
+    select(OFFICIAL_SYMBOL_A,OFFICIAL_SYMBOL_B,ALIASES_FOR_A,ALIASES_FOR_B) %>%
     # CHECK IF THE NAME IS IN THE ALIASES
-    select(OFFICIAL_SYMBOL_FOR_A,OFFICIAL_SYMBOL_FOR_B) %>%
-    rename(gene1 = OFFICIAL_SYMBOL_FOR_A,
-           gene2 = OFFICIAL_SYMBOL_FOR_B) %>%
+    select(OFFICIAL_SYMBOL_A,OFFICIAL_SYMBOL_B) %>%
+    rename(gene1 = OFFICIAL_SYMBOL_A,
+           gene2 = OFFICIAL_SYMBOL_B) %>%
     # remove self-interactions
     filter(gene1 != gene2) %>%
     unique

@@ -265,7 +265,7 @@ process getTAB {
   genome %>%
     apply(1, function(gene){
       lapply(gene[[5]], function(intx, geneId){
-        data.frame(OFFICIAL_SYMBOL_FOR_A = geneId, OFFICIAL_SYMBOL_FOR_B = intx)
+        data.frame(OFFICIAL_SYMBOL_A = geneId, OFFICIAL_SYMBOL_B = intx)
         }, gene[[1]]) %>% do.call("rbind", .)
       }) %>% do.call("rbind", .) %>%
     mutate(INTERACTOR_A = "", INTERACTOR_B = "", ALIASES_FOR_A = "",

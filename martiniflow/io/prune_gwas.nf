@@ -24,7 +24,7 @@ process get_snps {
     load("$rnet")
 
     tab <- read_tsv("$tab")
-    genes <- unique(c(tab\$OFFICIAL_SYMBOL_FOR_A, tab\$OFFICIAL_SYMBOL_FOR_B))
+    genes <- unique(c(tab\$OFFICIAL_SYMBOL_A, tab\$OFFICIAL_SYMBOL_B))
 
     snps <- martini:::subvert(net, 'gene', genes)
     snps <- data.frame(snps = names(snps))
