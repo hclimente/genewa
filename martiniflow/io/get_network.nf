@@ -71,13 +71,14 @@ process getNetwork {
   if (netType == "gs") {
     net <- get_GS_network(gwas)
   } else if (netType == "gm") {
-    snp2gene <- read_tsv("$snp2gene")
+    snp2gene <- read_tsv("$snp2gene")  %>%
+        rename(snp = SNP, gene = GENE)
     net <- get_GM_network(gwas, snpMapping = snp2gene)
   } else if (netType %in% c('gi', 'gi2', 'ppi')) {
       snp2gene <- read_tsv("$snp2gene") %>%
         rename(snp = SNP, gene = GENE)
       tab <- read_tsv("$tab") %>%
-        rename(gene1 = OFFICIAL_SYMBOL_FOR_A, gene2 = OFFICIAL_SYMBOL_FOR_B) %>%
+        rename(gene1 = OFFICIAL_SYMBOL_A, gene2 = OFFICIAL_SYMBOL_B) %>%
         select(gene1, gene2)
 
       if (netType == "gi") {
