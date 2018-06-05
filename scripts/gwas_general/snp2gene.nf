@@ -5,6 +5,7 @@ params.out = '.'
 gff = file("$params.gff")
 map = file("$params.map")
 ensembl2hgnc = file("$params.hgnc")
+biogrid = file("$params.biogrid")
 
 process extractGenes {
 
@@ -89,6 +90,33 @@ process ensembl2hgnc {
 		inner_join(ensembl2hgnc, by = 'ensembl_gene_id') %>%
 		select(snp, symbol) %>%
 		write_tsv('snp2hgnc.tsv')
+	"""
+
+}
+
+process biogrid2hgnc {
+
+	publishDir "$params.out", overwrite: true, mode: "copy"
+
+	input:
+		file ensembl2hgnc
+		file biogrid
+
+	output:
+		file "${biogrid.baseName}.hgnc.tsv" into hgncBiogrid
+
+	"""
+	#!/usr/bin/env Rscript
+	library(tidyverse)
+
+	symbols <- read_tsv('$ensembl2hgnc') %>%
+		select(entrez_id, symbol)
+
+	read_tsv("$biogrid") %>%
+		inner_join(symbols, by = c('Entrez Gene Interactor A' = 'entrez_id')) %>%
+		inner_join(symbols, by = c('Entrez Gene Interactor B' = 'entrez_id')) %>%
+		rename(`Official Symbol Interactor A` = symbol.x, `Official Symbol Interactor B` = symbol.y) %>%
+		write_tsv('${biogrid.baseName}.hgnc.tsv')
 	"""
 
 }

@@ -1,1 +1,1 @@
-../../scripts/gwas_general/snp2gene.nf --gff gencode.v28lift37.annotation.gff3 --map ../genesis/Genesis.map --hgnc non_alt_loci_set.txt
+../../scripts/gwas_general/snp2gene.nf --gff gencode.v28lift37.annotation.gff3 --map ../genesis/raw/Genesis.map --hgnc non_alt_loci_set.txt --biogrid ../genesis/BIOGRID-ORGANISM-Homo_sapiens-3.4.160.tab2.txt -resume
