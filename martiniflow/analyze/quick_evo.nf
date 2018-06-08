@@ -69,11 +69,11 @@ process run_evo {
   start.time <- Sys.time()
 
   params <- capture.output(
-    search_cones(gwas, net,
-                 associationScore = "$associationScore",
-                 modelScore = "$modelScore",
-                 encoding = "$encoding")
-  ) %>% tail(params, n = 2) %>% lapply(strsplit, ' = ') %>% unlist %>% .[c(F,T)] %>% as.numeric() %>% log10
+    cones <- search_cones(gwas, net,
+			  associationScore = "$associationScore",
+			  modelScore = "$modelScore",
+			  encoding = "$encoding")
+  ) %>% tail(n = 2) %>% lapply(strsplit, ' = ') %>% unlist %>% .[c(F,T)] %>% as.numeric() %>% log10
 
   etas <- 10^seq(params[1] - 1, params[1] + 1, length.out = 10)
   lambdas <- 10^seq(params[2] - 1, params[2] + 1, length.out = 10)
