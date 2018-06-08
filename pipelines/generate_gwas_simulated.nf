@@ -23,7 +23,7 @@ process generatePopulation {
     file "genotypes.map" into map, map2
     file "gene2snp.tsv" into gene2snp
     file "truth.tsv" into truth
-    file "ppi.tab" into ppi
+    file "ppi.tab2" into ppi
     file "snp_list.csv" into snp_list
 
   """

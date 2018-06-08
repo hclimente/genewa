@@ -4,14 +4,14 @@ params.out = "."
 
 map = file("$params.map")
 ped = file("$params.ped")
-tab = file("$params.tab")
+tab2 = file("$params.tab2")
 rnet = file("$params.rnet")
 
 process get_snps {
 
     input:
         file rnet
-        file tab
+        file tab2
 
     output:
         file "snps.tsv" into snps
@@ -23,8 +23,8 @@ process get_snps {
 
     load("$rnet")
 
-    tab <- read_tsv("$tab")
-    genes <- unique(c(tab\$OFFICIAL_SYMBOL_A, tab\$OFFICIAL_SYMBOL_B))
+    tab2 <- read_tsv("$tab2")
+    genes <- unique(c(tab2\$`Official Symbol Interactor A`, tab2\$`Official Symbol Interactor B`))
 
     snps <- martini:::subvert(net, 'gene', genes)
     snps <- data.frame(snps = names(snps))

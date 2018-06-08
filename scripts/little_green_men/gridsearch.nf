@@ -51,7 +51,7 @@ process generate_population {
     file "genotypes.map" into map
     file "gene2snp.tsv" into gene2snp
     file "snp_list.csv" into snp_list
-    file "ppi.tab" into ppi
+    file "ppi.tab2" into ppi
 
   """
   nextflow run little_green_men.nf -resume --numCausalGenes $params.numCausalGenes --numGenesPerPathway $params.numGenesPerPathway --numPathways $params.numPathways --numSnpsPerGene $params.numSnpsPerGene --numChromosomes $params.numChromosomes --freqCrosstalk $params.freqCrosstalk --N $params.N --rr $params.rr --population $params.population --freqCausalSnp $params.freqCausalSnp
@@ -76,7 +76,7 @@ process run_scones {
     file "gridsearch/*.L.txt" into laplacian
 
   """
-  nextflow run run_scones.nf -profile curie -resume --ped genotypes.ped --map  genotypes.map --snp2gene  gene2snp.tsv --icogsSnps snp_list.csv --tab ppi.tab --gridsearch custom --stat $params.stat --lambda_base $params.lambda_base --eta_base $params.eta_base
+  nextflow run run_scones.nf -profile curie -resume --ped genotypes.ped --map  genotypes.map --snp2gene  gene2snp.tsv --icogsSnps snp_list.csv --tab2 ppi.tab2 --gridsearch custom --stat $params.stat --lambda_base $params.lambda_base --eta_base $params.eta_base
   """
 }
 

@@ -1,1 +1,1 @@
-shake_gwas.nf --genewawd /data/users/hcliment/projects/genewa/ --geno data/genesis/genesis.processed --snp2gene data/genesis/snp2hgnc.tsv --tab data/genesis/BIOGRID-ORGANISM-Homo_sapiens-3.4.160.tab.txt --encoding $1 -resume
+shake_gwas.nf --genewawd /data/users/hcliment/projects/genewa/ --geno data/genesis/genesis.processed --snp2gene data/genesis/snp2hgnc.tsv --tab2 data/genesis/BIOGRID-ORGANISM-Homo_sapiens-3.4.160.tab2.hgnc.tsv --encoding $1 -resume

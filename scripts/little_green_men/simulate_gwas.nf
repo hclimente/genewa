@@ -245,14 +245,14 @@ process getSNPs {
 
 }
 
-process getTAB {
+process getTAB2 {
 
   publishDir "$params.out", overwrite: true, mode: "copy"
 
   input:
     file genome_ppi
   output:
-    file "ppi.tab" into ppi
+    file "ppi.tab2" into ppi
 
   """
   #!/usr/bin/env Rscript
@@ -265,13 +265,13 @@ process getTAB {
   genome %>%
     apply(1, function(gene){
       lapply(gene[[5]], function(intx, geneId){
-        data.frame(OFFICIAL_SYMBOL_A = geneId, OFFICIAL_SYMBOL_B = intx)
+        data.frame(`Official Symbol Interactor A` = geneId, `Official Symbol Interactor B` = intx)
         }, gene[[1]]) %>% do.call("rbind", .)
       }) %>% do.call("rbind", .) %>%
     mutate(INTERACTOR_A = "", INTERACTOR_B = "", ALIASES_FOR_A = "",
            ALIASES_FOR_B = "", EXPERIMENTAL_SYSTEM = "", SOURCE = "",
            PUBMED_ID = "", ORGANISM_A_ID = "", ORGANISM_B_ID = "") %>%
-    write_tsv("ppi.tab")
+    write_tsv("ppi.tab2")
 
   """
 

@@ -7,9 +7,9 @@ Create a GS, GM or GI network.
 Usage:
   nextflow martiniflow/io/get_network.nf --gwas gwas.RData --net gs
   nextflow martiniflow/io/get_network.nf --gwas gwas.RData --net gm --snp2gene snp2gene.txt
-  nextflow martiniflow/io/get_network.nf --gwas gwas.RData --net gi --snp2gene snp2gene.txt --tab BIOGRID-ORGANISM-Homo_sapiens-3.4.138.tab.txt
+  nextflow martiniflow/io/get_network.nf --gwas gwas.RData --net gi --snp2gene snp2gene.txt --tab2 BIOGRID-ORGANISM-Homo_sapiens-3.4.138.tab2.txt
 
-(gwas,snp2gene,tab,net) -> (net.Rdata)
+(gwas,snp2gene,tab2,net) -> (net.Rdata)
 
 OUTPUT:
 
@@ -22,7 +22,7 @@ PARAMETERS:
 - Required
   --gwas        Path to a GWAS experiment in a snpMatrix.
   --snp2gene    Path to a file containing snp2gene mapping.
-  --tab         Path to a PPI information table in TAB format.
+  --tab2        Path to a PPI information table in TAB2 format.
   --net         Type of network to generate (gs, gm, gi).
   --prune       Remove SNPs not mapped to a gene in a PPI?
 - Optional
@@ -53,7 +53,7 @@ process getNetwork {
 
   input:
     file rgwas
-    file tab
+    file tab2
     file snp2gene
   output:
     file "net.RData" into rnet
@@ -77,21 +77,21 @@ process getNetwork {
   } else if (netType %in% c('gi', 'gi2', 'ppi')) {
       snp2gene <- read_tsv("$snp2gene") %>%
         rename(snp = SNP, gene = GENE)
-      tab <- read_tsv("$tab") %>%
-        rename(gene1 = OFFICIAL_SYMBOL_A, gene2 = OFFICIAL_SYMBOL_B) %>%
+      tab2 <- read_tsv("$tab2") %>%
+        rename(gene1 = `Official Symbol Interactor A`, gene2 = `Official Symbol Interactor B`) %>%
         select(gene1, gene2)
 
       if (netType == "gi") {
-        net <- get_GI_network(gwas, snpMapping = snp2gene, ppi = tab)
+        net <- get_GI_network(gwas, snpMapping = snp2gene, ppi = tab2)
       } else if (netType == "gi2") {
-        gi <- get_GI_network(gwas, snpMapping = snp2gene, ppi = tab)
+        gi <- get_GI_network(gwas, snpMapping = snp2gene, ppi = tab2)
         gm <- get_GM_network(gwas, snpMapping = snp2gene)
         gs <- get_GS_network(gwas)
 
         net <- gi - gm + gs
         net <- set_edge_attr(net, "weight", value = 1)
       } else if (netType == "ppi") {
-        gi <- get_GI_network(gwas, snpMapping = snp2gene, ppi = tab)
+        gi <- get_GI_network(gwas, snpMapping = snp2gene, ppi = tab2)
         gm <- get_GM_network(gwas, snpMapping = snp2gene)
 
         net <- gi - gm
@@ -99,7 +99,7 @@ process getNetwork {
       }
 
     if ("true" == "$prune") {
-        ppiGenes <- unique(c(tab\$gene1, tab\$gene2))
+        ppiGenes <- unique(c(tab2\$gene1, tab2\$gene2))
         net <- martini:::subnet(net, "gene", ppiGenes)
     }
 

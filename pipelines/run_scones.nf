@@ -8,7 +8,7 @@ model_selection = params.model_selection
 ped = file("${params.gen}.ped")
 map = file("${params.gen}.map")
 gene2snp = file("$params.gene2snp")
-tab = file("$params.tab")
+tab2 = file("$params.tab2")
 
 params.wd = "."
 params.genewawd = "/Users/hclimente/projects/genewa"
@@ -28,14 +28,14 @@ process getSconesFiles {
     file gene2snp
     file ped
     file map
-    file tab
+    file tab2
 
   output:
     file "gi.txt" into gi
     file "phenotype.txt" into phen
 
   """
-  nextflow run $snpNetworkscript -profile bigmem --tab $tab --map $map --snp2gene $gene2snp
+  nextflow run $snpNetworkscript -profile bigmem --tab2 $tab2 --map $map --snp2gene $gene2snp
   nextflow run $getPhenotypesScript -profile cluster --ped $ped
   """
 

@@ -19,7 +19,7 @@ eta_base = params.eta_base
 // network information
 snp2gene = file("$params.snp2gene")
 icogsSnps = file("$params.icogsSnps")
-tab = file("$params.tab")
+tab2 = file("$params.tab2")
 
 process get_phenotypes {
 
@@ -153,12 +153,12 @@ process get_GI {
       set_colnames(c("chr","snp","cm","pos")) %>%
       select(chr,snp,pos)
 
-  ppi <- read_tsv("$tab") %>%
-    select(OFFICIAL_SYMBOL_A,OFFICIAL_SYMBOL_B,ALIASES_FOR_A,ALIASES_FOR_B) %>%
+  ppi <- read_tsv("$tab2") %>%
+    select(`Official Symbol Interactor A`,`Official Symbol Interactor B`,ALIASES_FOR_A,ALIASES_FOR_B) %>%
     # CHECK IF THE NAME IS IN THE ALIASES
-    select(OFFICIAL_SYMBOL_A,OFFICIAL_SYMBOL_B) %>%
-    rename(gene1 = OFFICIAL_SYMBOL_A,
-           gene2 = OFFICIAL_SYMBOL_B) %>%
+    select(`Official Symbol Interactor A`,`Official Symbol Interactor B`) %>%
+    rename(gene1 = `Official Symbol Interactor A`,
+           gene2 = `Official Symbol Interactor B`) %>%
     # remove self-interactions
     filter(gene1 != gene2) %>%
     unique

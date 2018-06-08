@@ -17,7 +17,7 @@ srcQualityMeasures = file("$genewawd/martiniflow/qc/getQualityMeasures.R")
 ped = file("$genewawd/${params.geno}.ped")
 map = file("$genewawd/${params.geno}.map")
 snp2gene = file("$genewawd/$params.snp2gene")
-tab = file("$genewawd/$params.tab")
+tab2 = file("$genewawd/$params.tab2")
 
 // simulation parameters
 params.ngenes = 20
@@ -76,7 +76,7 @@ process getNetwork {
     file "net*.RData" into rnet
 
   """
-  nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab -profile bigmem
+  nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab2 $tab2 -profile bigmem
   """
 
 }
@@ -99,7 +99,7 @@ if (params.rld != "None") {
       file "net*.RData" into rldnet
 
     """
-    nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab --rld $rld -profile bigmem
+    nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab2 $tab2 --rld $rld -profile bigmem
     """
 
   }
@@ -120,7 +120,7 @@ process getGI4Simulations {
     file "net*.RData" into gi
 
   """
-  nextflow run $srcGetNetwork --gwas $rgwas_simulate_net --net gi --snp2gene $snp2gene --tab $tab -profile bigmem
+  nextflow run $srcGetNetwork --gwas $rgwas_simulate_net --net gi --snp2gene $snp2gene --tab2 $tab2 -profile bigmem
   """
 
 }
