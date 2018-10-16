@@ -14,7 +14,7 @@ srcRunEvo = file("$genewawd/martiniflow/analyze/quick_evo.nf")
 ped = file("$genewawd/${params.geno}.ped")
 map = file("$genewawd/${params.geno}.map")
 snp2gene = file("$genewawd/$params.snp2gene")
-tab2 = file("$genewawd/$params.tab2")
+tab = file("$genewawd/$params.tab")
 params.rld = "None"
 
 // evo params
@@ -66,7 +66,7 @@ if (params.rld != "None") {
       file "net*.RData" into rnets
 
     """
-    nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab2 $tab2 --prune $prune --rld $rld -profile bigmem
+    nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab --prune $prune --rld $rld -profile bigmem
     """
 
   }
@@ -86,7 +86,7 @@ if (params.rld != "None") {
             file "net*.RData" into rnets
 
         """
-        nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab2 $tab2 --prune $prune -profile bigmem
+        nextflow run $srcGetNetwork --gwas $rgwas_getNetwork --net $net --snp2gene $snp2gene --tab $tab --prune $prune -profile bigmem
         """
 
     }
