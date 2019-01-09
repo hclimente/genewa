@@ -1,1 +1,0 @@
-shake_gwas.nf --geno data/genesis/genesis.final --snp2gene data/genesis/snp2hgnc.tsv --tab2 data/genesis/BIOGRID-ORGANISM-Homo_sapiens-3.4.160.tab2.hgnc.tsv --genewawd /cbio/donnees/hclimente/projects/genewa --nets gs,gm,gi,gi2 --associationScore chi2 -resume
