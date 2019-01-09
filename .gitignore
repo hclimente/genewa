@@ -1,18 +1,19 @@
-populations/gametes/h*
-populations/gametes/map*
-populations/gametes/models/*
-data/*
-bin/*
-pipelines/*.png.*
+# folders with patient raw data
+results/preprocessing/
+
+# GWAS files
 *.ped
 *.map
-*.gds
-*.net
+*.bed
+*.bim
+*.fam
+*.irem
+
+# software and OS
 .ipynb_checkpoints
-phenotype.txt
 .DS_Store
+.nextflow
 *work*
-*.nextflow*
+*.log*
 *RData
-results/fishy_gi/
 *trace.txt*
