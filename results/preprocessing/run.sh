@@ -11,3 +11,6 @@ plink -bfile out --remove excluded_samples --exclude FGFR2_SNPs_to_exclude.lst -
 
 # run vegas
 run_vegas --bed filtered.bed --bim filtered.bim --fam filtered.fam --genome GRCh37 --vegas_params '\-top 10 -upper 50000 -lower 50000' --covar CT_age_cens_tronq.cov -resume -profile bigmem
+
+# map snps to genes
+snp2gene --bim filtered.bim --genome GRCh37 -profile cluster
