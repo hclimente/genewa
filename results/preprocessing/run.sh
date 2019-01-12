@@ -1,4 +1,4 @@
-impute --ped Genesis.ped --map Genesis.map --reference 1000GP_Phase3 --strand_info strand_info --population EUR -resume -profile bigmem
+impute --ped Genesis.ped --map Genesis.map --genome GRCh37 --reference 1000GP_Phase3 --strand_info strand_info --population EUR -resume -profile bigmem
 
 # exclude 24 samples with bad genotyping
 awk '{print $2,$2}' OFS='\t' Genesis.irem >excluded_samples
@@ -10,4 +10,4 @@ awk '{print $2,$2}' OFS='\t' listNEW_IND_to_suppress.lst >>excluded_samples
 plink -bfile out --remove excluded_samples --exclude FGFR2_SNPs_to_exclude.lst --make-bed --out filtered
 
 # run vegas
-run_vegas --bed filtered.bed --bim filtered.bim --fam filtered.fam --vegas_opts '\-top 10 -upper 50000 -lower 50000' -profile cluster -resume
+run_vegas --bed filtered.bed --bim filtered.bim --fam filtered.fam --genome GRCh37 --vegas_params '\-top 10 -upper 50000 -lower 50000' --covar CT_age_cens_tronq.cov -resume -profile bigmem
