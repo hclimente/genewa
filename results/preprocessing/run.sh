@@ -14,3 +14,6 @@ run_vegas --bed filtered.bed --bim filtered.bim --fam filtered.fam --genome GRCh
 
 # map snps to genes
 snp2gene --bim filtered.bim --genome GRCh37 -profile cluster
+
+# map BIOGRID to HGNC based on Entrez Ids
+./biogrid2hgnc.R
