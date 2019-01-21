@@ -22,3 +22,6 @@ rm scored_genes.X.vegas.txt
 
 # map snps to genes
 snp2gene --bim filtered.bim --genome GRCh37 -profile cluster
+
+# map BIOGRID to HGNC based on Entrez Ids
+./biogrid2hgnc.R
