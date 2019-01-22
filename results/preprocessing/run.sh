@@ -9,7 +9,7 @@ impute --bfile genesis_raw.pos_ok --genome GRCh37 --reference 1000GP_Phase3 --st
 awk '{print $2,$2}' OFS='\t' listNEW_IND_to_suppress.lst >excluded_samples
 
 # exclude samples and and 20 FGFR2 SNPs and baly genotyped
-plink -bfile out --remove excluded_samples --exclude FGFR2_SNPs_to_exclude.lst --geno 0.1 --make-bed --out filtered
+plink -bfile out --remove excluded_samples --exclude FGFR2_SNPs_to_exclude.lst --maf 0.001 --mind 0.10 --geno 0.1 --hwe 0.001 --make-bed --out filtered
 
 # run vegas
 run_vegas --bed filtered.bed --bim filtered.bim --fam filtered.fam --genome GRCh37 --vegas_params '\-top 10 -upper 50000 -lower 50000  -chr 23' --covar CT_age_cens_tronq.cov -resume -profile bigmem
