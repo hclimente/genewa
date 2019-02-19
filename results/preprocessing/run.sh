@@ -5,7 +5,7 @@ plink --bfile genesis_raw --exclude unknown_pos --make-bed --out genesis_raw.pos
 # impute
 impute --bfile genesis_raw.pos_ok --genome GRCh37 --reference 1000GP_Phase3 --strand_info strand_info --population EUR -resume -profile bigmem
 
-# exclude 11 cases (non-familiar, BRCA mutations)
+# exclude 11 cases
 awk '{print $2,$2}' OFS='\t' listNEW_IND_to_suppress.lst >excluded_samples
 
 # exclude samples and and 20 FGFR2 SNPs and baly genotyped
