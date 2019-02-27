@@ -45,7 +45,7 @@ process run_vegas {
         file COVAR from covar
 
     output:
-        file 'scored_genes.vegas.txt' into vegas_split
+        set file(SPLIT), 'scored_genes.vegas.txt' into vegas_split
 
     """
     plink --bfile ${BED.baseName} --keep ${SPLIT} --make-bed --out input
@@ -53,6 +53,8 @@ process run_vegas {
     """
 
 }
+
+vegas_split .into {vegas_sigmod; vegas_lean}
 
 //  BIOMARKER SELECTION
 /////////////////////////////////////
@@ -71,11 +73,47 @@ process run_scones {
         file SNP2GENE from snp2gene
 
     output:
-        set ${SPLIT}, 'cones.tsv' into scones_biomarkers
+        set file(SPLIT), 'snps' into scones_biomarkers
 
     """
     plink --bfile ${BED.baseName} --keep ${SPLIT} --make-bed --out input
     run_scones --bfile input --covar ${COVAR} --network ${NET} --snp2gene ${SNP2GENE} --tab2 ${TAB2} -profile bigmem
+    grep TRUE cones_gs.tsv | cut -f1 >snps
+    """
+
+}
+
+process run_sigmod {
+
+    tag { "${SPLIT}" }
+
+    input:
+        set file(VEGAS), file(SPLIT) from vegas_sigmod
+        file TAB2 from tab2
+
+    output:
+        set file(SPLIT), 'selected_genes.sigmod.txt' into sigmod_biomarkers
+    
+    """
+    wget https://github.com/YuanlongLiu/SigMod/raw/master/SigMod_v2.zip && unzip SigMod_v2.zip
+    run_sigmod --bfile input --sigmod SigMod_v2 --vegas ${VEGAS} --tab2 ${TAB2} -profile bigmem
+    """
+
+}
+
+process run_lean {
+
+    tag { "${SPLIT}" }
+
+    input:
+        set file(VEGAS), file(SPLIT) from vegas_lean
+        file TAB2 from tab2
+
+    output:
+        set file(SPLIT), 'selected_genes.lean.txt' into lean_biomarkers
+    
+    """
+    run_lean --vegas ${VEGAS} --tab2 ${TAB2}
     """
 
 }
