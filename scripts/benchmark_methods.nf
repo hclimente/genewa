@@ -49,7 +49,7 @@ process run_vegas {
 
     """
     plink --bfile ${BED.baseName} --keep ${SPLIT} --make-bed --out input
-    run_vegas --bfile input --genome GRCh37 --covar ${COVAR}
+    run_vegas --bfile input --genome GRCh37 --covar ${COVAR} -profile bigmem
     """
 
 }
@@ -60,7 +60,7 @@ vegas_split .into {vegas_sigmod; vegas_lean}
 /////////////////////////////////////
 process run_scones {
 
-    tag { "${NET} (${SPLIT})" }
+    tag { "${NET}, ${SPLIT}" }
 
     input:
         file BED from bed
@@ -68,7 +68,7 @@ process run_scones {
         file BIM from bim
         file SPLIT from splits_scones
         file COVAR from covar
-        val NET from scones_nets
+        each NET from scones_nets
         file TAB2 from tab2
         file SNP2GENE from snp2gene
 
