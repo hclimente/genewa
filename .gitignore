@@ -8,8 +8,10 @@ results/preprocessing/
 *.bim
 *.fam
 *.irem
+*.cov
 
 # software and OS
+templates
 .ipynb_checkpoints
 .DS_Store
 .nextflow
