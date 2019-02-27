@@ -73,7 +73,7 @@ process run_scones {
         file SNP2GENE from snp2gene
 
     output:
-        set file(SPLIT), 'snps' into scones_biomarkers
+        set val("scones_${NET}"), file(SPLIT), 'snps' into scones_biomarkers
 
     """
     plink --bfile ${BED.baseName} --keep ${SPLIT} --make-bed --out input
@@ -92,11 +92,12 @@ process run_sigmod {
         file TAB2 from tab2
 
     output:
-        set file(SPLIT), 'selected_genes.sigmod.txt' into sigmod_biomarkers
+        set val('sigmod'), file(SPLIT), 'snps' into sigmod_biomarkers
     
     """
     wget https://github.com/YuanlongLiu/SigMod/raw/master/SigMod_v2.zip && unzip SigMod_v2.zip
     run_sigmod --bfile input --sigmod SigMod_v2 --vegas ${VEGAS} --tab2 ${TAB2} -profile bigmem
+    R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("selected_genes.sigmod.txt") %>% inner_join(snp2gene, by = "gene") %>% select(snp) %>% write_tsv("snps")'
     """
 
 }
@@ -108,12 +109,14 @@ process run_lean {
     input:
         set file(VEGAS), file(SPLIT) from vegas_lean
         file TAB2 from tab2
+        file SNP2GENE from snp2gene
 
     output:
-        set file(SPLIT), 'selected_genes.lean.txt' into lean_biomarkers
+        set val('lean'), file(SPLIT), 'snps' into lean_biomarkers
     
     """
     run_lean --vegas ${VEGAS} --tab2 ${TAB2}
+    R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("scored_genes.lean.txt") %>% inner_join(snp2gene, by = c("Gene" = "gene")) %>% select(snp) %>% write_tsv("snps")'
     """
 
 }
