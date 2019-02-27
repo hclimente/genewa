@@ -12,10 +12,10 @@ awk '{print $2,$2}' OFS='\t' listNEW_IND_to_suppress.lst >excluded_samples
 plink -bfile out --remove excluded_samples --exclude FGFR2_SNPs_to_exclude.lst --maf 0.001 --mind 0.10 --geno 0.1 --hwe 0.001 --make-bed --out filtered
 
 # run vegas
-run_vegas --bed filtered.bed --bim filtered.bim --fam filtered.fam --genome GRCh37 --vegas_params '\-top 10 -upper 50000 -lower 50000  -chr 23' --covar CT_age_cens_tronq.cov -resume -profile bigmem
+run_vegas --bfile filtered --genome GRCh37 --vegas_params '\-top 10 -upper 50000 -lower 50000  -chr 23' --covar CT_age_cens_tronq.cov -resume -profile bigmem
 mv scored_genes.vegas.txt scored_genes.X.vegas.txt
 
-run_vegas --bed filtered.bed --bim filtered.bim --fam filtered.fam --genome GRCh37 --vegas_params '\-top 10 -upper 50000 -lower 50000' --covar CT_age_cens_tronq.cov -resume -profile bigmem
+run_vegas --bfile filtered --genome GRCh37 --vegas_params '\-top 10 -upper 50000 -lower 50000' --covar CT_age_cens_tronq.cov -resume -profile bigmem
 tail -n +2 scored_genes.X.vegas.txt >>scored_genes.vegas.txt
 
 rm scored_genes.X.vegas.txt
