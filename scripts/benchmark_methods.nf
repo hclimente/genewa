@@ -49,7 +49,7 @@ process run_vegas {
 
     """
     plink --bfile ${BED.baseName} --keep ${SPLIT} --make-bed --out input
-    run_vegas --bfile input --genome GRCh37 --covar ${COVAR} -profile bigmem
+    run_vegas --bfile input --genome GRCh37 --covar ${COVAR} --vegas_params '\\-top 10 -upper 50000 -lower 50000' -profile bigmem
     """
 
 }
@@ -88,8 +88,9 @@ process run_sigmod {
     tag { "${SPLIT}" }
 
     input:
-        set file(VEGAS), file(SPLIT) from vegas_sigmod
+        set file(SPLIT), file(VEGAS) from vegas_sigmod
         file TAB2 from tab2
+        file SNP2GENE from snp2gene
 
     output:
         set val('sigmod'), file(SPLIT), 'snps' into sigmod_biomarkers
@@ -107,7 +108,7 @@ process run_lean {
     tag { "${SPLIT}" }
 
     input:
-        set file(VEGAS), file(SPLIT) from vegas_lean
+        set file(SPLIT), file(VEGAS) from vegas_lean
         file TAB2 from tab2
         file SNP2GENE from snp2gene
 
@@ -115,7 +116,7 @@ process run_lean {
         set val('lean'), file(SPLIT), 'snps' into lean_biomarkers
     
     """
-    run_lean --vegas ${VEGAS} --tab2 ${TAB2}
+    run_lean --vegas ${VEGAS} --tab2 ${TAB2} -profile cluster
     R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("scored_genes.lean.txt") %>% inner_join(snp2gene, by = c("Gene" = "gene")) %>% select(snp) %>% write_tsv("snps")'
     """
 
