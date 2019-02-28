@@ -123,3 +123,79 @@ process run_lean {
 
 //  RISK COMPUTATION
 /////////////////////////////////////
+biomarkers = scones_biomarkers .mix( sigmod_biomarkers, lean_biomarkers ) 
+
+process build_model {
+
+    input:
+        file BED from bed
+        file FAM from fam
+        file BIM from bim
+        set val(METHOD), file(SPLIT), file(SNPS) from biomarkers
+
+    output:
+        set val(METHOD), file(SPLIT), 'score', 'test.fam', 'test.bim' into predictions
+
+    """
+    plink --bfile ${BED.baseName} --keep ${SPLIT} --extract ${SNPS} --make-bed --out train
+    plink --bfile ${BED.baseName} --remove ${SPLIT} --extract ${SNPS} --make-bed --out test
+
+    plink --bfile train --logistic
+    plink --bfile test --score plink.assoc.logistic 2 4 7 header
+
+    sed 's/^ \\+//' plink.profile | sed 's/ \\+/\\t/g' >score
+
+    ## TODO: compute auc
+    # regularize
+    # see how the coefficients change between OR and normal regression
+    # pick what gets better results
+    """
+
+}
+
+process calculate_auc {
+
+    input:
+        set val(METHOD), file(SPLIT), file(SCORES), file(FAM), file(BIM) from predictions
+
+    output:
+        file 'auc' into auc
+
+    """
+    #!/usr/bin/env Rscript
+
+    library(tidyverse)
+    library(pROC)
+
+    scores <- read_tsv("${SCORES}")\$SCORE
+    phenotype <- read_tsv("${FAM}", col_names = FALSE, delim=' ')\$X6
+
+    tible(method = ${METHOD},
+          n_selected = read_tsv("${BIM}", header = FALSE) %>% nrow,
+          auc = auc(scores, phenotype)) %>%
+        write_tsv('auc')
+    """
+
+}
+
+process join_analyses {
+
+    publishDir "$params.out", overwrite: true, mode: "copy"
+
+    input:
+        file "auc*" from auc. collect()
+
+    output:
+        file "prediction.tsv"
+
+    """
+    #!/usr/bin/env Rscript
+
+    library(tidyverse)
+
+    lapply(list.files('auc*'), write_tsv) %>% 
+        do.call(rbind, .) %>%
+        write_tsv('prediction.tsv')
+    """
+
+}
