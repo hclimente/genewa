@@ -78,7 +78,7 @@ process run_scones {
     """
     plink --bfile ${BED.baseName} --keep ${SPLIT} --make-bed --out input
     run_scones --bfile input --covar ${COVAR} --network ${NET} --snp2gene ${SNP2GENE} --tab2 ${TAB2} -profile bigmem
-    grep TRUE cones_gs.tsv | cut -f1 >snps
+    grep TRUE cones.tsv | cut -f1 >snps
     """
 
 }
@@ -128,6 +128,9 @@ biomarkers = scones_biomarkers .mix( sigmod_biomarkers, lean_biomarkers )
 
 process build_model {
 
+    errorStrategy 'ignore'
+    tag { "${METHOD}, ${SPLIT}" }
+
     input:
         file BED from bed
         file FAM from fam
@@ -156,6 +159,8 @@ process build_model {
 
 process calculate_auc {
 
+    tag { "${METHOD}, ${SPLIT}" }
+
     input:
         set val(METHOD), file(SPLIT), file(SCORES), file(FAM), file(BIM) from predictions
 
@@ -169,10 +174,10 @@ process calculate_auc {
     library(pROC)
 
     scores <- read_tsv("${SCORES}")\$SCORE
-    phenotype <- read_tsv("${FAM}", col_names = FALSE, delim=' ')\$X6
+    phenotype <- read_delim("${FAM}", col_names = FALSE, delim=' ')\$X6
 
-    tible(method = ${METHOD},
-          n_selected = read_tsv("${BIM}", header = FALSE) %>% nrow,
+    tibble(method = "${METHOD}",
+          n_selected = read_delim("${BIM}", col_names = FALSE, delim=' ') %>% nrow,
           auc = auc(scores, phenotype)) %>%
         write_tsv('auc')
     """
@@ -194,8 +199,9 @@ process join_analyses {
 
     library(tidyverse)
 
-    lapply(list.files('auc*'), write_tsv) %>% 
+    lapply(list.files(pattern = 'auc*'), read_tsv, col_types = 'cdd') %>% 
         do.call(rbind, .) %>%
+        as.tibble %>%
         write_tsv('prediction.tsv')
     """
 
