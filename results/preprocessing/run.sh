@@ -1,9 +1,13 @@
 # remove snps with unknown positions
 awk '$4 == -1 {print $2}' genesis_raw.bim >unknown_pos
-plink --bfile genesis_raw --exclude unknown_pos --make-bed --out genesis_raw.pos_ok
+plink --bfile genesis_raw --exclude unknown_pos --make-bed --out genesis_raw_pos_ok
+
+# perform ld pruning
+plink -bfile genesis_raw_pos_ok -indep-pairwise 50 5 0.75 -out pruned
+plink -bfile genesis_raw_pos_ok -extract pruned.prune.in -make-bed -out genesis_raw_pos_ok_LD0.75
 
 # impute
-impute --bfile genesis_raw.pos_ok --genome GRCh37 --reference 1000GP_Phase3 --strand_info strand_info --population EUR -resume -profile bigmem
+impute --bfile genesis_raw_pos_ok --genome GRCh37 --reference 1000GP_Phase3 --strand_info strand_info --population EUR -resume -profile bigmem
 
 # exclude 11 cases
 awk '{print $2,$2}' OFS='\t' listNEW_IND_to_suppress.lst >excluded_samples
