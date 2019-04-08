@@ -13,4 +13,4 @@ biogrid <- read_tsv("BIOGRID-MV-Physical-3.5.171.tab2.txt") %>%
 	mutate(`Official Symbol Interactor A` = symbol.x, 
 		   `Official Symbol Interactor B` = symbol.y) %>%
 	select(-symbol.x, -symbol.y) %>%
-	write_tsv('BIOGRID-MV-Physical-3.5.168.tab2.hgnc.tsv')
+	write_tsv('BIOGRID-MV-Physical-3.5.171.tab2.hgnc.tsv')
