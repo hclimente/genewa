@@ -126,7 +126,7 @@ process run_lean {
 /////////////////////////////////////
 biomarkers = scones_biomarkers .mix( sigmod_biomarkers, lean_biomarkers ) 
 
-process build_model {
+process benchmark {
 
     errorStrategy 'ignore'
     tag { "${METHOD}, ${SPLIT}" }
@@ -135,50 +135,37 @@ process build_model {
         file BED from bed
         file FAM from fam
         file BIM from bim
+        file COVAR from covar
         set val(METHOD), file(SPLIT), file(SNPS) from biomarkers
-
-    output:
-        set val(METHOD), file(SPLIT), 'score', 'test.fam', 'test.bim' into predictions
-
-    """
-    plink --bfile ${BED.baseName} --keep ${SPLIT} --extract ${SNPS} --make-bed --out train
-    plink --bfile ${BED.baseName} --remove ${SPLIT} --extract ${SNPS} --make-bed --out test
-
-    plink --bfile train --logistic
-    plink --bfile test --score plink.assoc.logistic 2 4 7 header
-
-    sed 's/^ \\+//' plink.profile | sed 's/ \\+/\\t/g' >score
-
-    ## TODO: compute auc
-    # regularize
-    # see how the coefficients change between OR and normal regression
-    # pick what gets better results
-    """
-
-}
-
-process calculate_auc {
-
-    tag { "${METHOD}, ${SPLIT}" }
-
-    input:
-        set val(METHOD), file(SPLIT), file(SCORES), file(FAM), file(BIM) from predictions
 
     output:
         file 'auc' into auc
 
     """
     #!/usr/bin/env Rscript
-
+    library(biglasso)
+    library(snpStats)
     library(tidyverse)
     library(pROC)
 
-    scores <- read_tsv("${SCORES}")\$SCORE
-    phenotype <- read_delim("${FAM}", col_names = FALSE, delim=' ')\$X6
+    ## read train and selected
+
+    gwas <- read.plink("${BED}", "${BIM}", "${FAM}")
+    X <- as(gwas[['genotypes']], 'numeric') %>% as.big.matrix
+    y <- gwas[['fam']][['phenotype']]
+
+    X_train <- X[gwas[['fam']][['phenotype']] %in% train,]
+    y_train <- y[gwas[['fam']][['phenotype']] %in% train]
+    cvfit <- cv.biglasso(X_train, y_train, penalty = 'lasso', family = "binomial")
+
+    X_test <- X[gwas[['fam']][['phenotype']] %in% test,]
+    y_train <- y[gwas[['fam']][['phenotype']] %in% test]
+    y_pred <- predict(cvfit, X_test)
 
     tibble(method = "${METHOD}",
-          n_selected = read_delim("${BIM}", col_names = FALSE, delim=' ') %>% nrow,
-          auc = auc(scores, phenotype)) %>%
+           n_selected = read_delim("${BIM}", col_names = FALSE, delim=' ') %>% nrow,
+           n_active_set = sum(cvfit\$fit\$beta[,cvfit\$lambda == cvfit\$lambda.min][-1] != 0),
+           auc = auc(y_pred, y_train)) %>%
         write_tsv('auc')
     """
 
@@ -199,7 +186,7 @@ process join_analyses {
 
     library(tidyverse)
 
-    lapply(list.files(pattern = 'auc*'), read_tsv, col_types = 'cdd') %>% 
+    lapply(list.files(pattern = 'auc*'), read_tsv, col_types = 'ciid') %>% 
         do.call(rbind, .) %>%
         as.tibble %>%
         write_tsv('prediction.tsv')
