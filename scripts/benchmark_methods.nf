@@ -130,6 +130,7 @@ process benchmark {
 
     errorStrategy 'ignore'
     tag { "${METHOD}, ${SPLIT}" }
+    clusterOptions = '-l mem=20G'
 
     input:
         file BED from bed
