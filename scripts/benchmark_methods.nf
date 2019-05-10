@@ -149,22 +149,32 @@ process benchmark {
     library(tidyverse)
     library(pROC)
 
-    ## read train and selected
-
+    # read dataset
     gwas <- read.plink("${BED}", "${BIM}", "${FAM}")
     X <- as(gwas[['genotypes']], 'numeric') %>% as.big.matrix
     y <- gwas[['fam']][['phenotype']]
 
-    X_train <- X[gwas[['fam']][['phenotype']] %in% train,]
-    y_train <- y[gwas[['fam']][['phenotype']] %in% train]
+    # read selected and splits
+    selected <- read_tsv('${SNPS}', col_names = FALSE)\$X1
+    train <- read_delim('${SPLIT}', delim = ' ', col_names = FALSE)$X1
+    test <- setdiff(gwas[['fam']][['pedigree']], train)
+
+    X_train <- X[train, selected]
+    X_test <- X[test, selected]
+    y_train <- y[train]
+    y_train <- y[test]
+    rm(gwas, X, y)
+
+    # train and evaluate classifier
     cvfit <- cv.biglasso(X_train, y_train, penalty = 'lasso', family = "binomial")
+    y_pred <- predict(cvfit, X_test)
 
     X_test <- X[gwas[['fam']][['phenotype']] %in% test,]
     y_train <- y[gwas[['fam']][['phenotype']] %in% test]
     y_pred <- predict(cvfit, X_test)
 
     tibble(method = "${METHOD}",
-           n_selected = read_delim("${BIM}", col_names = FALSE, delim=' ') %>% nrow,
+           n_selected = length(snps),
            n_active_set = sum(cvfit\$fit\$beta[,cvfit\$lambda == cvfit\$lambda.min][-1] != 0),
            auc = auc(y_pred, y_train)) %>%
         write_tsv('auc')
