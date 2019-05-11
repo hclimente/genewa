@@ -54,7 +54,7 @@ process run_vegas {
 
 }
 
-vegas_split .into {vegas_sigmod; vegas_lean}
+vegas_split .into {vegas_sigmod; vegas_lean; vegas_heinz}
 
 //  BIOMARKER SELECTION
 /////////////////////////////////////
@@ -122,9 +122,54 @@ process run_lean {
 
 }
 
+process run_heinz {
+
+    tag { "${SPLIT}" }
+
+    input:
+        set file(SPLIT), file(VEGAS) from vegas_heinz
+        file TAB2 from tab2
+        file SNP2GENE from snp2gene
+
+    output:
+        set val('heinz'), file(SPLIT), 'snps' into heinz_biomarkers
+
+    """
+    #!/usr/bin/env Rscript
+
+    library(tidyverse)
+    library(igraph)
+    library(BioNet)
+
+    # search subnetworks
+    vegas <- read_tsv('${VEGAS}') %>% 
+        select(Gene, Pvalue) %>%
+        mutate(score = ifelse(Pvalue == 1, 0.99999, Pvalue))
+    scores <- vegas\$score
+    names(scores) <- vegas\$Gene
+
+    net <- read_tsv("${TAB2}") %>%
+        rename(gene1 = `Official Symbol Interactor A`, 
+               gene2 = `Official Symbol Interactor B`) %>%
+        select(gene1, gene2) %>%
+        graph_from_data_frame(directed = FALSE)
+
+    selected <- runFastHeinz(net, score)
+    
+    # map selected genes to snps
+    snp2gene <- read_tsv("${SNP2GENE}")
+    tibble(gene = names(V(selected))) %>% 
+        inner_join(snp2gene, by = 'gene') %>% 
+        select(snp) %>% 
+        write_tsv("snps")
+    """
+
+
+}
+
 //  RISK COMPUTATION
 /////////////////////////////////////
-biomarkers = scones_biomarkers .mix( sigmod_biomarkers, lean_biomarkers ) 
+biomarkers = scones_biomarkers .mix( sigmod_biomarkers, lean_biomarkers, heinz_biomarkers ) 
 
 process benchmark {
 
@@ -168,9 +213,6 @@ process benchmark {
     cvfit <- cv.biglasso(X_train, y_train, penalty = 'lasso', family = "binomial")
     y_pred <- predict(cvfit, X_test)
 
-    X_test <- X[gwas[['fam']][['phenotype']] %in% test,]
-    y_train <- y[gwas[['fam']][['phenotype']] %in% test]
-    y_pred <- predict(cvfit, X_test)
 
     tibble(method = "${METHOD}",
            n_selected = length(snps),
