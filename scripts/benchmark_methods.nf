@@ -144,7 +144,7 @@ process run_heinz {
     # search subnetworks
     vegas <- read_tsv('${VEGAS}') %>% 
         select(Gene, Pvalue) %>%
-        mutate(score = ifelse(Pvalue == 1, 0.99999, Pvalue))
+        mutate(score = qnorm(1 - (Pvalue/2)))
     scores <- vegas\$score
     names(scores) <- vegas\$Gene
 
