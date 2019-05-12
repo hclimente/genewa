@@ -185,41 +185,43 @@ process benchmark {
         set val(METHOD), file(SPLIT), file(SNPS) from biomarkers
 
     output:
-        file 'auc' into auc
+        file 'bm' into bm
 
     """
     #!/usr/bin/env Rscript
     library(biglasso)
     library(snpStats)
     library(tidyverse)
-    library(pROC)
+    library(caret)
 
     # read dataset
     gwas <- read.plink("${BED}", "${BIM}", "${FAM}")
-    X <- as(gwas[['genotypes']], 'numeric') %>% as.big.matrix
-    y <- gwas[['fam']][['phenotype']]
+    covars <- read_tsv('${COVARS}') %>% select(AGE) %>% as.matrix()
+    X <- as(gwas[['genotypes']], 'numeric')
+    y <- gwas[['fam']][['affected']] - 1
+    names(y) <- gwas[['fam']][['member']]
 
     # read selected and splits
-    selected <- read_tsv('${SNPS}', col_names = FALSE)\$X1
-    train <- read_delim('${SPLIT}', delim = ' ', col_names = FALSE)$X1
+    selected <- read_tsv('${SNPS}', col_types = 'c')\$snp
+    train <- read_delim('${SPLIT}', delim = ' ', col_names = FALSE, col_types = 'cc')\$X1
     test <- setdiff(gwas[['fam']][['pedigree']], train)
 
-    X_train <- X[train, selected]
-    X_test <- X[test, selected]
+    X_train <- X[train, selected] %>% cbind(covars) %>% as.big.matrix
+    X_test <- X[test, selected] %>% cbind(covars) %>% as.big.matrix
     y_train <- y[train]
-    y_train <- y[test]
+    y_test <- y[test]
     rm(gwas, X, y)
 
     # train and evaluate classifier
     cvfit <- cv.biglasso(X_train, y_train, penalty = 'lasso', family = "binomial")
-    y_pred <- predict(cvfit, X_test)
-
+    y_pred <- predict(cvfit, X_test, type = "class") %>% as.numeric
 
     tibble(method = "${METHOD}",
-           n_selected = length(snps),
+           n_selected = length(selected),
            n_active_set = sum(cvfit\$fit\$beta[,cvfit\$lambda == cvfit\$lambda.min][-1] != 0),
-           auc = auc(y_pred, y_train)) %>%
-        write_tsv('auc')
+           sensitivity = sensitivity(y_pred, y_test),
+           specificity = specificity(y_pred, y_test)) %>%
+        write_tsv('bm')
     """
 
 }
@@ -229,7 +231,7 @@ process join_analyses {
     publishDir "$params.out", overwrite: true, mode: "copy"
 
     input:
-        file "auc*" from auc. collect()
+        file "bm*" from bm. collect()
 
     output:
         file "prediction.tsv"
@@ -239,7 +241,7 @@ process join_analyses {
 
     library(tidyverse)
 
-    lapply(list.files(pattern = 'auc*'), read_tsv, col_types = 'ciid') %>% 
+    lapply(list.files(pattern = 'bm*'), read_tsv, col_types = 'ciid') %>% 
         do.call(rbind, .) %>%
         as.tibble %>%
         write_tsv('prediction.tsv')
