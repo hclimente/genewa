@@ -229,12 +229,12 @@ process benchmark {
     X_train <- X[train, selected] %>% cbind(covars) %>% as.big.matrix
     X_test <- X[test, selected] %>% cbind(covars) %>% as.big.matrix
     y_train <- y[train]
-    y_test <- y[test]
+    y_test <- y[test] %>% as.factor
     rm(gwas, X, y)
 
     # train and evaluate classifier
     cvfit <- cv.biglasso(X_train, y_train, penalty = 'lasso', family = "binomial")
-    y_pred <- predict(cvfit, X_test, type = "class") %>% as.numeric
+    y_pred <- predict(cvfit, X_test, type = "class") %>% as.numeric %>% as.factor
 
     tibble(method = "${METHOD}",
            n_selected = length(selected),
