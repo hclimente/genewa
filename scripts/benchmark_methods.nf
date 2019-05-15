@@ -78,7 +78,8 @@ process run_scones {
     """
     plink --bfile ${BED.baseName} --keep ${SPLIT} --make-bed --out input
     run_scones --bfile input --covar ${COVAR} --network ${NET} --snp2gene ${SNP2GENE} --tab2 ${TAB2} -profile bigmem
-    grep TRUE cones.tsv | cut -f1 >snps
+    echo snp >snps
+    grep TRUE cones.tsv | cut -f1 >>snps
     """
 
 }
@@ -151,10 +152,11 @@ process run_heinz {
     net <- read_tsv("${TAB2}") %>%
         rename(gene1 = `Official Symbol Interactor A`, 
                gene2 = `Official Symbol Interactor B`) %>%
+        filter(gene1 %in% names(scores) & gene2 %in% names(scores)) %>%
         select(gene1, gene2) %>%
         graph_from_data_frame(directed = FALSE)
 
-    selected <- runFastHeinz(net, score)
+    selected <- runFastHeinz(net, scores)
     
     # map selected genes to snps
     snp2gene <- read_tsv("${SNP2GENE}")
@@ -171,7 +173,7 @@ process run_heinz {
 /////////////////////////////////////
 biomarkers = scones_biomarkers .mix( sigmod_biomarkers, lean_biomarkers, heinz_biomarkers ) 
 
-process benchmark {
+process lasso {
 
     errorStrategy 'ignore'
     tag { "${METHOD}, ${SPLIT}" }
@@ -196,7 +198,9 @@ process benchmark {
 
     # read dataset
     gwas <- read.plink("${BED}", "${BIM}", "${FAM}")
-    covars <- read_tsv('${COVARS}') %>% select(AGE) %>% as.matrix()
+    covars_df <- read_tsv('${COVAR}')
+    covars <- select(covars_df, AGE) %>% as.matrix()
+    rownames(covars) <- covars_df\$IID
     X <- as(gwas[['genotypes']], 'numeric')
     y <- gwas[['fam']][['affected']] - 1
     names(y) <- gwas[['fam']][['member']]
@@ -206,8 +210,8 @@ process benchmark {
     train <- read_delim('${SPLIT}', delim = ' ', col_names = FALSE, col_types = 'cc')\$X1
     test <- setdiff(gwas[['fam']][['pedigree']], train)
 
-    X_train <- X[train, selected] %>% cbind(covars) %>% as.big.matrix
-    X_test <- X[test, selected] %>% cbind(covars) %>% as.big.matrix
+    X_train <- X[train, selected] %>% cbind(covars[train,]) %>% as.big.matrix
+    X_test <- X[test, selected] %>% cbind(covars[test,]) %>% as.big.matrix
     y_train <- y[train]
     y_test <- y[test]
     rm(gwas, X, y)
