@@ -35,7 +35,7 @@ process make_splits {
 
 splits .into {splits_vegas; splits_scones}
 
-process run_vegas {
+process vegas {
 
     input:
         file BED from bed
@@ -45,7 +45,7 @@ process run_vegas {
         file COVAR from covar
 
     output:
-        set file(SPLIT), 'scored_genes.vegas.txt' into vegas_split
+        set file(SPLIT), 'scored_genes.vegas.txt' into vegas
 
     """
     plink --bfile ${BED.baseName} --keep ${SPLIT} --make-bed --out input
@@ -54,11 +54,11 @@ process run_vegas {
 
 }
 
-vegas_split .into {vegas_sigmod; vegas_lean; vegas_heinz}
+vegas .into {vegas_sigmod; vegas_lean; vegas_heinz; vegas_hotnet}
 
 //  BIOMARKER SELECTION
 /////////////////////////////////////
-process run_scones {
+process scones {
 
     tag { "${NET}, ${SPLIT}" }
 
@@ -84,7 +84,7 @@ process run_scones {
 
 }
 
-process run_sigmod {
+process sigmod {
 
     tag { "${SPLIT}" }
 
@@ -104,7 +104,7 @@ process run_sigmod {
 
 }
 
-process run_lean {
+process lean {
 
     tag { "${SPLIT}" }
 
@@ -123,7 +123,7 @@ process run_lean {
 
 }
 
-process run_heinz {
+process heinz {
 
     tag { "${SPLIT}" }
 
@@ -169,9 +169,29 @@ process run_heinz {
 
 }
 
+process hotnet {
+
+    tag { "${SPLIT}" }
+
+    input:
+        set file(SPLIT), file(VEGAS) from vegas_hotnet
+        file TAB2 from tab2
+        file SNP2GENE from snp2gene
+
+    output:
+        set val('hotnet'), file(SPLIT), 'snps' into hotnet_biomarkers
+    
+    """
+    git clone https://github.com/raphael-group/hierarchical-hotnet.git
+    run_hhotnet --scores ${VEGAS} --tab2 ${TAB2} --hhnet_path hierarchical-hotnet -profile bigmem
+    R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("selected_genes.sigmod.txt") %>% inner_join(snp2gene, by = "gene") %>% select(snp) %>% write_tsv("snps")'
+    """
+
+}
+
 //  RISK COMPUTATION
 /////////////////////////////////////
-biomarkers = scones_biomarkers .mix( sigmod_biomarkers, lean_biomarkers, heinz_biomarkers ) 
+biomarkers = scones_biomarkers .mix( sigmod_biomarkers, lean_biomarkers, heinz_biomarkers, hotnet_biomarkers ) 
 
 process lasso {
 
@@ -213,12 +233,12 @@ process lasso {
     X_train <- X[train, selected] %>% cbind(covars[train,]) %>% as.big.matrix
     X_test <- X[test, selected] %>% cbind(covars[test,]) %>% as.big.matrix
     y_train <- y[train]
-    y_test <- y[test]
+    y_test <- y[test] %>% as.factor
     rm(gwas, X, y)
 
     # train and evaluate classifier
     cvfit <- cv.biglasso(X_train, y_train, penalty = 'lasso', family = "binomial")
-    y_pred <- predict(cvfit, X_test, type = "class") %>% as.numeric
+    y_pred <- predict(cvfit, X_test, type = "class") %>% as.numeric %>% as.factor
 
     tibble(method = "${METHOD}",
            n_selected = length(selected),
