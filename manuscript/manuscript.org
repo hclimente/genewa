@@ -1,5 +1,5 @@
 #+TITLE: Network-based GWAS on familial breast cancer: method comparison and new biomarkers
-#+AUTHOR: H\'ector Climente-Gonz\'alez, Christine Lonjou, Chlo\'e-Agathe Azencott
+#+AUTHOR: Héctor Climente-González, Christine Lonjou, Chloé-Agathe Azencott
 
 * TODO Introduction
 
@@ -143,4 +143,4 @@ to reproduce all the analyses in this article is available at https://github.com
 * TODO Discussion
 
 bibliographystyle:ieeetr
-biliography:bibliography.bib
+bibliography:bibliography.bib
