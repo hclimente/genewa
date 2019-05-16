@@ -35,7 +35,7 @@ process make_splits {
 
 splits .into {splits_vegas; splits_scones}
 
-process run_vegas {
+process vegas {
 
     input:
         file BED from bed
@@ -45,7 +45,7 @@ process run_vegas {
         file COVAR from covar
 
     output:
-        set file(SPLIT), 'scored_genes.vegas.txt' into vegas_split
+        set file(SPLIT), 'scored_genes.vegas.txt' into vegas
 
     """
     plink --bfile ${BED.baseName} --keep ${SPLIT} --make-bed --out input
@@ -54,11 +54,11 @@ process run_vegas {
 
 }
 
-vegas_split .into {vegas_sigmod; vegas_lean}
+vegas .into {vegas_sigmod; vegas_lean; vegas_heinz; vegas_hotnet}
 
 //  BIOMARKER SELECTION
 /////////////////////////////////////
-process run_scones {
+process scones {
 
     tag { "${NET}, ${SPLIT}" }
 
@@ -78,12 +78,13 @@ process run_scones {
     """
     plink --bfile ${BED.baseName} --keep ${SPLIT} --make-bed --out input
     run_scones --bfile input --covar ${COVAR} --network ${NET} --snp2gene ${SNP2GENE} --tab2 ${TAB2} -profile bigmem
-    grep TRUE cones.tsv | cut -f1 >snps
+    echo snp >snps
+    grep TRUE cones.tsv | cut -f1 >>snps
     """
 
 }
 
-process run_sigmod {
+process sigmod {
 
     tag { "${SPLIT}" }
 
@@ -103,7 +104,7 @@ process run_sigmod {
 
 }
 
-process run_lean {
+process lean {
 
     tag { "${SPLIT}" }
 
@@ -122,14 +123,81 @@ process run_lean {
 
 }
 
+process heinz {
+
+    tag { "${SPLIT}" }
+
+    input:
+        set file(SPLIT), file(VEGAS) from vegas_heinz
+        file TAB2 from tab2
+        file SNP2GENE from snp2gene
+
+    output:
+        set val('heinz'), file(SPLIT), 'snps' into heinz_biomarkers
+
+    """
+    #!/usr/bin/env Rscript
+
+    library(tidyverse)
+    library(igraph)
+    library(BioNet)
+
+    # search subnetworks
+    vegas <- read_tsv('${VEGAS}') %>% 
+        select(Gene, Pvalue) %>%
+        mutate(score = qnorm(1 - (Pvalue/2)))
+    scores <- vegas\$score
+    names(scores) <- vegas\$Gene
+
+    net <- read_tsv("${TAB2}") %>%
+        rename(gene1 = `Official Symbol Interactor A`, 
+               gene2 = `Official Symbol Interactor B`) %>%
+        filter(gene1 %in% names(scores) & gene2 %in% names(scores)) %>%
+        select(gene1, gene2) %>%
+        graph_from_data_frame(directed = FALSE)
+
+    selected <- runFastHeinz(net, scores)
+    
+    # map selected genes to snps
+    snp2gene <- read_tsv("${SNP2GENE}")
+    tibble(gene = names(V(selected))) %>% 
+        inner_join(snp2gene, by = 'gene') %>% 
+        select(snp) %>% 
+        write_tsv("snps")
+    """
+
+
+}
+
+process hotnet {
+
+    tag { "${SPLIT}" }
+
+    input:
+        set file(SPLIT), file(VEGAS) from vegas_hotnet
+        file TAB2 from tab2
+        file SNP2GENE from snp2gene
+
+    output:
+        set val('hotnet'), file(SPLIT), 'snps' into hotnet_biomarkers
+    
+    """
+    git clone https://github.com/raphael-group/hierarchical-hotnet.git
+    run_hhotnet --scores ${VEGAS} --tab2 ${TAB2} --hhnet_path hierarchical-hotnet -profile bigmem
+    R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("selected_genes.sigmod.txt") %>% inner_join(snp2gene, by = "gene") %>% select(snp) %>% write_tsv("snps")'
+    """
+
+}
+
 //  RISK COMPUTATION
 /////////////////////////////////////
-biomarkers = scones_biomarkers .mix( sigmod_biomarkers, lean_biomarkers ) 
+biomarkers = scones_biomarkers .mix( sigmod_biomarkers, lean_biomarkers, heinz_biomarkers, hotnet_biomarkers ) 
 
-process benchmark {
+process lasso {
 
     errorStrategy 'ignore'
     tag { "${METHOD}, ${SPLIT}" }
+    clusterOptions = '-l mem=20G'
 
     input:
         file BED from bed
@@ -139,34 +207,45 @@ process benchmark {
         set val(METHOD), file(SPLIT), file(SNPS) from biomarkers
 
     output:
-        file 'auc' into auc
+        file 'bm' into bm
 
     """
     #!/usr/bin/env Rscript
     library(biglasso)
     library(snpStats)
     library(tidyverse)
-    library(pROC)
+    library(caret)
 
-    ## read train and selected
-
+    # read dataset
     gwas <- read.plink("${BED}", "${BIM}", "${FAM}")
-    X <- as(gwas[['genotypes']], 'numeric') %>% as.big.matrix
-    y <- gwas[['fam']][['phenotype']]
+    covars_df <- read_tsv('${COVAR}')
+    covars <- select(covars_df, AGE) %>% as.matrix()
+    rownames(covars) <- covars_df\$IID
+    X <- as(gwas[['genotypes']], 'numeric')
+    y <- gwas[['fam']][['affected']] - 1
+    names(y) <- gwas[['fam']][['member']]
 
-    X_train <- X[gwas[['fam']][['phenotype']] %in% train,]
-    y_train <- y[gwas[['fam']][['phenotype']] %in% train]
+    # read selected and splits
+    selected <- read_tsv('${SNPS}', col_types = 'c')\$snp
+    train <- read_delim('${SPLIT}', delim = ' ', col_names = FALSE, col_types = 'cc')\$X1
+    test <- setdiff(gwas[['fam']][['pedigree']], train)
+
+    X_train <- X[train, selected] %>% cbind(covars[train,]) %>% as.big.matrix
+    X_test <- X[test, selected] %>% cbind(covars[test,]) %>% as.big.matrix
+    y_train <- y[train]
+    y_test <- y[test] %>% as.factor
+    rm(gwas, X, y)
+
+    # train and evaluate classifier
     cvfit <- cv.biglasso(X_train, y_train, penalty = 'lasso', family = "binomial")
-
-    X_test <- X[gwas[['fam']][['phenotype']] %in% test,]
-    y_train <- y[gwas[['fam']][['phenotype']] %in% test]
-    y_pred <- predict(cvfit, X_test)
+    y_pred <- predict(cvfit, X_test, type = "class") %>% as.numeric %>% as.factor
 
     tibble(method = "${METHOD}",
-           n_selected = read_delim("${BIM}", col_names = FALSE, delim=' ') %>% nrow,
+           n_selected = length(selected),
            n_active_set = sum(cvfit\$fit\$beta[,cvfit\$lambda == cvfit\$lambda.min][-1] != 0),
-           auc = auc(y_pred, y_train)) %>%
-        write_tsv('auc')
+           sensitivity = sensitivity(y_pred, y_test),
+           specificity = specificity(y_pred, y_test)) %>%
+        write_tsv('bm')
     """
 
 }
@@ -176,7 +255,7 @@ process join_analyses {
     publishDir "$params.out", overwrite: true, mode: "copy"
 
     input:
-        file "auc*" from auc. collect()
+        file "bm*" from bm. collect()
 
     output:
         file "prediction.tsv"
@@ -186,7 +265,7 @@ process join_analyses {
 
     library(tidyverse)
 
-    lapply(list.files(pattern = 'auc*'), read_tsv, col_types = 'ciid') %>% 
+    lapply(list.files(pattern = 'bm*'), read_tsv, col_types = 'ciid') %>% 
         do.call(rbind, .) %>%
         as.tibble %>%
         write_tsv('prediction.tsv')
