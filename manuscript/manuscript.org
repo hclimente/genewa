@@ -1,5 +1,6 @@
 #+TITLE: Network-based GWAS on familial breast cancer: method comparison and new biomarkers
 #+AUTHOR: Héctor Climente-González, Christine Lonjou, Chloé-Agathe Azencott
+#+OPTIONS: toc:nil num:nil
 
 * TODO Introduction
 
@@ -43,10 +44,10 @@ We imputed missing genotypes using IMPUTE2 cite:howie_flexible_2009. The referen
 genotypes from the 1000 Genomes Project Phase 3
 cite:the_1000_genomes_project_consortium_global_2015. We selected 503 samples, the
 number of samples of European origin in the reference panel. After imputation, we discarded
-SNPs with a minor allele frequency lower than 0.1\%, not in Hardy - Weinberg
+SNPs with a minor allele frequency lower than 0.1%, not in Hardy - Weinberg
 equilibrium (P-value \textless 0.001), and/or those with missing values on more
-than 10\% of the samples. In addition, we removed the samples with more than
-10\% missing genotypes. The final dataset included 1\,279 controls and 1\,298
+than 10% of the samples. In addition, we removed the samples with more than
+10% missing genotypes. The final dataset included 1\,279 controls and 1\,298
 cases, genotyped over 128\,595 SNPs. Following the suggested protocol in ??, we
 LD pruned the dataset with $R^2$ 0.75.
 
@@ -80,10 +81,9 @@ Mathematical notation used.
 
 - Heinz :: cite:dittrich_identifying_2008
 - Hierarchichal HotNet :: cite:reyna_hierarchical_2018
-- jActiveModules
+- jActiveModules ::
 - LEAN :: cite:gwinner_network-based_2016
-- SConES :: SConES searches the minimal, maximally interconnected,
-maximally associated subnetwork in a SNP graph cite:azencott_efficient_2013.
+- SConES :: SConES searches the minimal, maximally interconnected, maximally associated subnetwork in a SNP graph cite:azencott_efficient_2013.
 Specifically, it solves the following problem:
 
 \begin{equation}
@@ -96,7 +96,7 @@ interconnecting all the SNPs mapped to the same gene, on top of GS (GM); and
 interconnecting all SNPs mapped to two genes for which a protein-protein
 interaction exists (GI). 
 
-- SigMod
+- SigMod ::
 
 ** Validation of selected biomarkers
 
@@ -106,8 +106,8 @@ To evaluate the quality of the SNPs selected by the different methods, we used
 the performance of a classifier trained exclusively on those SNPs. The
 underlying assumption is that SNPs that are good biomarkers will be good
 predictiors of the phenotype of unseen samples. To that end, we followed a
-5-fold cross-validation schema, where over 5 iterations 80\% of the data is used
-to select SNPs and train the classifier, and 20\% is used to compute and
+5-fold cross-validation schema, where over 5 iterations 80% of the data is used
+to select SNPs and train the classifier, and 20% is used to compute and
 evaluate the predictions.
 
 Specifically we fitted an L1-penalized logistic regression over the age and the
