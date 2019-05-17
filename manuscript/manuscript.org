@@ -1,0 +1,146 @@
+#+TITLE: Network-based GWAS on familial breast cancer: method comparison and new biomarkers
+#+AUTHOR: Héctor Climente-González, Christine Lonjou, Chloé-Agathe Azencott
+#+OPTIONS: toc:nil num:nil
+
+* TODO Introduction
+
+Definition of GWAS.
+
+High-dimensionality and lack of interpretability.
+
+Omnigenic model and widespread pleiotropy.
+
+Network methods to handle both problems.
+
+Classification of network methods.
+
+Contribution of this paper.
+
+* Methods
+
+** GENESIS
+
+GENESIS is a GWAS study of familial breast cancer on the French population. The
+index cases are patients with a breast cancer affected sister and no BRCA1/2
+mutations cite:sinilnikova_genesis:_2016. The controls are unaffected
+colleagues and/or friends of the cases. In total, the GENESIS dataset consists
+of 2\,566 samples, of which 1\,293 are cases and 1\,273 are controls. The genotyping
+platform was iCOGS, a custom Illumina array designed
+to study genetic susceptibility of hormone-related cancers
+cite:sakoda_turning_2013. It contains ~211\,155
+SNPs previously associated with cancer susceptibility, survival, or other
+cancer-related traits; and in selected genes and pathways.
+
+We used the age of the patients as covariate. Specifically, the
+age at diagnosis for cases, and the age at the interview for controls.
+
+** Preprocessing and quality control
+
+A PCA revealed no differential population structure between cases and controls.
+
+28 samples with ?? were removed. A subset of 20 duplicated SNPs in FGFR2 were also removed.
+
+We imputed missing genotypes using IMPUTE2 cite:howie_flexible_2009. The reference panel were the
+genotypes from the 1000 Genomes Project Phase 3
+cite:the_1000_genomes_project_consortium_global_2015. We selected 503 samples, the
+number of samples of European origin in the reference panel. After imputation, we discarded
+SNPs with a minor allele frequency lower than 0.1%, not in Hardy - Weinberg
+equilibrium (P-value \textless 0.001), and/or those with missing values on more
+than 10% of the samples. In addition, we removed the samples with more than
+10% missing genotypes. The final dataset included 1\,279 controls and 1\,298
+cases, genotyped over 128\,595 SNPs. Following the suggested protocol in ??, we
+LD pruned the dataset with $R^2$ 0.75.
+
+** High-weight module discovery algorithms
+
+*** Node scores
+
+We used PLINK v1.90 cite:chang_second-generation_2015 to fit a per-SNP
+logistic regression, using the age as covariate. The assumed model of
+inheritance was additive. Then, we computed a P-value of the null hypothesis of
+the coefficient being different than 0. We used VEGAS2v2 to compute the
+gene-level association score cite:mishra_vegas2:_2015. In order to map a SNP
+to a gene we relied on their physical position, being within 50 kb of the
+borders of the gene.
+
+*** Network
+
+We used the physical interactions from BioGRID version 3.5.171
+cite:oughtred_biogrid_2019 to get protein-protein interactions when required.
+Out of the six methods tested, five use a protein-protein interaction network.
+
+*** Methods used
+
+Finding the highest-scoring, densely interconnected subnetwork on a graph is an
+open problem in the field. Hence, several solutions have been proposed to the
+problem. In this paper, we apply 5 methods designed to explore the
+Gprotein-protein interaction network, and one method, SConES, which explores
+SNP-networks.
+
+Mathematical notation used.
+
+- Heinz :: cite:dittrich_identifying_2008
+- Hierarchichal HotNet :: cite:reyna_hierarchical_2018
+- jActiveModules ::
+- LEAN :: cite:gwinner_network-based_2016
+- SConES :: SConES searches the minimal, maximally interconnected, maximally associated subnetwork in a SNP graph cite:azencott_efficient_2013.
+Specifically, it solves the following problem:
+
+\begin{equation}
+\underset{f \in\{0,1\}^{n}}{\arg \max } \underbrace{c^{\top} f}_{\text { association }}-\underbrace{\lambda f^{\top} L f}_{\text { connectivity }}-\underbrace{\eta\|f\|_{0}}_{\text { sparsity }}
+\end{equation}
+
+Building a SNP graph is non-trivial. The authors suggested three networks:
+connecting the genotyped SNPs consecutive in the genomic sequence (GS);
+interconnecting all the SNPs mapped to the same gene, on top of GS (GM); and
+interconnecting all SNPs mapped to two genes for which a protein-protein
+interaction exists (GI). 
+
+- SigMod ::
+
+** Validation of selected biomarkers
+
+*** Classification accuracy of selected biomarkers
+
+To evaluate the quality of the SNPs selected by the different methods, we used
+the performance of a classifier trained exclusively on those SNPs. The
+underlying assumption is that SNPs that are good biomarkers will be good
+predictiors of the phenotype of unseen samples. To that end, we followed a
+5-fold cross-validation schema, where over 5 iterations 80% of the data is used
+to select SNPs and train the classifier, and 20% is used to compute and
+evaluate the predictions.
+
+Specifically we fitted an L1-penalized logistic regression over the age and the
+selected SNPs, using the outcome (case/control) as
+target variable. When the method retrieved a list of genes (all of them except
+SConES), all the SNPs mapped to any of those genes were used.
+
+*** Comparison to external dataset
+
+An alternative way to validate the results involves looking at an external
+dataset. For that purpose, we used the Breast Cancer
+Association Consortium (BCAC). BCAC is one of the largest efforts in
+GWAS, with over XX samples genotyped over YY SNPs. Specifically, we used the summary
+statistics of the European cohort. Despite the studies not being performed on
+exactly the shared population, there is a lot of overlap between a pan-European
+cohort and a French cohort. On top of that, that overlap should increase when
+the results are observed at the gene-level.
+
+** Code availability
+
+The implementation of the different network-based methods to GWAS data is
+available at https://github.com/hclimente/gwas-tools. The code necessary
+to reproduce all the analyses in this article is available at https://github.com/hclimente/genewa.
+
+* Results
+
+** TODO Comparison
+
+** TODO New biomarkers
+
+** TODO Consensus network
+
+* TODO Discussion
+
+bibliographystyle:ieeetr
+bibliography:bibliography.bib
