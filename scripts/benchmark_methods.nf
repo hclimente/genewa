@@ -54,7 +54,8 @@ process vegas {
 
 }
 
-vegas .into {vegas_sigmod; vegas_lean; vegas_heinz; vegas_hotnet}
+//vegas .into {vegas_sigmod; vegas_lean; vegas_heinz; vegas_hotnet}
+vegas .into {vegas_sigmod; vegas_lean; vegas_heinz}
 
 //  BIOMARKER SELECTION
 /////////////////////////////////////
@@ -118,7 +119,7 @@ process lean {
     
     """
     run_lean --vegas ${VEGAS} --tab2 ${TAB2} -profile cluster
-    R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("scored_genes.lean.txt") %>% inner_join(snp2gene, by = c("Gene" = "gene")) %>% select(snp) %>% write_tsv("snps")'
+    R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("scored_genes.lean.txt") %>% filter(PLEAN < 0.05) %>% inner_join(snp2gene, by = c("Gene" = "gene")) %>% select(snp) %>% write_tsv("snps")'
     """
 
 }
@@ -169,6 +170,7 @@ process heinz {
 
 }
 
+/*
 process hotnet {
 
     tag { "${SPLIT}" }
@@ -183,15 +185,17 @@ process hotnet {
     
     """
     git clone https://github.com/raphael-group/hierarchical-hotnet.git
-    run_hhotnet --scores ${VEGAS} --tab2 ${TAB2} --hhnet_path hierarchical-hotnet -profile bigmem
+    run_hhotnet --scores ${VEGAS} --tab2 ${TAB2} --hhnet_path hierarchical-hotnet/src -profile bigmem
     R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("selected_genes.sigmod.txt") %>% inner_join(snp2gene, by = "gene") %>% select(snp) %>% write_tsv("snps")'
     """
 
 }
+*/
 
 //  RISK COMPUTATION
 /////////////////////////////////////
-biomarkers = scones_biomarkers .mix( sigmod_biomarkers, lean_biomarkers, heinz_biomarkers, hotnet_biomarkers ) 
+// biomarkers = scones_biomarkers .mix( sigmod_biomarkers, lean_biomarkers, heinz_biomarkers, hotnet_biomarkers ) 
+biomarkers = scones_biomarkers .mix( sigmod_biomarkers, lean_biomarkers, heinz_biomarkers ) 
 
 process lasso {
 
