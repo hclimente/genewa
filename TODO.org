@@ -1,0 +1,7 @@
+* TODO See possible directions
+** TODO Check if VEGAS without covariate correction has significant genes
+** TODO OncoDRIVE
+*** TODO Check license date
+** TODO Use SNP networks for everything
+*** TODO Check p-value shift
+* TODO Check Network-guided biomarker discovery

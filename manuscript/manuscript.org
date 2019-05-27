@@ -18,6 +18,8 @@ Hierarchichal HotNet categories:
 - Consider jointly the node scores and topology: SConES, HotNet 2, Sigmod.
 - Use additional information: Hierarchical Hotnet.
 
+Check classification in Network-guided biomarker discovery.
+
 In this article we focus on GENESIS cite:sinilnikova_genesis:_2016, a homogeneous dataset of familial breast cancer in French population of European ancestry. We apply a representative set of methods, some of them never applied to GWAS. Our goal is two-fold: we compare the methods in this dataset; and we explore new biomarkers of familial breast cancer. 
 
 * Methods
@@ -36,7 +38,7 @@ A PCA revealed no differential population structure between cases and controls.
 
 We imputed missing genotypes using IMPUTE2 cite:howie_flexible_2009. The reference panel were the genotypes from the 1000 Genomes Project Phase 3 cite:the_1000_genomes_project_consortium_global_2015. We selected 503 samples, the number of samples of European origin in the reference panel. After imputation, we discarded SNPs with a minor allele frequency lower than 0.1%, not in Hardy - Weinberg equilibrium (P-value \textless 0.001), and/or those with missing values on more than 10% of the samples. In addition, we removed the samples with more than 10% missing genotypes. The final dataset included 1\,279 controls and 1\,298 cases, genotyped over 128\,595 SNPs. Following the suggested protocol in ??, we LD pruned the dataset with $R^2$ 0.75.
 
-** High-weight module discovery algorithms
+** High-weight subnetwork discovery algorithms
 
 *** Node scores
 
@@ -46,22 +48,35 @@ We used PLINK v1.90 cite:chang_second-generation_2015 to fit a per-SNP logistic 
 
 We used the physical interactions from BioGRID version 3.5.171 cite:oughtred_biogrid_2019 to get protein-protein interactions when required. Out of the six methods tested, five use a protein-protein interaction network.
 
+*** Mathematical notation
+
+In this article, we refer to undirected, vertex-weighted graphs G = (V,E,w). V = {v_1, \dots, v_n} refers to the vertices, with weights w: V \rightarrow \mathbb{R}. Equivalently, E \subseteq {{x,y} | x,y \in V \wedge x \neq y} refers to the edges. When referring to a subnetwork S, V_S is the set of nodes in S and E_S is the set of edges in S.
+
 *** Methods used
 
 Finding the highest-scoring, densely interconnected subnetwork on a graph is an open problem in the field. Hence, several solutions have been proposed to the problem. In this paper, we apply 5 methods designed to explore the protein-protein interaction network, and one method, SConES, which explores SNP-networks.
 
-Mathematical notation used.
++ heinz :: The goal of heinz is identifying the highest-scored connected subgraph on the network cite:dittrich_identifying_2008. The problem has a trivial solution when all scores are positive: the whole network; however, it becomes NP-complete when scores are both positive and negative. The authors propose a transformation of the nodes' P-value into a score which takes a negative value when no association with the phenotype is detected, and a positive value when it is. The distinction between both is determined though an FDR approach. Then, the problem is re-casted as the Prize-Collecting Steiner Tree Problem (PCST). This is the problem of selecting the subnetwork S that maximizes the /profit/ p(S):
 
-- heinz :: cite:dittrich_identifying_2008
-- Hierarchichal HotNet :: Hierarchical HotNet was developed in the context of cancer driver identification cite:reyna_hierarchical_2018. Its aim is identifying statistically significant subnetworks, made up by nodes with high-scores that are close in the network. Specifically, it uses a random walk with restart procedure, to capture a graph-based vertex similarity. By setting up the appropriate restart probability, we tune the locality of this similarity. The graph similarity is combined with the vertex score to get a similarity matrix. On this matrix is a hierarchical cluster step is performed to select the clusters.
+    \begin{equation}
+    p(S) = \sum_{v \in V_S} p(v) - \sum_{e \in E_S} c(e). 
+    \end{equation}
+
+    were p(v) is called profit of adding a node, and c(e) is the cost of the edge, both positive values. These quantities are defined from w' = min_{v \in V_G} w(v):
+
+    \begin{multiline}
+    p(v) = w(v) - w', \\
+    c(e) = w'.
+    \end{multiline}
+
+    PCST has a heuristic, efficient solution cite:ljubic_algorithmic_2006. We used the implementation of heinz from BioNet cite:beisser_bionet:_2010, available on Bioconductor.
++ Hierarchichal HotNet :: Hierarchical HotNet was developed in the context of cancer driver identification cite:reyna_hierarchical_2018. Its aim is identifying statistically significant subnetworks, made up by nodes with high-scores that are close in the network. It does so by performing hierarchical clustering on a similarity matrix that captures both the node score similarity and the network similarity. Specifically, it uses the stationary distribution of a random walk with restart procedure to capture a graph-based vertex similarity. By setting up the appropriate restart probability, we tune the locality of this similarity. 
 
     Interestingly, Hierarchical HotNet addresses the bias of biological graphs, where genes with high scores tend to have higher degrees, as they are better studied. 
     
-- jActiveModules ::
-- LEAN :: cite:gwinner_network-based_2016
-- SConES :: SConES searches the minimal, maximally interconnected, maximally associated subnetwork in a SNP graph cite:azencott_efficient_2013.
-
-    Specifically, it solves the following problem:
++ jActiveModules ::
++ LEAN :: cite:gwinner_network-based_2016
++ SConES :: SConES searches the minimal, maximally interconnected, maximally associated subnetwork in a SNP graph cite:azencott_efficient_2013. Specifically, it solves the following problem:
 
     \begin{equation}
     \underset{f \in\{0,1\}^{n}}{\arg \max } \underbrace{c^{\top} f}_{\text { association }}-\underbrace{\lambda f^{\top} L f}_{\text { connectivity }}-\underbrace{\eta\|f\|_{0}}_{\text { sparsity }}
@@ -69,7 +84,7 @@ Mathematical notation used.
 
     Building a SNP graph is non-trivial. The authors suggested three networks: connecting the genotyped SNPs consecutive in the genomic sequence (GS); interconnecting all the SNPs mapped to the same gene, on top of GS (GM); and interconnecting all SNPs mapped to two genes for which a protein-protein interaction exists (GI). 
 
-- SigMod ::
++ SigMod ::
 
 ** Validation of selected biomarkers
 
@@ -104,10 +119,23 @@ the results are observed at the gene-level.
 The implementation of the different network-based methods to GWAS data is available at https://github.com/hclimente/gwas-tools. The code necessary to reproduce all the analyses in this article is available at https://github.com/hclimente/genewa.
 
 * Results
-
+** TODO SNP and gene level analyses
 ** TODO Comparison
 
+    - Size: how many SNPs and how many genes. Do a Elastic net (more stable, more robust, fix alpha) and report that number as well.
+    - Stability.
+    - Sensitivity & specificity on Lasso'd SNPs
+    - Consensus network & Jaccard index of each of them with it.
+    - Runtime?
+
 ** TODO New biomarkers
+
+    - SNP level analyses for SconES
+        - Chromosomic region
+        - Non-protein SNPs
+    - Gene level analyses
+        - Pathway enrichment
+        - Biomarkers LD clumping/LASSO
 
 ** TODO Consensus network
 
