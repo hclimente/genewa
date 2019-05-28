@@ -133,36 +133,9 @@ process heinz {
         set val('heinz'), file(SPLIT), 'snps' into heinz_biomarkers
 
     """
-    #!/usr/bin/env Rscript
-
-    library(tidyverse)
-    library(igraph)
-    library(BioNet)
-
-    # search subnetworks
-    vegas <- read_tsv('${VEGAS}') %>% 
-        select(Gene, Pvalue) %>%
-        mutate(score = qnorm(1 - (Pvalue/2)))
-    scores <- vegas\$score
-    names(scores) <- vegas\$Gene
-
-    net <- read_tsv("${TAB2}") %>%
-        rename(gene1 = `Official Symbol Interactor A`, 
-               gene2 = `Official Symbol Interactor B`) %>%
-        filter(gene1 %in% names(scores) & gene2 %in% names(scores)) %>%
-        select(gene1, gene2) %>%
-        graph_from_data_frame(directed = FALSE)
-
-    selected <- runFastHeinz(net, scores)
-    
-    # map selected genes to snps
-    snp2gene <- read_tsv("${SNP2GENE}")
-    tibble(gene = names(V(selected))) %>% 
-        inner_join(snp2gene, by = 'gene') %>% 
-        select(snp) %>% 
-        write_tsv("snps")
+    run_heinz --vegas ${VEGAS} --tab2 ${TAB2} --fdr 0.5 -profile bigmem -resume 
+    R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("selected_genes.heinz.txt") %>% inner_join(snp2gene, by = "gene") %>% select(snp) %>% write_tsv("snps")'
     """
-
 
 }
 
