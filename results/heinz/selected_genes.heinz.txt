@@ -1,0 +1,6 @@
+gene
+CLIC1
+MYC
+HSPA1A
+VARS
+HSPA1L
