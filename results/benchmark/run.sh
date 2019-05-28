@@ -1,1 +1,1 @@
-../../scripts/benchmark_methods.nf --bfile genesis_2019 --covar CT_age_cens_tronq.cov --snp2gene ../preprocessing/snp2hgnc.tsv --tab2 BIOGRID-MV-Physical-3.5.171.tab2.hgnc.tsv -profile nf -resume -with-trace
+../../scripts/benchmark_methods.nf --bfile genesis_2019 --covar CT_age_cens_tronq.cov --snp2gene ../preprocessing/snp2hgnc.tsv --tab2 ../preprocessing/BIOGRID-ORGANISM-Homo_sapiens-3.5.172.tab2.hgnc.txt -profile nf -resume -with-trace
