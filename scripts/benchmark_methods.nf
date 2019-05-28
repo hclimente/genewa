@@ -2,13 +2,11 @@
 
 params.out = '.'
 params.k = 5
-params.covar = ''
 
 // gwas
 bed = file("${params.bfile}.bed")
 bim = file("${bed.baseName}.bim")
 fam = file("${bed.baseName}.fam")
-covar = file(params.covar)
 
 scones_nets = ['gs','gm','gi']
 
@@ -42,14 +40,13 @@ process vegas {
         file FAM from fam
         file BIM from bim
         file SPLIT from splits_vegas
-        file COVAR from covar
 
     output:
         set file(SPLIT), 'scored_genes.vegas.txt' into vegas
 
     """
     plink --bfile ${BED.baseName} --keep ${SPLIT} --make-bed --out input
-    run_vegas --bfile input --genome GRCh37 --covar ${COVAR} --vegas_params '\\-top 10 -upper 50000 -lower 50000' -profile bigmem
+    run_vegas --bfile input --genome GRCh37 --vegas_params '\\-top 10 -upper 50000 -lower 50000' -profile bigmem
     """
 
 }
@@ -68,7 +65,6 @@ process scones {
         file FAM from fam
         file BIM from bim
         file SPLIT from splits_scones
-        file COVAR from covar
         each NET from scones_nets
         file TAB2 from tab2
         file SNP2GENE from snp2gene
@@ -78,7 +74,7 @@ process scones {
 
     """
     plink --bfile ${BED.baseName} --keep ${SPLIT} --make-bed --out input
-    run_scones --bfile input --covar ${COVAR} --network ${NET} --snp2gene ${SNP2GENE} --tab2 ${TAB2} -profile bigmem
+    run_scones --bfile input --network ${NET} --snp2gene ${SNP2GENE} --tab2 ${TAB2} -profile bigmem
     echo snp >snps
     grep TRUE cones.tsv | cut -f1 >>snps
     """
@@ -207,7 +203,6 @@ process lasso {
         file BED from bed
         file FAM from fam
         file BIM from bim
-        file COVAR from covar
         set val(METHOD), file(SPLIT), file(SNPS) from biomarkers
 
     output:
@@ -222,9 +217,6 @@ process lasso {
 
     # read dataset
     gwas <- read.plink("${BED}", "${BIM}", "${FAM}")
-    covars_df <- read_tsv('${COVAR}')
-    covars <- select(covars_df, AGE) %>% as.matrix()
-    rownames(covars) <- covars_df\$IID
     X <- as(gwas[['genotypes']], 'numeric')
     y <- gwas[['fam']][['affected']] - 1
     names(y) <- gwas[['fam']][['member']]
@@ -234,8 +226,8 @@ process lasso {
     train <- read_delim('${SPLIT}', delim = ' ', col_names = FALSE, col_types = 'cc')\$X1
     test <- setdiff(gwas[['fam']][['pedigree']], train)
 
-    X_train <- X[train, selected] %>% cbind(covars[train,]) %>% as.big.matrix
-    X_test <- X[test, selected] %>% cbind(covars[test,]) %>% as.big.matrix
+    X_train <- X[train, selected] %>% as.big.matrix
+    X_test <- X[test, selected] %>% as.big.matrix
     y_train <- y[train]
     y_test <- y[test] %>% as.factor
     rm(gwas, X, y)
