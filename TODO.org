@@ -1,7 +1,25 @@
-* TODO See possible directions
-** TODO Check if VEGAS without covariate correction has significant genes
-** TODO OncoDRIVE
-*** TODO Check license date
-** TODO Use SNP networks for everything
-*** TODO Check p-value shift
-* TODO Check Network-guided biomarker discovery
+* DONE See possible directions
+  CLOSED: [2019-06-07 Fri 16:27]
+** DONE Check if VEGAS without covariate correction has significant genes
+   CLOSED: [2019-06-07 Fri 16:26]
+** DONE OncoDRIVE
+   CLOSED: [2019-06-07 Fri 16:27]
+*** DONE Check license date
+    CLOSED: [2019-06-07 Fri 16:26]
+** DONE Use SNP networks for everything
+   CLOSED: [2019-06-10 Mon 00:32]
+*** Check p-value shift
+* TODO Describe state of the art: comparison between methods
+SCHEDULED: <2019-06-11 Tue>
+** TODO Check Network-guided biomarker discovery
+* TODO Run benchmark
+DEADLINE: <2019-06-14 Fri>
+* TODO Run methods
+DEADLINE: <2019-06-14 Fri>
+** TODO Check SConES solution/use old algorithm
+ SCHEDULED: <2019-06-10 Mon>
+** TODO Handle dmGWAS solutions
+ SCHEDULED:<2019-06-12 Wed> 
+** TODO Find consensus network
+ DEADLINE: <2019-06-14 Fri>
+* TODO Prepare OncoDRIVE paper after GENESIS as Letter.
