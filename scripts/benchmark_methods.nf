@@ -73,7 +73,7 @@ process scones {
 
     """
     plink --bfile ${BED.baseName} --keep ${SPLIT} --make-bed --out input
-    run_scones --bfile input --network ${NET} --snp2gene ${SNP2GENE} --tab2 ${TAB2} -profile bigmem
+    run_old_scones --bfile input --network ${NET} --snp2gene ${SNP2GENE} --tab2 ${TAB2} -profile bigmem
     echo snp >snps
     grep TRUE cones.tsv | cut -f1 >>snps
     """
@@ -152,11 +152,7 @@ process dmgwas {
     
     """
     run_dmGWAS --vegas ${VEGAS} --tab2 ${TAB2} -profile bigmem
-    R -e 'library(tidyverse); \\
-    snp2gene <- read_tsv("${SNP2GENE}"); \\
-    dmgwas <- read_tsv("subnetworks.tsv"); \\
-    num_seeds <- length(unique(dmgwas$seed)); \\
-    dmgwas %>% group_by(genes) %>% filter(n() >= (num_seeds * 0.01)) %>% inner_join(snp2gene, by = c('genes' = "gene")) %>% select(snp) %>% write_tsv("snps")'
+    R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("selected_genes.dmgwas.txt") %>% inner_join(snp2gene, by = "gene") %>% select(snp) %>% write_tsv("snps")'
     """
 
 }
