@@ -212,13 +212,15 @@ process lasso {
     # read dataset
     gwas <- read.plink("${BED}", "${BIM}", "${FAM}")
     X <- as(gwas[['genotypes']], 'numeric')
+    ## remove NAs
+    X[is.na(X)] <- 0	
     y <- gwas[['fam']][['affected']] - 1
-    names(y) <- gwas[['fam']][['member']]
+    names(y) <- gwas[['fam']][['pedigree']] %>% as.character
 
     # read selected and splits
     selected <- read_tsv('${SNPS}', col_types = 'c')\$snp
     train <- read_delim('${SPLIT}', delim = ' ', col_names = FALSE, col_types = 'cc')\$X1
-    test <- setdiff(gwas[['fam']][['pedigree']], train)
+    test <- setdiff(as.character(gwas[['fam']][['pedigree']]), train)
 
     X_train <- X[train, selected] %>% as.big.matrix
     X_test <- X[test, selected] %>% as.big.matrix
