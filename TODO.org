@@ -34,9 +34,9 @@ CLOSED: [2019-06-12 Wed 21:08] SCHEDULED:<2019-06-12 Wed>
 ** TODO Figure out how to select modules in Hotnet
 SCHEDULED:<2019-06-20 Thu> 
 ** TODO Convert SConES GI to gene network to build consensus
-SCHEDULED:<2019-06-13 Thu>
-** TODO Plot SConES GS and GM results 
-SCHEDULED:<2019-06-13 Thu> 
+SCHEDULED:<2019-06-14 Fri>
+** DONE Plot SConES GS and GM results 
+CLOSED: [2019-06-13 Thu 17:34] SCHEDULED:<2019-06-13 Thu>
 * DONE Check room for 3rd year thesis committee
 CLOSED: [2019-06-11 Tue 17:15] SCHEDULED:<2019-06-11 Tue>
 * TODO Submit application to Training Unit
