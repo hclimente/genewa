@@ -9,17 +9,37 @@
 ** DONE Use SNP networks for everything
    CLOSED: [2019-06-10 Mon 00:32]
 *** Check p-value shift
-* TODO Describe state of the art: comparison between methods
-SCHEDULED: <2019-06-11 Tue>
+* DONE Describe state of the art: comparison between methods
+CLOSED: [2019-06-12 Wed 16:29] SCHEDULED: <2019-06-12 Wed>
 ** TODO Check Network-guided biomarker discovery
 * TODO Run benchmark
-DEADLINE: <2019-06-14 Fri>
-* TODO Run methods
-DEADLINE: <2019-06-14 Fri>
-** TODO Check SConES solution/use old algorithm
- SCHEDULED: <2019-06-10 Mon>
-** TODO Handle dmGWAS solutions
- SCHEDULED:<2019-06-12 Wed> 
+  DEADLINE: <2019-06-17 Mon>
+* Run methods
+** DONE Check SConES solution/use old algorithm
+ CLOSED: [2019-06-11 Tue 18:51] SCHEDULED: <2019-06-11 Tue>
+** DONE Handle dmGWAS solutions in benchmark
+ CLOSED: [2019-06-11 Tue 17:41] SCHEDULED:<2019-06-11 Tue>
 ** TODO Find consensus network
- DEADLINE: <2019-06-14 Fri>
+ DEADLINE: <2019-06-17 Mon>
+** DONE Pathway enrichment analysis on consensus
+CLOSED: [2019-06-13 Thu 16:38] SCHEDULED:<2019-06-13 Thu>
+** TODO Compare gene results to BCAC
+SCHEDULED:<2019-06-17 Mon>
+** TODO Compare SNP results to BCAC
+SCHEDULED:<2019-06-13 Thu> 
+** DONE Compute BCAC gene-level results 
+CLOSED: [2019-06-13 Thu 11:56] SCHEDULED: <2019-06-13 Thu>
+** DONE Fix SConES and dmGWAS
+CLOSED: [2019-06-12 Wed 21:08] SCHEDULED:<2019-06-12 Wed>
+** TODO Figure out how to select modules in Hotnet
+SCHEDULED:<2019-06-20 Thu> 
+** TODO Convert SConES GI to gene network to build consensus
+SCHEDULED:<2019-06-13 Thu>
+** TODO Plot SConES GS and GM results 
+SCHEDULED:<2019-06-13 Thu> 
+* DONE Check room for 3rd year thesis committee
+CLOSED: [2019-06-11 Tue 17:15] SCHEDULED:<2019-06-11 Tue>
+* TODO Submit application to Training Unit
+DEADLINE:<2019-06-17 Mon> 
 * TODO Prepare OncoDRIVE paper after GENESIS as Letter.
+DEADLINE:<2019-09-01 Sun> 
