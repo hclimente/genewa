@@ -253,7 +253,7 @@ process join_analyses {
 
     library(tidyverse)
 
-    lapply(list.files(pattern = 'bm*'), read_tsv, col_types = 'ciid') %>% 
+    lapply(list.files(pattern = 'bm*'), read_tsv, col_types = 'ciidd') %>% 
         do.call(rbind, .) %>%
         as.tibble %>%
         write_tsv('prediction.tsv')
