@@ -13,33 +13,42 @@
 CLOSED: [2019-06-12 Wed 16:29] SCHEDULED: <2019-06-12 Wed>
 ** TODO Check Network-guided biomarker discovery
 * TODO Run benchmark
-  DEADLINE: <2019-06-17 Mon>
+  DEADLINE: <2019-06-24 Mon>
 * Run methods
 ** DONE Check SConES solution/use old algorithm
  CLOSED: [2019-06-11 Tue 18:51] SCHEDULED: <2019-06-11 Tue>
 ** DONE Handle dmGWAS solutions in benchmark
  CLOSED: [2019-06-11 Tue 17:41] SCHEDULED:<2019-06-11 Tue>
-** TODO Find consensus network
+** TODO Find out best way to add Hotnet 
  DEADLINE: <2019-06-17 Mon>
 ** DONE Pathway enrichment analysis on consensus
 CLOSED: [2019-06-13 Thu 16:38] SCHEDULED:<2019-06-13 Thu>
 ** TODO Compare gene results to BCAC
-SCHEDULED:<2019-06-17 Mon>
-** TODO Compare SNP results to BCAC
-SCHEDULED:<2019-06-13 Thu> 
+SCHEDULED:<2019-06-24 Mon>
+*** TODO Check if SNPs are imputed
+    BCAC mixes OncoArray and iCOGS. Hence, it will need imputation. Be careful that they do not introduce artifacts.
+** DONE Compare SNP results to BCAC
+CLOSED: [2019-06-13 Thu 19:42] SCHEDULED:<2019-06-13 Thu>
 ** DONE Compute BCAC gene-level results 
 CLOSED: [2019-06-13 Thu 11:56] SCHEDULED: <2019-06-13 Thu>
 ** DONE Fix SConES and dmGWAS
 CLOSED: [2019-06-12 Wed 21:08] SCHEDULED:<2019-06-12 Wed>
 ** TODO Figure out how to select modules in Hotnet
 SCHEDULED:<2019-06-20 Thu> 
-** TODO Convert SConES GI to gene network to build consensus
-SCHEDULED:<2019-06-14 Fri>
+** DONE Convert SConES GM to gene network to build consensus
+CLOSED: [2019-06-17 Mon 17:41] SCHEDULED:<2019-06-14 Fri>
 ** DONE Plot SConES GS and GM results 
 CLOSED: [2019-06-13 Thu 17:34] SCHEDULED:<2019-06-13 Thu>
+** TODO Add known BRCA genes to consensus network
+SCHEDULED:<2019-06-21 Fri> 
 * DONE Check room for 3rd year thesis committee
 CLOSED: [2019-06-11 Tue 17:15] SCHEDULED:<2019-06-11 Tue>
-* TODO Submit application to Training Unit
-DEADLINE:<2019-06-17 Mon> 
+* DONE Submit application to Training Unit
+CLOSED: [2019-06-17 Mon 17:43] DEADLINE:<2019-06-17 Mon>
 * TODO Prepare OncoDRIVE paper after GENESIS as Letter.
 DEADLINE:<2019-09-01 Sun> 
+* TODO Re-read GENESIS paper
+SCHEDULED:<2019-06-18 Tue> 
+Preparation for the e-mail and for the paper.
+* DONE Write e-mail to Nadine and Fabienne
+CLOSED: [2019-06-18 Tue 14:01] SCHEDULED:<2019-06-18 Tue>

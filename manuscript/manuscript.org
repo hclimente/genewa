@@ -26,7 +26,7 @@ In this article we focus on GENESIS cite:sinilnikova_genesis:_2016, a homogeneou
 
 ** GENESIS
 
-GENESIS is a GWAS study of familial breast cancer on the French population. The index cases are patients with a breast cancer affected sister and no BRCA1/2 mutations cite:sinilnikova_genesis:_2016. The controls are unaffected colleagues and/or friends of the cases. In total, the GENESIS dataset consists of 2\,566 samples, of which 1\,293 are cases and 1\,273 are controls. The genotyping platform was iCOGS, a custom Illumina array designed to study genetic susceptibility of hormone-related cancers cite:sakoda_turning_2013. It contains ~211\,155 SNPs previously associated with cancer susceptibility, survival, or other cancer-related traits; and in selected genes and pathways.
+GENESIS is a GWAS study of familial breast cancer on the French population cite:sinilnikova_genesis:_2016. The index cases are patients with infiltrating mammary or ductal adenocarcinoma, who had sister with breast cancer, and negative for BRCA1 and BRCA2 mutations. The controls are unaffected colleagues and/or friends of the cases, born around the year of birth of the corresponding case (\pm 3 years). In total, the GENESIS dataset consists of 2551 samples, of which 1280 are cases and 1271 are controls. The genotyping platform was iCOGS, a custom Illumina array designed to study genetic susceptibility of hormone-related cancers cite:sakoda_turning_2013. It contains 211155 SNPs previously associated with cancer susceptibility, survival, or other cancer-related traits; and in selected genes and pathways.
 
 We used the age of the patients as covariate. Specifically, the age at diagnosis for cases, and the age at the interview for controls.
 
