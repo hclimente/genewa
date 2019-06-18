@@ -1,5 +1,5 @@
 # SNP LEVEL STATISTICS
-plink -bfile genesis_2019 --assoc
+plink -bfile genesis_2019 --assoc --adjust
 sed 's/ \+/\t/g' plink.assoc | sed 's/^\t//' | sed 's/\t$//' >univariate_models.no_covars.tsv
 rm plink.assoc
 

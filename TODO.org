@@ -47,8 +47,8 @@ CLOSED: [2019-06-11 Tue 17:15] SCHEDULED:<2019-06-11 Tue>
 CLOSED: [2019-06-17 Mon 17:43] DEADLINE:<2019-06-17 Mon>
 * TODO Prepare OncoDRIVE paper after GENESIS as Letter.
 DEADLINE:<2019-09-01 Sun> 
-* TODO Re-read GENESIS paper
-SCHEDULED:<2019-06-18 Tue> 
+* DONE Finish details on GENESIS: dataset and preprocessing 
+CLOSED: [2019-06-18 Tue 17:13] SCHEDULED:<2019-06-18 Tue>
 Preparation for the e-mail and for the paper.
 * DONE Write e-mail to Nadine and Fabienne
 CLOSED: [2019-06-18 Tue 14:01] SCHEDULED:<2019-06-18 Tue>

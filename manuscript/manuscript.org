@@ -26,23 +26,19 @@ In this article we focus on GENESIS cite:sinilnikova_genesis:_2016, a homogeneou
 
 ** GENESIS
 
-GENESIS is a GWAS study of familial breast cancer on the French population cite:sinilnikova_genesis:_2016. The index cases are patients with infiltrating mammary or ductal adenocarcinoma, who had sister with breast cancer, and negative for BRCA1 and BRCA2 mutations. The controls are unaffected colleagues and/or friends of the cases, born around the year of birth of the corresponding case (\pm 3 years). In total, the GENESIS dataset consists of 2551 samples, of which 1280 are cases and 1271 are controls. The genotyping platform was iCOGS, a custom Illumina array designed to study genetic susceptibility of hormone-related cancers cite:sakoda_turning_2013. It contains 211155 SNPs previously associated with cancer susceptibility, survival, or other cancer-related traits; and in selected genes and pathways.
-
-We used the age of the patients as covariate. Specifically, the age at diagnosis for cases, and the age at the interview for controls.
+GENESIS is a GWAS study of familial breast cancer on the French population cite:sinilnikova_genesis:_2016. The index cases are patients with infiltrating mammary or ductal adenocarcinoma, who had sister with breast cancer, and negative for BRCA1 and BRCA2 mutations. The controls are unaffected colleagues and/or friends of the cases, born around the year of birth of the corresponding case (\pm 3 years). In total, the GENESIS dataset consists of 2577 samples, of which 1279 are controls and 1298 are cases. The genotyping platform was iCOGS, a custom Illumina array designed to study genetic susceptibility of hormone-related cancers cite:sakoda_turning_2013. It contains 210918 SNPs previously associated with cancer susceptibility, survival, or other cancer-related traits; and in selected genes and pathways.
 
 ** Preprocessing and quality control
 
-A PCA revealed no differential population structure between cases and controls.
+We discarded SNPs with a minor allele frequency lower than 0.1%, not in Hardy - Weinberg equilibrium (P-value \textless 0.001), and/or those with missing values on more than 10% of the samples. In addition, we removed the samples with more than 10% missing genotypes. 28 samples with ?? were removed. A subset of 20 duplicated SNPs in FGFR2 were also removed. The final dataset included 1271 controls and 1280 cases, genotyped over 197083 SNPs. 
 
-28 samples with ?? were removed. A subset of 20 duplicated SNPs in FGFR2 were also removed.
-
-We imputed missing genotypes using IMPUTE2 cite:howie_flexible_2009. The reference panel were the genotypes from the 1000 Genomes Project Phase 3 cite:the_1000_genomes_project_consortium_global_2015. We selected 503 samples, the number of samples of European origin in the reference panel. After imputation, we discarded SNPs with a minor allele frequency lower than 0.1%, not in Hardy - Weinberg equilibrium (P-value \textless 0.001), and/or those with missing values on more than 10% of the samples. In addition, we removed the samples with more than 10% missing genotypes. The final dataset included 1\,279 controls and 1\,298 cases, genotyped over 128\,595 SNPs. Following the suggested protocol in ??, we LD pruned the dataset with $R^2$ 0.75.
+We examined if GENESIS had evidence of population structure that could create confounding associations. A PCA revealed no differential population structure between cases and controls (Supplementary Figure [[sfig:pcs]]). Independently, we did not find evidence of genomic inflation (\lambda = 1.05029), further dismissing the presence of population structure.
 
 ** High-weight subnetwork discovery algorithms
 
 *** Node scores
 
-We used PLINK v1.90 cite:chang_second-generation_2015 to fit a per-SNP logistic regression, using the age as covariate. The assumed model of inheritance was additive. Then, we computed a P-value of the null hypothesis of the coefficient being different than 0. We used VEGAS2v2 to compute the gene-level association score cite:mishra_vegas2:_2015. In order to map a SNP to a gene we relied on their physical position, being within 50 kb of the borders of the gene.
+To measure association between a genotype and the phenotype, we performed a per-SNP 1df \chi^2 allelic test using PLINK v1.90 cite:chang_second-generation_2015. Then, we used VEGAS2v2 to compute the gene-level association score cite:mishra_vegas2:_2015 from the SNP P-values. In order to map SNPs to genes we relied used their overlap on the sequence: when a SNP is located within the boundaries of a gene, \pm 50 kb, it was mapped to that gene. To compute the gene association, we used all the SNPs mapped to it, as opposed to other strategies like taking only the 10% of SNPs with lowest P-values.
 
 *** Network
 
@@ -120,6 +116,9 @@ The implementation of the different network-based methods to GWAS data is availa
 
 * Results
 ** TODO SNP and gene level analyses
+#+CAPTION: Association in GENESIS. The red line represents the Bonferroni threshold. *(A).* SNP association, measured from the outcome of a 1df \chi^2 allelic test. SNPs that are within a coding gene, or within 50 kilobases of its boundaries are annotated. *(B).* Gene association, measured by P-value of VEGAS2v2 cite:mishra_vegas2:_2015.
+#+NAME: fig_snp_gene_manhattan
+[[./figures/figure_1.pdf]]
 ** TODO Comparison
 
     - Size: how many SNPs and how many genes. Do a Elastic net (more stable, more robust, fix alpha) and report that number as well.
@@ -143,3 +142,14 @@ The implementation of the different network-based methods to GWAS data is availa
 
 bibliographystyle:ieeetr
 bibliography:bibliography.bib
+
+#+LATEX: \clearpage
+#+LATEX: \setcounter{figure}{0}
+#+LATEX: \setcounter{section}{0}
+#+LATEX: \setcounter{table}{0}
+
+* Supplementary materials
+
+#+CAPTION: *(A,B,C,D).* Eight main principal components computed on the genotypes of GENESIS. Cases are colored in green, controls in orange. 
+#+NAME: sfig:pcs
+[[./figures/sfigure_1.pdf]]
