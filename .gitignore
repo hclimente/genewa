@@ -9,6 +9,7 @@ results/preprocessing/
 *.fam
 *.irem
 *.cov
+scored_genes.top10.txt
 
 # software and OS
 templates
@@ -20,6 +21,7 @@ templates
 *RData
 *trace.txt*
 SigMod_v2*
+hierarchical-hotnet
 
 # manuscript files
 manuscript.tex
