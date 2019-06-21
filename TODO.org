@@ -33,7 +33,7 @@ CLOSED: [2019-06-13 Thu 19:42] SCHEDULED:<2019-06-13 Thu>
 CLOSED: [2019-06-13 Thu 11:56] SCHEDULED: <2019-06-13 Thu>
 ** DONE Fix SConES and dmGWAS
 CLOSED: [2019-06-12 Wed 21:08] SCHEDULED:<2019-06-12 Wed>
-** TODO Figure out how to select modules in Hotnet
+** TODO Figure out how to select modules in Hierarchical Hotnet
 SCHEDULED:<2019-06-20 Thu> 
 ** DONE Convert SConES GM to gene network to build consensus
 CLOSED: [2019-06-17 Mon 17:41] SCHEDULED:<2019-06-14 Fri>
@@ -52,3 +52,7 @@ CLOSED: [2019-06-18 Tue 17:13] SCHEDULED:<2019-06-18 Tue>
 Preparation for the e-mail and for the paper.
 * DONE Write e-mail to Nadine and Fabienne
 CLOSED: [2019-06-18 Tue 14:01] SCHEDULED:<2019-06-18 Tue>
+* DONE Book ISMB
+CLOSED: [2019-06-20 Thu 13:31] DEADLINE:<2019-06-21 Fri>
+* DONE Run Vegas with top 5, 15 and 20%
+CLOSED: [2019-06-20 Thu 16:06] SCHEDULED:<2019-06-20 Thu>
