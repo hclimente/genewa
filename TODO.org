@@ -19,12 +19,12 @@ CLOSED: [2019-06-12 Wed 16:29] SCHEDULED: <2019-06-12 Wed>
  CLOSED: [2019-06-11 Tue 18:51] SCHEDULED: <2019-06-11 Tue>
 ** DONE Handle dmGWAS solutions in benchmark
  CLOSED: [2019-06-11 Tue 17:41] SCHEDULED:<2019-06-11 Tue>
-** TODO Find out best way to add Hotnet 
- DEADLINE: <2019-06-17 Mon>
+** DONE Add HotNet2 
+ CLOSED: [2019-06-21 Fri 18:14] DEADLINE: <2019-06-17 Mon>
 ** DONE Pathway enrichment analysis on consensus
 CLOSED: [2019-06-13 Thu 16:38] SCHEDULED:<2019-06-13 Thu>
 ** TODO Compare gene results to BCAC
-SCHEDULED:<2019-06-24 Mon>
+DEADLINE:<2019-07-08 Mon>
 *** TODO Check if SNPs are imputed
     BCAC mixes OncoArray and iCOGS. Hence, it will need imputation. Be careful that they do not introduce artifacts.
 ** DONE Compare SNP results to BCAC
@@ -39,8 +39,8 @@ SCHEDULED:<2019-06-20 Thu>
 CLOSED: [2019-06-17 Mon 17:41] SCHEDULED:<2019-06-14 Fri>
 ** DONE Plot SConES GS and GM results 
 CLOSED: [2019-06-13 Thu 17:34] SCHEDULED:<2019-06-13 Thu>
-** TODO Add known BRCA genes to consensus network
-SCHEDULED:<2019-06-21 Fri> 
+** DONE Add known BRCA genes to consensus network
+CLOSED: [2019-06-21 Fri 11:18] SCHEDULED:<2019-06-21 Fri>
 * DONE Check room for 3rd year thesis committee
 CLOSED: [2019-06-11 Tue 17:15] SCHEDULED:<2019-06-11 Tue>
 * DONE Submit application to Training Unit
@@ -56,3 +56,19 @@ CLOSED: [2019-06-18 Tue 14:01] SCHEDULED:<2019-06-18 Tue>
 CLOSED: [2019-06-20 Thu 13:31] DEADLINE:<2019-06-21 Fri>
 * DONE Run Vegas with top 5, 15 and 20%
 CLOSED: [2019-06-20 Thu 16:06] SCHEDULED:<2019-06-20 Thu>
+* Manuscript
+** TODO Prepare method-wise list of biomarkers
+** DONE LEAN 
+CLOSED: [2019-07-01 Mon 16:25] SCHEDULED: <2019-07-01 Mon>
+** DONE dmGWAS
+CLOSED: [2019-07-02 Tue 15:32] SCHEDULED: <2019-07-02 Tue>i
+** TODO SigMod
+SCHEDULED:<2019-07-03 Wed> 
+** TODO Finish introduction
+DEADLINE: <2019-07-05 Fri>
+** DONE Finish SNP and gene-level results
+CLOSED: [2019-07-02 Tue 21:01] DEADLINE:<2019-07-03 Wed>
+** TODO BCAC comparison
+DEADLINE: <2019-07-05 Fri>
+*** TODO Run VEGAS only on iCOGS SNPs
+SCHEDULED:<2019-06-28 Fri>
