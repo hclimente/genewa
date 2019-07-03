@@ -9,7 +9,6 @@ bim = file("${bed.baseName}.bim")
 fam = file("${bed.baseName}.fam")
 
 scones_nets = ['gs','gm','gi']
-
 // annotation
 tab2 = file(params.tab2)
 snp2gene = file(params.snp2gene)
@@ -94,7 +93,8 @@ process sigmod {
     
     """
     wget https://github.com/YuanlongLiu/SigMod/raw/master/SigMod_v2.zip && unzip SigMod_v2.zip
-    run_sigmod --bfile input --sigmod SigMod_v2 --vegas ${VEGAS} --tab2 ${TAB2} -profile bigmem
+    cut -f2,9 ${VEGAS} | sed 's/Top-0.1-pvalue/Pvalue/' >scored_genes.top10.txt
+    run_sigmod --bfile input --sigmod SigMod_v2 --vegas scored_genes.top10.txt --tab2 ${TAB2} -profile cluster 
     R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("selected_genes.sigmod.txt") %>% inner_join(snp2gene, by = "gene") %>% select(snp) %>% write_tsv("snps")'
     """
 
@@ -113,7 +113,8 @@ process lean {
         set val('lean'), file(SPLIT), 'snps' into lean_biomarkers
     
     """
-    run_lean --vegas ${VEGAS} --tab2 ${TAB2} -profile cluster
+    cut -f2,9 ${VEGAS} | sed 's/Top-0.1-pvalue/Pvalue/' >scored_genes.top10.txt
+    run_lean --vegas scored_genes.top10.txt --tab2 ${TAB2} -profile cluster
     R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("scored_genes.lean.txt") %>% filter(PLEAN < 0.05) %>% inner_join(snp2gene, by = c("Gene" = "gene")) %>% select(snp) %>% write_tsv("snps")'
     """
 
@@ -132,7 +133,8 @@ process heinz {
         set val('heinz'), file(SPLIT), 'snps' into heinz_biomarkers
 
     """
-    run_heinz --vegas ${VEGAS} --tab2 ${TAB2} --fdr 0.5 -profile bigmem -resume 
+    cut -f2,9 ${VEGAS} | sed 's/Top-0.1-pvalue/Pvalue/' >scored_genes.top10.txt
+    run_heinz --vegas scored_genes.top10.txt --tab2 ${TAB2} --fdr 0.5 -profile cluster -resume 
     R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("selected_genes.heinz.txt") %>% inner_join(snp2gene, by = "gene") %>% select(snp) %>% write_tsv("snps")'
     """
 
@@ -151,14 +153,14 @@ process dmgwas {
         set val('dmgwas'), file(SPLIT), 'snps' into dmgwas_biomarkers
     
     """
-    run_dmGWAS --vegas ${VEGAS} --tab2 ${TAB2} -profile bigmem
-    R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("selected_genes.dmgwas.txt") %>% inner_join(snp2gene, by = "gene") %>% select(snp) %>% write_tsv("snps")'
+    cut -f2,9 ${VEGAS} | sed 's/Top-0.1-pvalue/Pvalue/' >scored_genes.top10.txt
+    run_dmGWAS --vegas scored_genes.top10.txt --tab2 ${TAB2} -profile cluster
+    R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("selected_genes.dmgwas.tsv") %>% inner_join(snp2gene, by = "gene") %>% select(snp) %>% write_tsv("snps")'
     """
 
 }
-
 /*
-process hotnet {
+process hierarchichal_hotnet {
 
     tag { "${SPLIT}" }
 
@@ -169,16 +171,16 @@ process hotnet {
 
     output:
         set val('hotnet'), file(SPLIT), 'snps' into hotnet_biomarkers
-    
+   , dmgwas_biomarkers 
     """
+    cut -f2,9 ${VEGAS} | sed 's/Top-0.1-pvalue/Pvalue/' >scored_genes.top10.txt
     git clone https://github.com/raphael-group/hierarchical-hotnet.git
-    run_hhotnet --scores ${VEGAS} --tab2 ${TAB2} --hhnet_path hierarchical-hotnet/src -profile bigmem
+    run_hhotnet --scores scored_genes.top10.txt --tab2 ${TAB2} --hhnet_path hierarchical-hotnet/src -profile bigmem
     R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("selected_genes.hotnet.txt") %>% inner_join(snp2gene, by = "gene") %>% select(snp) %>% write_tsv("snps")'
     """
 
 }
 */
-
 //  RISK COMPUTATION
 /////////////////////////////////////
 biomarkers = scones_biomarkers .mix( sigmod_biomarkers, lean_biomarkers, heinz_biomarkers, dmgwas_biomarkers ) 
