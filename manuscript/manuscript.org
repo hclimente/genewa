@@ -1,22 +1,16 @@
-#+TITLE: Aggregation of network-guided GWAS to find the susceptibility network to familial breast cancer
+#+TITLE: Aggregating network-guided GWAS to discover the susceptibility mechanism to familial breast cancer
 #+AUTHOR: Héctor Climente-González, Christine Lonjou, Chloé-Agathe Azencott
 #+OPTIONS: toc:nil num:nil
 
 * TODO Introduction
 
-In human health, the goal of genome-wide association studies (GWAS) is uncovering the genetic variants that predispose to complex diseases, like diabetes or some variants of cancer. To that end, thousands of unrelated samples are genotyped, a fraction of them with the disease of interest, and the rest from the general population. In the traditional setting, a per-SNP statistical test (i.e. \chi^2) is conducted, and only those SNPs with a P-value lower than a conservative threshold are the selected ones.
+In human health, genome-wide association studies (GWAS) aim at quantifying how genetic variants predispose to complex diseases like diabetes or some forms of cancer cite:bush_chapter_2012. The most commonly studied variants are single-nucleotide polymorphisms (SNPs). Once the relevant SNPs have been discovered, they can be used for diagnosis, computing the risk, and deepen our understanding of the disease. To that end, in a typical retrospective study thousands of unrelated samples are genotyped: the cases, suffering the disease of interest, and the controls from the general population. Then, a per-SNP statistical association test is conducted (e.g. \chi^2). Those SNPs with a P-value lower than a conservative FWER threshold are candidates to further studies in an independent cohort.
 
-This experimental design has been successful in identifying the main variants underlying many common diseases, allowing early diagnosis. However, the experimental setting also presents intrinsic challenges. The first one is the high-dimensionality of the problem: all GWAS studies to date genotype more positions in the genome than samples are used. This limits the statistical power of the experiment, as only variants with large and moderate effects can be detected. Additionally, to avoid false positives, a conservative multiple test correction is applied, typically Bonferroni. The second problem is the interpretability of the results, when SNPs in non-coding regions or in large LD-blocks are selected. 
+GWAS has been successful at identifying the main variants underlying many common diseases. However, the experimental setting also presents intrinsic challenges. Some of them stem from the high-dimensionality of the problem, as every GWAS to date study more variants than samples are genotyped. This limits the statistical power of the experiment, as only variants with large and moderate effects can be detected. Additionally, to avoid false positives, a conservative multiple test correction is applied, typically Bonferroni. However, Bonferroni is known to be overly conservative when the statistical tests are correlated. Another open issue is the interpretability of the results, as the functional consequences of most common variants are not well understood. The fact that SNPs in non-coding regions often top the results of GWAS portrays well this challenge. On top of that, recent large-sampled studies suggest that most of the genome contributes to a degree to any complex trait. This opposes to the traditional polygenic model of complex diseases, which postulated that only key genes in key pathways need to be affected. In the recently postulated omnigenic model cite:boyle_expanded_2017, genes are highly interconnected, and influence each others behavior. Hence, a more comprehensive statistical framework is required.
 
-On top of the aforementioned problems, there is evidence suggesting that most of the genome contributes to a degree to any complex trait. This opposes to the traditional polygenic model of complex diseases, which postulated that only key genes in key pathways need to be affected. In the recently postulated omnigenic model, genes are highly interconnected, and influence each others behavior. Hence, a more comprehensive statistical framework is required.
+Network-based methods offer a compact and elegant solution to the aforementioned problems. In essence, they put together experimental data and prior biological information, which allows to evaluate each SNP in its biological context. This is done by abstracting the markers to nodes in a network, weighted by the association score from the experiment (e.g. a P-value), and connecting the nodes via an edge when there is a functional link between them (e.g. a protein-protein interaction). Then, the problem becomes finding a functionally-related set of SNPs that is highly associated with the disease. 
 
-Network-based methods offer a compact and elegant solution to both problems. In essence, they represent the experiment as a network where the nodes contain information from the experiment, and the edges represent functional relatedness between them. A common paradigm consists on aggregating the SNP association into gene association, and relate the genes according to whether their proteins physically interact. The problem involves the selection of one or more subnetworks, densely intra-connected, which contains the highest-associated nodes. 
-
-Hierarchichal HotNet categories:
-
-- Constrain the problem to certain kinds of subnetworks, then explore those subnetworks: dmGWAS, heinz, LEAN.
-- Consider jointly the node scores and topology: SConES, HotNet 2, Sigmod.
-- Use additional information: Hierarchical Hotnet.
+Different solutions have been proposed to this problem, often stemming from divergent considerations of what the optimal solution subnetwork look like. Some methods strongly constrain the problem to certain kinds of subnetworks. Such is the extreme case of LEAN cite:gwinner_network-based_2016, which focuses on 'star subnetworks' i.e. instances were a gene and its direct interactors are associated with the disease. Other algorithms, like dmGWAS cite:jia_dmgwas:_2011 and heinz cite:dittrich_identifying_2008, focus on interconnected genes with high association with the disease. However, they differ in their tolerance to include lowly associated nodes. Lastly, other methods explicitly consider the topology of the solution, favoring densely interconnected subnetworks; such is the case of Hierarchichal HotNet cite:reyna_hierarchical_2018, SConES cite:azencott_efficient_2013 and SigMod cite:liu_sigmod:_2017.
 
 Check classification in Network-guided biomarker discovery.
 
@@ -46,31 +40,37 @@ To measure association between a genotype and the phenotype, we performed a per-
 We used the physical interactions from BioGRID version 3.5.171 cite:oughtred_biogrid_2019 to get protein-protein interactions when required. Out of the six methods tested, five use a protein-protein interaction network.
 
 *** Mathematical notation
+    :PROPERTIES:
+    :CUSTOM_ID: methods:notation
+    :END:
 
 In this article, we refer to undirected, vertex-weighted graphs G = (V,E,w). V = {v_1, \dots, v_n} refers to the vertices, with weights w: V \rightarrow \mathbb{R}. Equivalently, E \subseteq {{x,y} | x,y \in V \wedge x \neq y} refers to the edges. When referring to a subnetwork S, V_S is the set of nodes in S and E_S is the set of edges in S.
 
 In addition, we use several matrices that describe different properties of a graph. The described matrices are square, and have as many rows and columns as nodes are in the network. In fact, the element i,j represent a  selected relationship between v_i and v_j. The adjacency matrix W_G contains a 1 when the corresponding nodes are connected through an edge, and 0 otherwise; the diagonal is zero. The degree matrix D_G is a diagonal matrix which contains the degree of the different nodes. Lastly, the Laplacian matrix L_G is defined as L_G = D_G - W_G.
 
-*** TODO Methods used
+*** Methods used
+    :PROPERTIES:
+    :CUSTOM_ID: methods:methods
+    :END:
 
-#+CAPTION: Summary of the differences between the studied algorithms. 
+#+CAPTION: Summary of the differences between the studied algorithms. The colums are: Field, the field in which the algorithm was developed; Node type, the type of network, either gene (protein-protein interaction network usually) or a SNP network; Exhaustive, if all the possible solutions given the selected hyperparameters are explored, or not; Solution, referring properties that are enforced on the solution, other than being dense in high scores and connected; and Input, referring to whether the methods require genotype data or GWAS summary statistics. 
 #+NAME:   tab:method_comparison
-| Algorithm           | Purpose | Network     | Exhaustive | Solution properties |
-|---------------------+---------+-------------+------------+---------------------|
-| heinz               |         | PPIN        | Yes?       | Dense?              |
-| Hierarchical HotNet |         | PPIN        |            |                     |
-| dmGWAS              | GWAS    | PPIN        | No         | Dense               |
-| LEAN                | Omics   | PPIN        | Yes        | Star-shaped         |
-| SConES              | GWAS    | SNP network | Yes        | Dense, connected    |
-| SigMod              | GWAS    | PPIN        |            |                     |
+| Algorithm           | Field | Node type | Exhaustive | Solution         | Input     |
+|---------------------+-------+-----------+------------+------------------+-----------|
+| heinz               | Omics | Gene      | Yes?       | -                | Summary   |
+| Hierarchical HotNet | Omics | Gene      |            |                  | Summary   |
+| dmGWAS              | GWAS  | Gene      | No         | -                | Summary   |
+| LEAN                | Omics | Gene      | Yes        | Star-shaped      | Summary   |
+| SConES              | GWAS  | SNP       | Yes        | Highly connected | Genotypes |
+| SigMod              | GWAS  | Gene      | Yes        | Highly connected | Summary   |
 
-Finding the highest-scoring, densely interconnected subnetwork on a graph is an open problem in the field. Hence, several solutions have been proposed to the problem. In this paper, we apply six methods designed to explore the protein-protein interaction network, and one method, SConES, which explores SNP-networks. Their main differences are summarized in Table [[tab:method_comparison]].
+Finding the highest-scoring, densely interconnected subnetwork on a graph is an open problem in the field. Hence, several solutions have been proposed to the problem. In this paper, we apply six methods designed to explore the protein-protein interaction network, and one method, SConES, which explores SNP-networks. We selected methods that had a readily available, programmatically accessible implementation. Their main differences are summarized in Table [[tab:method_comparison]].
 
 + heinz :: The goal of heinz is identifying the highest-scored connected subgraph on the network cite:dittrich_identifying_2008. The problem has a trivial solution when all scores are positive: the whole network; however, it becomes NP-complete when scores are both positive and negative. The authors propose a transformation of the nodes' P-value into a score which takes a negative value when no association with the phenotype is detected, and a positive value when it is. The distinction between both is determined though an FDR approach. Then, the problem is re-casted as the Prize-Collecting Steiner Tree Problem (PCST). This is the problem of selecting the subnetwork S that maximizes the /profit/ p(S):
 
-    \begin{equation}
+    \begin{equation*}
     p(S) = \sum_{v \in V_S} p(v) - \sum_{e \in E_S} c(e). 
-    \end{equation}
+    \end{equation*}
 
     were p(v) is called profit of adding a node, and c(e) is the cost of the edge, both positive values. These quantities are defined from w' = min_{v \in V_G} w(v):
 
@@ -89,9 +89,9 @@ Finding the highest-scoring, densely interconnected subnetwork on a graph is an 
   1. Select a seed node.
   2. Compute Stouffer's Z-score Z_m for the current subgraph as
     
-    \begin{equation} 
+    \begin{equation*} 
     Z_m = \frac{\sum z_i}{\sqrt{k}}
-    \end{equation}
+    \end{equation*}
 
     where /k/ is the number of genes in the subgraph, z_i = \phi^{-1}(1 - P_i), and \phi^{-1} is the inverse normal distribution function.
   3. Identify neighboring nodes i.e. nodes at shortest path \le /d/. We set d = 2.
@@ -100,9 +100,9 @@ Finding the highest-scoring, densely interconnected subnetwork on a graph is an 
   
   Lastly, the module's Z-score is normalized as
 
-  \begin{equation}
+  \begin{equation*}
   Z_{N}=\frac{Z_{m}-\operatorname{mean}\left(Z_{m}(\pi)\right)}{\operatorname{SD}\left(Z_{m}(\pi)\right)}
-  \end{equation} 
+  \end{equation*} 
 
   where Z_{m}(\pi) represent a vector with 100000 random subsets of the same number of genes.
 
@@ -110,13 +110,24 @@ Finding the highest-scoring, densely interconnected subnetwork on a graph is an 
 + LEAN :: Local enrichment analysis (LEAN) searches disregulated "star" gene subnetworks i.e. subnetworks composed by one central node and all its interactors cite:gwinner_network-based_2016. By imposing this restriction, LEAN is able to exhaustively test all possible solution subnetworks (one per node in the network). For a particular subnetwork of size /m/, the P-values corresponding to the involved nodes are ranked as p_1 \le \dots \le p_m. Then, /k/ binomial tests are conducted, to compute the probability of having /k/ out of /m/ P-values lower or equal to p_k under the null hypothesis. The minimum of these /k/ P-values is the score of the subnetwork. This score is transformed into a P-value through an empirical distribution obtained via a subsampling scheme, where sets of /m/ genes are selected randomly, and their score computed. Lastly, P-values are corrected for multiple testing through a Benjamini-Hochberg correction. We used the implementation of LEAN from the LEANR R package.
 + SConES :: SConES searches the minimal, maximally interconnected, maximally associated subnetwork in a SNP graph cite:azencott_efficient_2013. Specifically, it solves the problem
 
+    #+NAME: eq:scones
     \begin{equation}
     \underset{S \in G}{\arg \max } \underbrace{\sum_{v \in V_S} w(v)}_{\text { association }}-\underbrace{\lambda \mathbf{1}^{\top} L_S \mathbf{1}}_{\text { connectivity }}-\underbrace{\eta \lvert V_S \rvert }_{\text { sparsity }}
     \end{equation}
 
-    where \mathbf{1} is the one-vector of size |V_S|. To build a SNP-graph, the authors suggested three networks: connecting the genotyped SNPs consecutive in the genomic sequence (GS); interconnecting all the SNPs mapped to the same gene, on top of GS (GM); and interconnecting all SNPs mapped to two genes for which a protein-protein interaction exists (GI). 
+    where \mathbf{1} is the one-vector of size |V_S|, and \lambda and \eta are hyperparameters that control the sparsity and the connectivity of the model. For two hyperparameters, the aforementioned problem has a unique equation, that SConES finds using a graph min-cut procedure. We used the version on SConES implemented in R package martini. We selected \lambda and \eta by cross-validation, choosing the values that produce the most stable solution across folds. Note that the solution to the above problem can consist of several disconnected subnetworks.
+    
+    To build a SNP-graph, the authors suggested three networks: connecting the genotyped SNPs consecutive in the genomic sequence (GS); interconnecting all the SNPs mapped to the same gene, on top of GS (GM); and interconnecting all SNPs mapped to two genes for which a protein-protein interaction exists (GI). 
 
-+ SigMod ::
++ SigMod :: SigMod aims at identifying the most densely interconnected gene subnetwork that is most strongly associated to the phenotype cite:liu_sigmod:_2017. It addresses an optimization problem similar to that of SConES (Equation [[eq:scones]]), but replacing the Laplacian matrix my the adjacency matrix (Section [[#methods:notation]]). 
+
+    \begin{equation*}
+    \underset{S \in G}{\arg \max } \underbrace{\sum_{v \in V_S} w(v)}_{\text { association }}-\underbrace{\lambda \mathbf{1}^{\top} A_S \mathbf{1}}_{\text { connectivity }}-\underbrace{\eta \lvert V_S \rvert }_{\text { sparsity }}.
+    \end{equation*}
+  
+    As SConES, this optimization problem can also be solved by a graph min-cut approach. 
+
+    SigMod presents two important additional differences with SConES. First it is designed for gene-gene networks. Second, it returns a single connected subnetwork, which it achieves by exploring a grid of hyperparameters and processing their respective solutions. Specifically, for the range of \lambda = \lambda_{min}, \dots, \lambda_{max} for the same \eta, it prioritizes the solution with the largest change in size from \lambda_n to \lambda_{n+1}. Such a large change implies that the network is strongly interconnected. This results in one candidate solution for each \eta, which are processed by removing any node not connected to any other. A score is assigned to each candidate solution by summing their node scores and normalizing by size. The candidate solution with the highest standardized score is the chosen  solution. 
 
 *** Consensus network
     :PROPERTIES:
@@ -133,7 +144,7 @@ To evaluate the quality of the solutions offered by the different algorithms, we
 
 Another desirable property is that the method retrieves a good candidate causal subnetwork. In consequence, we compared the outcome of each of the methods to the consensus subnetwork of all the solutions (Section [[#methods:consensus]]). 
 
-An alternative way to validate the results involves looking at an external dataset. For that purpose, we used the summary statistics from the Breast Cancer Association Consortium (BCAC) cite:michailidou_genome-wide_2015. BCAC is one of the largest efforts in GWAS, with over 120000 women from European ancestry. Despite the studies not being performed on exactly the same genetic population, there should be shared heritability between a pan-European cohort and a French one. On top of that, that overlap should become more notorious when the results are aggregated at the gene level. For that purpose, we computed the gene association as in Section [[#methods:node_score]]. iCOGS array was used for genotyping in BCAC cite:sakoda_turning_2013, the same array as for GENESIS cite:sinilnikova_genesis:_2016. Although imputed data is available, we used exclusively the SNPs on iCOGS on both cases to make the results comparable.
+An alternative way to validate the results involves looking at an external dataset. For that purpose, we used the summary statistics from the Breast Cancer Association Consortium (BCAC) cite:michailidou_genome-wide_2015. BCAC is one of the largest efforts in GWAS, with over 120000 women from European ancestry. Despite the studies not being performed on exactly the same genetic population, there should be shared heritability between a pan-European cohort and a French one. On top of that, that overlap should become more notorious when the results are aggregated at the gene level. For that purpose, we computed the gene association as in Section [[#methods:node_score]]. iCOGS array was used for genotyping in BCAC cite:sakoda_turning_2013, the same array as for GENESIS cite:sinilnikova_genesis:_2016. Although imputed data is available, we used exclusively the SNPs available on GENESIS after quality control to make the results comparable.
 
 ** Code availability
 
@@ -150,8 +161,13 @@ We conducted association analyses both at the SNP level and at the gene level in
 
 Variants in TOX3 were related to breast cancer susceptibility in other cohorts cite:the_search_collaborators_genome-wide_2007. We did not find previous reports that directly involve LINC02641 in cancer susceptibility. These results show the overlap between the genetic architecture of the disease between the French population and other cohorts, especially at the gene level. In addition, there are other regions highly associated with familial breast cancer, albeit well above the conventional threshold of significance. The most prominent regions, which have been associated to breast cancer susceptibility in the past, are 3p24 cite:brisbin_meta-analysis_2011, and 8q24 cite:search_newly_2009. This motivates exploring network methods, which trade statistical association for biological significance.
 
-** TODO Consensus network
-** TODO New biomarkers
+** Network methods produced heterogeneous results
+
+We applied six network methods to the GENESIS dataset (Section [[#methods:methods]]). We obtained eight solutions: one for each of the gene-based methods, and one for each of the SNP networks of SConES. The solutions were very heterogeneous: none of the subnetworks examined by LEAN was significant (adjusted P-value < 0.05), while dmGWAS produced the largest solution subnetwork with 214 genes.
+
+** TODO Network methods successfully identify genes linked to breast cancer 
+   
+Overlap between solutions.
 
     - SNP level analyses for SconES
         - Chromosomic region
@@ -159,7 +175,11 @@ Variants in TOX3 were related to breast cancer susceptibility in other cohorts c
     - Gene level analyses
         - Pathway enrichment
         - Biomarkers LD clumping/LASSO
-          
+
+** TODO The consensus causal subnetwork is organized around MYC 
+
+We built a consensus subnetwork that captures the mechanisms most shared among the eight solutions (Section [[#methods:consensus]]).
+
 ** TODO Comparison
    
     - Size: how many SNPs and how many genes. Do a Elastic net (more stable, more robust, fix alpha) and report that number as well.
