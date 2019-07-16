@@ -45,7 +45,7 @@ process vegas {
 
     """
     plink --bfile ${BED.baseName} --keep ${SPLIT} --make-bed --out input
-    run_vegas --bfile input --genome GRCh37 --vegas_params '\\-top 10 -upper 50000 -lower 50000' -profile bigmem
+    run_vegas --bfile input --genome GRCh37 --gencode 31 --vegas_params '\\-top 10 -upper 50000 -lower 50000' -profile bigmem
     """
 
 }
@@ -155,7 +155,7 @@ process dmgwas {
     """
     cut -f2,9 ${VEGAS} | sed 's/Top-0.1-pvalue/Pvalue/' >scored_genes.top10.txt
     run_dmGWAS --vegas scored_genes.top10.txt --tab2 ${TAB2} -profile cluster
-    R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("selected_genes.dmgwas.tsv") %>% inner_join(snp2gene, by = "gene") %>% select(snp) %>% write_tsv("snps")'
+    R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("selected_genes.dmgwas.txt") %>% inner_join(snp2gene, by = "gene") %>% select(snp) %>% write_tsv("snps")'
     """
 
 }
