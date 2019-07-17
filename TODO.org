@@ -23,14 +23,50 @@ CLOSED: [2019-06-12 Wed 16:29] SCHEDULED: <2019-06-12 Wed>
  CLOSED: [2019-06-21 Fri 18:14] DEADLINE: <2019-06-17 Mon>
 ** DONE Pathway enrichment analysis on consensus
 CLOSED: [2019-06-13 Thu 16:38] SCHEDULED:<2019-06-13 Thu>
-** TODO Compare gene results to BCAC
-DEADLINE:<2019-07-08 Mon>
-*** TODO Check if SNPs are imputed
+* DONE Check room for 3rd year thesis committee
+CLOSED: [2019-06-11 Tue 17:15] SCHEDULED:<2019-06-11 Tue>
+* DONE Submit application to Training Unit
+CLOSED: [2019-06-17 Mon 17:43] DEADLINE:<2019-06-17 Mon>
+* TODO Prepare OncoDRIVE paper after GENESIS as Letter.
+DEADLINE:<2019-09-01 Sun>
+** TODO Figure out how to correct by population structure
+DEADLINE:<2019-09-02 Mon> 
+* DONE Finish details on GENESIS: dataset and preprocessing 
+CLOSED: [2019-06-18 Tue 17:13] SCHEDULED:<2019-06-18 Tue>
+Preparation for the e-mail and for the paper.
+* DONE Write e-mail to Nadine and Fabienne
+CLOSED: [2019-06-18 Tue 14:01] SCHEDULED:<2019-06-18 Tue>
+* DONE Book ISMB
+CLOSED: [2019-06-20 Thu 13:31] DEADLINE:<2019-06-21 Fri>
+** TODO Ordre de Service
+SCHEDULED:<2019-07-17 Wed> 
+* DONE Run Vegas with top 5, 15 and 20%
+CLOSED: [2019-06-20 Thu 16:06] SCHEDULED:<2019-06-20 Thu>
+* DONE BCAC comparison
+CLOSED: [2019-07-10 Wed 18:28] DEADLINE: <2019-07-05 Fri>
+** DONE Compare gene results to BCAC
+CLOSED: [2019-07-10 Wed 18:28] DEADLINE:<2019-07-08 Mon>
+**** DONE Check if SNPs are imputed
+    CLOSED: [2019-07-04 Thu 12:21]
     BCAC mixes OncoArray and iCOGS. Hence, it will need imputation. Be careful that they do not introduce artifacts.
 ** DONE Compare SNP results to BCAC
 CLOSED: [2019-06-13 Thu 19:42] SCHEDULED:<2019-06-13 Thu>
 ** DONE Compute BCAC gene-level results 
 CLOSED: [2019-06-13 Thu 11:56] SCHEDULED: <2019-06-13 Thu>
+*** DONE Run VEGAS only on iCOGS SNPs
+CLOSED: [2019-07-09 Tue 10:28] SCHEDULED:<2019-07-09 Tue>
+* Manuscript
+** TODO Prepare method-wise list of biomarkers
+** DONE LEAN 
+CLOSED: [2019-07-01 Mon 16:25] SCHEDULED: <2019-07-01 Mon>
+** DONE dmGWAS
+CLOSED: [2019-07-02 Tue 15:32] SCHEDULED: <2019-07-02 Tue>i
+** DONE SigMod
+CLOSED: [2019-07-05 Fri 16:09] SCHEDULED:<2019-07-04 Thu>
+** TODO Finish introduction
+DEADLINE: <2019-07-05 Fri>
+** DONE Finish SNP and gene-level results
+CLOSED: [2019-07-02 Tue 21:01] DEADLINE:<2019-07-03 Wed>
 ** DONE Fix SConES and dmGWAS
 CLOSED: [2019-06-12 Wed 21:08] SCHEDULED:<2019-06-12 Wed>
 ** TODO Figure out how to select modules in Hierarchical Hotnet
@@ -41,34 +77,23 @@ CLOSED: [2019-06-17 Mon 17:41] SCHEDULED:<2019-06-14 Fri>
 CLOSED: [2019-06-13 Thu 17:34] SCHEDULED:<2019-06-13 Thu>
 ** DONE Add known BRCA genes to consensus network
 CLOSED: [2019-06-21 Fri 11:18] SCHEDULED:<2019-06-21 Fri>
-* DONE Check room for 3rd year thesis committee
-CLOSED: [2019-06-11 Tue 17:15] SCHEDULED:<2019-06-11 Tue>
-* DONE Submit application to Training Unit
-CLOSED: [2019-06-17 Mon 17:43] DEADLINE:<2019-06-17 Mon>
-* TODO Prepare OncoDRIVE paper after GENESIS as Letter.
-DEADLINE:<2019-09-01 Sun> 
-* DONE Finish details on GENESIS: dataset and preprocessing 
-CLOSED: [2019-06-18 Tue 17:13] SCHEDULED:<2019-06-18 Tue>
-Preparation for the e-mail and for the paper.
-* DONE Write e-mail to Nadine and Fabienne
-CLOSED: [2019-06-18 Tue 14:01] SCHEDULED:<2019-06-18 Tue>
-* DONE Book ISMB
-CLOSED: [2019-06-20 Thu 13:31] DEADLINE:<2019-06-21 Fri>
-* DONE Run Vegas with top 5, 15 and 20%
-CLOSED: [2019-06-20 Thu 16:06] SCHEDULED:<2019-06-20 Thu>
-* Manuscript
-** TODO Prepare method-wise list of biomarkers
-** DONE LEAN 
-CLOSED: [2019-07-01 Mon 16:25] SCHEDULED: <2019-07-01 Mon>
-** DONE dmGWAS
-CLOSED: [2019-07-02 Tue 15:32] SCHEDULED: <2019-07-02 Tue>i
-** TODO SigMod
-SCHEDULED:<2019-07-03 Wed> 
-** TODO Finish introduction
-DEADLINE: <2019-07-05 Fri>
-** DONE Finish SNP and gene-level results
-CLOSED: [2019-07-02 Tue 21:01] DEADLINE:<2019-07-03 Wed>
-** TODO BCAC comparison
-DEADLINE: <2019-07-05 Fri>
-*** TODO Run VEGAS only on iCOGS SNPs
-SCHEDULED:<2019-06-28 Fri>
+** TODO Discussion: read Gene and Network Analysis of Common VariantsReveals Novel Associations in MultipleComplex Diseases
+SCHEDULED:<2019-07-11 Thu>
+** TODO SNP BCAC comparison 
+SCHEDULED:<2019-07-15 Mon> 
+** DONE Add software references 
+CLOSED: [2019-07-16 Tue 17:45] SCHEDULED:<2019-07-16 Tue>
+** DONE Fix several TODOs in the manuscript
+CLOSED: [2019-07-17 Wed 15:55] SCHEDULED: <2019-07-17 Wed>
+** DONE Print manuscript for Chloe 
+CLOSED: [2019-07-17 Wed 15:55] SCHEDULED:<2019-07-17 Wed>
+* HT vs LC networks 
+** DONE Prepare HINT LC
+CLOSED: [2019-07-16 Tue 15:08] SCHEDULED:<2019-07-16 Tue>
+** DONE Think about the problem 
+   CLOSED: [2019-07-17 Wed 15:55] SCHEDULED:<2019-07-17 Wed>
+* Genes not in the network
+** DONE Finish analysis
+CLOSED: [2019-07-16 Tue 17:52] SCHEDULED:<2019-07-16 Tue>
+** TODO What about old runs results? FGFR2? 
+SCHEDULED:<2019-07-18 Thu> 
