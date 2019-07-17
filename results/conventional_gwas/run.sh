@@ -34,3 +34,6 @@ tail -n +2 scored_genes.X.vegas.txt >>scored_genes.vegas.txt
 
 rm scored_genes.X.vegas.txt
 mv scored_genes.vegas.txt scored_genes.vegas.age_adjust.txt
+
+# ld prune 0.75
+plink -bfile genesis_2019 -indep-pairwise 50 5 0.75 -out snps_75
