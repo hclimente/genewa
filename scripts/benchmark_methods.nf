@@ -68,7 +68,7 @@ process scones {
         file SNP2GENE from snp2gene
 
     output:
-        set val("scones_${NET}"), file(SPLIT), 'snps' into scones_biomarkers
+        set val("scones_${NET}"), file(SPLIT), 'snps' into scones_snps, scones_snps_stability
 
     """
     plink --bfile ${BED.baseName} --keep ${SPLIT} --make-bed --out input
@@ -89,7 +89,7 @@ process sigmod {
         file SNP2GENE from snp2gene
 
     output:
-        set val('sigmod'), file(SPLIT), 'snps' into sigmod_biomarkers
+        set val('sigmod'), file(SPLIT), 'snps' into sigmod_snps, sigmod_snps_stability
     
     """
     wget https://github.com/YuanlongLiu/SigMod/raw/master/SigMod_v2.zip && unzip SigMod_v2.zip
@@ -110,7 +110,7 @@ process lean {
         file SNP2GENE from snp2gene
 
     output:
-        set val('lean'), file(SPLIT), 'snps' into lean_biomarkers
+        set val('lean'), file(SPLIT), 'snps' into lean_snps, lean_snps_stability
     
     """
     cut -f2,9 ${VEGAS} | sed 's/Top-0.1-pvalue/Pvalue/' >scored_genes.top10.txt
@@ -130,7 +130,7 @@ process heinz {
         file SNP2GENE from snp2gene
 
     output:
-        set val('heinz'), file(SPLIT), 'snps' into heinz_biomarkers
+        set val('heinz'), file(SPLIT), 'snps' into heinz_snps, heinz_snps_stability
 
     """
     cut -f2,9 ${VEGAS} | sed 's/Top-0.1-pvalue/Pvalue/' >scored_genes.top10.txt
@@ -150,7 +150,7 @@ process dmgwas {
         file SNP2GENE from snp2gene
 
     output:
-        set val('dmgwas'), file(SPLIT), 'snps' into dmgwas_biomarkers
+        set val('dmgwas'), file(SPLIT), 'snps' into dmgwas_snps, dmgwas_snps_stability
     
     """
     cut -f2,9 ${VEGAS} | sed 's/Top-0.1-pvalue/Pvalue/' >scored_genes.top10.txt
@@ -170,8 +170,8 @@ process hierarchichal_hotnet {
         file SNP2GENE from snp2gene
 
     output:
-        set val('hotnet'), file(SPLIT), 'snps' into hotnet_biomarkers
-   , dmgwas_biomarkers 
+        set val('hotnet'), file(SPLIT), 'snps' into hotnet_snps, hotnet_snps_stability
+   , dmgwas_snps 
     """
     cut -f2,9 ${VEGAS} | sed 's/Top-0.1-pvalue/Pvalue/' >scored_genes.top10.txt
     git clone https://github.com/raphael-group/hierarchical-hotnet.git
@@ -183,7 +183,7 @@ process hierarchichal_hotnet {
 */
 //  RISK COMPUTATION
 /////////////////////////////////////
-biomarkers = scones_biomarkers .mix( sigmod_biomarkers, lean_biomarkers, heinz_biomarkers, dmgwas_biomarkers ) 
+snps = scones_snps .mix( sigmod_snps, lean_snps, heinz_snps, dmgwas_snps )
 
 process lasso {
 
@@ -195,7 +195,7 @@ process lasso {
         file BED from bed
         file FAM from fam
         file BIM from bim
-        set val(METHOD), file(SPLIT), file(SNPS) from biomarkers
+        set val(METHOD), file(SPLIT), file(SNPS) from snps
 
     output:
         file 'bm' into bm
@@ -259,6 +259,86 @@ process join_analyses {
         do.call(rbind, .) %>%
         as.tibble %>%
         write_tsv('prediction.tsv')
+    """
+
+}
+
+//  JACCARD
+/////////////////////////////////////
+snps_stability = scones_snps_stability 
+    .mix( sigmod_snps_stability, lean_snps_stability, heinz_snps_stability, dmgwas_snps_stability )
+    .groupTuple(size = params.k)
+
+process compute_stability {
+
+    input:
+        set val(METHOD), file('snps*') from snps_stability
+
+    output:
+        file 'stability_method' into stability_method
+
+    """
+    #!/usr/bin/env python
+    import csv
+    import numpy as np
+    from glob import glob
+
+    def read_snps(path):
+        FILE = open(path, 'r')
+        snps = FILE.read()
+        snps = snps.split('\\n')
+        snps = set(snps)
+        FILE.close()
+
+        return(snps)
+
+    snps_files = glob('snps*')
+    selected_snps = []
+    jaccards = []
+    for i in range(len(snps_files)):
+
+        snps1 = read_snps(snps_files[i])
+
+        for j in range(len(selected_snps)):
+            snps2 = selected_snps[j]
+            if len(snps1) and len(snps2):
+                intersection = snps1 & snps2
+                union = snps1 | snps2
+                J = len(intersection)/len(union)
+                jaccards.append(('{}-{}'.format(i, j), J))
+            else:
+                jaccards.append(('{}-{}'.format(i, j), 'nan'))
+
+        selected_snps.append(snps1)
+
+    with open('stability_method', 'w', newline='') as f_output:
+        tsv_output = csv.writer(f_output, delimiter='\t')
+        for idx, J in jaccards:
+            row = ['${METHOD}', len(snps_files), idx, J ]
+            tsv_output.writerow(row)
+    """
+
+}
+
+process join_stability {
+
+    publishDir "$params.out", overwrite: true, mode: "copy"
+
+    input:
+        file "stability_method*" from stability_method. collect()
+
+    output:
+        file "stability.tsv"
+
+    """
+    #!/usr/bin/env Rscript
+
+    library(tidyverse)
+
+    lapply(list.files(pattern = 'stability_method*'), read_tsv, col_types = 'cid') %>% 
+        do.call(rbind, .) %>%
+        as.tibble %>%
+        write_tsv('stability.tsv')
     """
 
 }
