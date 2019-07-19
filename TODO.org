@@ -12,8 +12,17 @@
 * DONE Describe state of the art: comparison between methods
 CLOSED: [2019-06-12 Wed 16:29] SCHEDULED: <2019-06-12 Wed>
 ** TODO Check Network-guided biomarker discovery
-* TODO Run benchmark
+* WAIT Run benchmark
   DEADLINE: <2019-06-24 Mon>
+  - State "WAIT"       from "TODO"       [2019-07-19 Fri 14:58]
+** DONE Add Jaccard indexes to compute stability
+CLOSED: [2019-07-19 Fri 16:14] SCHEDULED:<2019-07-19 Fri>
+- State "DONE"       from "WAIT"       [2019-07-19 Fri 16:14]
+- State "WAIT"       from "TODO"       [2019-07-19 Fri 16:14]
+** TODO Test Jaccard indexes
+SCHEDULED:<2019-07-22 Mon> 
+** TODO Run benchmark on HT+LC 
+DEADLINE:<2019-07-29 Mon> 
 * Run methods
 ** DONE Check SConES solution/use old algorithm
  CLOSED: [2019-06-11 Tue 18:51] SCHEDULED: <2019-06-11 Tue>
@@ -38,8 +47,10 @@ Preparation for the e-mail and for the paper.
 CLOSED: [2019-06-18 Tue 14:01] SCHEDULED:<2019-06-18 Tue>
 * DONE Book ISMB
 CLOSED: [2019-06-20 Thu 13:31] DEADLINE:<2019-06-21 Fri>
-** TODO Ordre de Service
-SCHEDULED:<2019-07-17 Wed> 
+** DONE Ordre de Service
+CLOSED: [2019-07-17 Wed 19:00] SCHEDULED:<2019-07-17 Wed>
+** DONE Add acknowledgements
+CLOSED: [2019-07-18 Thu 11:03] SCHEDULED:<2019-07-18 Thu>
 * DONE Run Vegas with top 5, 15 and 20%
 CLOSED: [2019-06-20 Thu 16:06] SCHEDULED:<2019-06-20 Thu>
 * DONE BCAC comparison
@@ -69,8 +80,12 @@ DEADLINE: <2019-07-05 Fri>
 CLOSED: [2019-07-02 Tue 21:01] DEADLINE:<2019-07-03 Wed>
 ** DONE Fix SConES and dmGWAS
 CLOSED: [2019-06-12 Wed 21:08] SCHEDULED:<2019-06-12 Wed>
-** TODO Figure out how to select modules in Hierarchical Hotnet
-SCHEDULED:<2019-06-20 Thu> 
+** CANCELED Figure out how to select modules in Hierarchical Hotnet
+CLOSED: [2019-07-19 Fri 14:56] SCHEDULED:<2019-06-20 Thu>
+- State "CANCELED"   from "DONE"       [2019-07-19 Fri 14:56] \\
+  Hierarchical HotNet ditched for HotNet2.
+- State "DONE"       from "WAIT"       [2019-07-19 Fri 14:56]
+- State "WAIT"       from "TODO"       [2019-07-19 Fri 14:56]
 ** DONE Convert SConES GM to gene network to build consensus
 CLOSED: [2019-06-17 Mon 17:41] SCHEDULED:<2019-06-14 Fri>
 ** DONE Plot SConES GS and GM results 
@@ -87,13 +102,21 @@ CLOSED: [2019-07-16 Tue 17:45] SCHEDULED:<2019-07-16 Tue>
 CLOSED: [2019-07-17 Wed 15:55] SCHEDULED: <2019-07-17 Wed>
 ** DONE Print manuscript for Chloe 
 CLOSED: [2019-07-17 Wed 15:55] SCHEDULED:<2019-07-17 Wed>
+** DONE Move Chloe's comments into the manuscript
+CLOSED: [2019-07-18 Thu 18:05] SCHEDULED:<2019-07-18 Thu>
 * HT vs LC networks 
 ** DONE Prepare HINT LC
 CLOSED: [2019-07-16 Tue 15:08] SCHEDULED:<2019-07-16 Tue>
 ** DONE Think about the problem 
    CLOSED: [2019-07-17 Wed 15:55] SCHEDULED:<2019-07-17 Wed>
+** TODO Implement solution approved by Chloe
+SCHEDULED:<2019-07-19 Fri>
+** TODO Run benchmark HT+LC 
+SCHEDULED:<2019-07-22 Mon> 
 * Genes not in the network
 ** DONE Finish analysis
 CLOSED: [2019-07-16 Tue 17:52] SCHEDULED:<2019-07-16 Tue>
-** TODO What about old runs results? FGFR2? 
-SCHEDULED:<2019-07-18 Thu> 
+** TODO Re-run SigMod with old PPI + old scores? Check FGFR2. 
+SCHEDULED:<2019-07-22 Mon> 
+* TODO Finish HotNet2 implementation
+SCHEDULED:<2019-07-22 Mon> 
