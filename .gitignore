@@ -10,7 +10,7 @@ results/preprocessing/
 *.irem
 *.cov
 scored_genes.top10.txt
-.gff
+*.gff3
 
 # software and OS
 templates
