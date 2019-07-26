@@ -267,24 +267,26 @@ process join_analyses {
 /////////////////////////////////////
 snps_stability = scones_snps_stability 
     .mix( sigmod_snps_stability, lean_snps_stability, heinz_snps_stability, dmgwas_snps_stability )
-    .groupTuple(size = params.k)
+    .groupTuple(size: params.k)
 
-process compute_stability {
+process stability {
 
     input:
-        set val(METHOD), file('snps*') from snps_stability
+        set val(METHOD), file('samples*'), file('snps*') from snps_stability
 
     output:
         file 'stability_method' into stability_method
 
     """
     #!/usr/bin/env python
+
     import csv
     import numpy as np
     from glob import glob
 
     def read_snps(path):
         FILE = open(path, 'r')
+        FILE.readline()
         snps = FILE.read()
         snps = snps.split('\\n')
         snps = set(snps)
@@ -300,7 +302,7 @@ process compute_stability {
         snps1 = read_snps(snps_files[i])
 
         for j in range(len(selected_snps)):
-            snps2 = selected_snps[j]
+            snps2 = read_snps(snps_files[j])
             if len(snps1) and len(snps2):
                 intersection = snps1 & snps2
                 union = snps1 | snps2
@@ -313,6 +315,7 @@ process compute_stability {
 
     with open('stability_method', 'w', newline='') as f_output:
         tsv_output = csv.writer(f_output, delimiter='\t')
+        tsv_output.writerow(['method', 'num_replicates', 'idx', 'jaccard'])
         for idx, J in jaccards:
             row = ['${METHOD}', len(snps_files), idx, J ]
             tsv_output.writerow(row)
@@ -335,7 +338,7 @@ process join_stability {
 
     library(tidyverse)
 
-    lapply(list.files(pattern = 'stability_method*'), read_tsv, col_types = 'cid') %>% 
+    lapply(list.files(pattern = 'stability_method*'), read_tsv, col_types = 'cicd') %>% 
         do.call(rbind, .) %>%
         as.tibble %>%
         write_tsv('stability.tsv')
