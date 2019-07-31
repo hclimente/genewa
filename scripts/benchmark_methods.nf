@@ -45,7 +45,7 @@ process vegas {
 
     """
     plink --bfile ${BED.baseName} --keep ${SPLIT} --make-bed --out input
-    run_vegas --bfile input --genome GRCh37 --gencode 31 --vegas_params '\\-top 10 -upper 50000 -lower 50000' -profile bigmem
+    run_vegas --bfile input --genome 37 --gencode 31 --vegas_params '-top 10 -upper 50000 -lower 50000' -profile bigmem
     """
 
 }
@@ -189,7 +189,8 @@ process lasso {
 
     errorStrategy 'ignore'
     tag { "${METHOD}, ${SPLIT}" }
-    clusterOptions = '-l mem=20G'
+    memory '40 GB'
+    executor 'slurm'
 
     input:
         file BED from bed
