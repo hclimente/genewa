@@ -4,9 +4,9 @@ Review of network-based GWAS approaches on the GENESIS dataset.
 
 ## Analyses
 
-* [Conventional GWAS](results/conventional_gwas/gwas.ipynb)
-* [Consensus network](results/consensus/consensus.ipynb)
-* [SConES results](results/scones/scones.ipynb)
+* [Conventional GWAS](doc/gwas.ipynb)
+* [Consensus network](doc/consensus.ipynb)
+* [SConES results](doc/scones.ipynb)
 
 ## Manuscript
 

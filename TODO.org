@@ -11,18 +11,25 @@
 *** Check p-value shift
 * DONE Describe state of the art: comparison between methods
 CLOSED: [2019-06-12 Wed 16:29] SCHEDULED: <2019-06-12 Wed>
-** TODO Check Network-guided biomarker discovery
-* WAIT Run benchmark
-  DEADLINE: <2019-06-24 Mon>
+* DONE Run benchmark
+  CLOSED: [2019-08-01 Thu 02:04] DEADLINE: <2019-07-01 Mon>
+  - State "DONE"       from "WAIT"       [2019-08-01 Thu 02:04]
+  - State "WAIT"       from "DONE"       [2019-07-28 Sun 17:02]
+  - State "DONE"       from "WAIT"       [2019-07-26 Fri 09:56]
   - State "WAIT"       from "TODO"       [2019-07-19 Fri 14:58]
 ** DONE Add Jaccard indexes to compute stability
 CLOSED: [2019-07-19 Fri 16:14] SCHEDULED:<2019-07-19 Fri>
 - State "DONE"       from "WAIT"       [2019-07-19 Fri 16:14]
 - State "WAIT"       from "TODO"       [2019-07-19 Fri 16:14]
-** TODO Test Jaccard indexes
-SCHEDULED:<2019-07-22 Mon> 
-** TODO Run benchmark on HT+LC 
-DEADLINE:<2019-07-29 Mon> 
+** DONE Test Jaccard indexes
+CLOSED: [2019-07-25 Thu 14:36] SCHEDULED:<2019-07-26 Fri>
+- State "DONE"       from "WAIT"       [2019-07-25 Thu 14:36]
+- State "WAIT"       from "TODO"       [2019-07-25 Thu 14:22]
+** DONE Run Lasso on a node
+CLOSED: [2019-08-01 Thu 02:56] SCHEDULED:<2019-07-29 Mon>
+- State "DONE"       from "WAIT"       [2019-08-01 Thu 02:56]
+- State "WAIT"       from "TODO"       [2019-08-01 Thu 02:54]
+It will require bigmem. 
 * Run methods
 ** DONE Check SConES solution/use old algorithm
  CLOSED: [2019-06-11 Tue 18:51] SCHEDULED: <2019-06-11 Tue>
@@ -32,25 +39,59 @@ DEADLINE:<2019-07-29 Mon>
  CLOSED: [2019-06-21 Fri 18:14] DEADLINE: <2019-06-17 Mon>
 ** DONE Pathway enrichment analysis on consensus
 CLOSED: [2019-06-13 Thu 16:38] SCHEDULED:<2019-06-13 Thu>
+** CANCELED Re-run SConES with new genes
+CLOSED: [2019-07-25 Thu 16:38] SCHEDULED:<2019-07-26 Fri>
+- State "CANCELED"   from "DONE"       [2019-07-25 Thu 16:38] \\
+  It was done.
+- State "DONE"       from "WAIT"       [2019-07-25 Thu 16:38]
+- State "WAIT"       from "TODO"       [2019-07-25 Thu 16:38]
+** WAIT Run HotNet2
+SCHEDULED:<2019-07-25 Thu> 
+- State "WAIT"       from "TODO"       [2019-07-25 Thu 18:05]
 * DONE Check room for 3rd year thesis committee
 CLOSED: [2019-06-11 Tue 17:15] SCHEDULED:<2019-06-11 Tue>
 * DONE Submit application to Training Unit
 CLOSED: [2019-06-17 Mon 17:43] DEADLINE:<2019-06-17 Mon>
 * TODO Prepare OncoDRIVE paper after GENESIS as Letter.
 DEADLINE:<2019-09-01 Sun>
-** TODO Figure out how to correct by population structure
-DEADLINE:<2019-09-02 Mon> 
+** DONE Figure out how to correct by population structure
+CLOSED: [2019-07-25 Thu 17:05] DEADLINE:<2019-09-02 Mon>
+- State "DONE"       from "WAIT"       [2019-07-25 Thu 17:05]
+- State "WAIT"       from "TODO"       [2019-07-25 Thu 17:05]
+** DONE Correct by population structure as in Association analysis identifies 65 new breast cancer risk loci
+CLOSED: [2019-08-01 Thu 04:21] SCHEDULED:<2019-07-25 Thu>
+- State "DONE"       from "WAIT"       [2019-08-01 Thu 04:21]
+- State "WAIT"       from "TODO"       [2019-07-25 Thu 22:45]
+"To adjust for potential (intra-continental) popu- lation stratification in the OncoArray dataset, principal components analysis was performed using data from 33,661 uncorrelated SNPs (which included 2,318 SNPs specifically selected on informativeness for determining continental ancestry) with a MAF of at least 0.05 and maximum correlation of 0.1 in the OncoArray dataset, using purpose-written software (http://ccge.medschl.cam.ac.uk/software/pccalc). For the main analyses, we used the first ten principal components, as additional components did not further reduce inflation in the test statistics. We used nine principal components for the iCOGS and up to ten principal components for the other GWAS, where this was found to reduce inflation."
+** TODO Check population structure on PCs 
+SCHEDULED:<2019-07-26 Fri>
+Find out genomic inflation by # of PC. Find out the number of PCs to use. As we have less samples than the original study, maybe not 10 PCs are needed. 
 * DONE Finish details on GENESIS: dataset and preprocessing 
 CLOSED: [2019-06-18 Tue 17:13] SCHEDULED:<2019-06-18 Tue>
 Preparation for the e-mail and for the paper.
 * DONE Write e-mail to Nadine and Fabienne
 CLOSED: [2019-06-18 Tue 14:01] SCHEDULED:<2019-06-18 Tue>
-* DONE Book ISMB
+* ISMB
+** DONE Book ISMB
 CLOSED: [2019-06-20 Thu 13:31] DEADLINE:<2019-06-21 Fri>
 ** DONE Ordre de Service
 CLOSED: [2019-07-17 Wed 19:00] SCHEDULED:<2019-07-17 Wed>
 ** DONE Add acknowledgements
 CLOSED: [2019-07-18 Thu 11:03] SCHEDULED:<2019-07-18 Thu>
+** DONE Re-read Block HSIC Lasso paper
+CLOSED: [2019-07-24 Wed 14:11] SCHEDULED:<2019-07-23 Tue>
+- State "DONE"       from "WAIT"       [2019-07-24 Wed 14:11]
+- State "WAIT"       from "TODO"       [2019-07-24 Wed 14:11]
+** DONE Check Block HSIC Lasso runtime and memory consumption 
+CLOSED: [2019-07-24 Wed 14:11] SCHEDULED:<2019-07-23 Tue>
+- State "DONE"       from "WAIT"       [2019-07-24 Wed 14:11]
+- State "WAIT"       from "TODO"       [2019-07-24 Wed 14:11]
+** CANCELED Write summary for RIKEN talk
+CLOSED: [2019-07-25 Thu 12:21] SCHEDULED:<2019-07-25 Thu>
+- State "CANCELED"   from "DONE"       [2019-07-25 Thu 12:21] \\
+  Makoto did it.
+- State "DONE"       from "WAIT"       [2019-07-25 Thu 12:21]
+- State "WAIT"       from "TODO"       [2019-07-25 Thu 12:21]
 * DONE Run Vegas with top 5, 15 and 20%
 CLOSED: [2019-06-20 Thu 16:06] SCHEDULED:<2019-06-20 Thu>
 * DONE BCAC comparison
@@ -68,6 +109,7 @@ CLOSED: [2019-06-13 Thu 11:56] SCHEDULED: <2019-06-13 Thu>
 CLOSED: [2019-07-09 Tue 10:28] SCHEDULED:<2019-07-09 Tue>
 * Manuscript
 ** TODO Prepare method-wise list of biomarkers
+SCHEDULED: <2019-08-05 Mon>
 ** DONE LEAN 
 CLOSED: [2019-07-01 Mon 16:25] SCHEDULED: <2019-07-01 Mon>
 ** DONE dmGWAS
@@ -75,7 +117,7 @@ CLOSED: [2019-07-02 Tue 15:32] SCHEDULED: <2019-07-02 Tue>i
 ** DONE SigMod
 CLOSED: [2019-07-05 Fri 16:09] SCHEDULED:<2019-07-04 Thu>
 ** TODO Finish introduction
-DEADLINE: <2019-07-05 Fri>
+DEADLINE: <2019-08-05 Mon>
 ** DONE Finish SNP and gene-level results
 CLOSED: [2019-07-02 Tue 21:01] DEADLINE:<2019-07-03 Wed>
 ** DONE Fix SConES and dmGWAS
@@ -92,10 +134,8 @@ CLOSED: [2019-06-17 Mon 17:41] SCHEDULED:<2019-06-14 Fri>
 CLOSED: [2019-06-13 Thu 17:34] SCHEDULED:<2019-06-13 Thu>
 ** DONE Add known BRCA genes to consensus network
 CLOSED: [2019-06-21 Fri 11:18] SCHEDULED:<2019-06-21 Fri>
-** TODO Discussion: read Gene and Network Analysis of Common VariantsReveals Novel Associations in MultipleComplex Diseases
-SCHEDULED:<2019-07-11 Thu>
 ** TODO SNP BCAC comparison 
-SCHEDULED:<2019-07-15 Mon> 
+SCHEDULED:<2019-08-05 Mon> 
 ** DONE Add software references 
 CLOSED: [2019-07-16 Tue 17:45] SCHEDULED:<2019-07-16 Tue>
 ** DONE Fix several TODOs in the manuscript
@@ -104,19 +144,28 @@ CLOSED: [2019-07-17 Wed 15:55] SCHEDULED: <2019-07-17 Wed>
 CLOSED: [2019-07-17 Wed 15:55] SCHEDULED:<2019-07-17 Wed>
 ** DONE Move Chloe's comments into the manuscript
 CLOSED: [2019-07-18 Thu 18:05] SCHEDULED:<2019-07-18 Thu>
+** TODO Update outdated parts of the manuscript
+SCHEDULED:<2019-08-05 Mon> 
 * HT vs LC networks 
 ** DONE Prepare HINT LC
 CLOSED: [2019-07-16 Tue 15:08] SCHEDULED:<2019-07-16 Tue>
 ** DONE Think about the problem 
    CLOSED: [2019-07-17 Wed 15:55] SCHEDULED:<2019-07-17 Wed>
-** TODO Implement solution approved by Chloe
-SCHEDULED:<2019-07-19 Fri>
-** TODO Run benchmark HT+LC 
-SCHEDULED:<2019-07-22 Mon> 
+** DONE Implement solution approved by Chloe
+CLOSED: [2019-07-19 Fri 16:22] SCHEDULED:<2019-07-19 Fri>
+- State "DONE"       from "WAIT"       [2019-07-19 Fri 16:22]
+- State "WAIT"       from "TODO"       [2019-07-19 Fri 16:22]
+** WAIT Run benchmark HT+LC 
+SCHEDULED:<2019-07-26 Fri> 
+- State "WAIT"       from "TODO"       [2019-07-25 Thu 16:15]
 * Genes not in the network
 ** DONE Finish analysis
 CLOSED: [2019-07-16 Tue 17:52] SCHEDULED:<2019-07-16 Tue>
-** TODO Re-run SigMod with old PPI + old scores? Check FGFR2. 
-SCHEDULED:<2019-07-22 Mon> 
-* TODO Finish HotNet2 implementation
-SCHEDULED:<2019-07-22 Mon> 
+** DONE Re-run SigMod with old PPI + old scores? Check FGFR2. 
+CLOSED: [2019-08-01 Thu 02:56] SCHEDULED:<2019-07-26 Fri>
+- State "DONE"       from "WAIT"       [2019-08-01 Thu 02:56]
+- State "WAIT"       from "TODO"       [2019-07-25 Thu 16:31]
+* DONE Finish HotNet2 implementation
+CLOSED: [2019-07-22 Mon 15:27] SCHEDULED:<2019-07-22 Mon>
+- State "DONE"       from "WAIT"       [2019-07-22 Mon 15:27]
+- State "WAIT"       from "TODO"       [2019-07-22 Mon 15:27]
