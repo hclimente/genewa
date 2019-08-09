@@ -13,7 +13,6 @@ wget ftp://ftp.ebi.ac.uk/pub/databases/genenames/new/tsv/non_alt_loci_set.txt
 ./hint2hgnc.R
 
 # map snps to genes
-snp2gene --bim genesis_2019.bim --grch_version 37 --gencode_version 31 -profile cluster
+snp2gene.nf --bim genesis_2019.bim --grch_version 37 --gencode_version 31 -profile cluster -resume
 sed 's/symbol/gene/' snp2hgnc.tsv >tmp
-
 mv tmp snp2hgnc.tsv
