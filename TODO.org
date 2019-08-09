@@ -48,6 +48,8 @@ CLOSED: [2019-07-25 Thu 16:38] SCHEDULED:<2019-07-26 Fri>
 ** WAIT Run HotNet2
 SCHEDULED:<2019-07-25 Thu> 
 - State "WAIT"       from "TODO"       [2019-07-25 Thu 18:05]
+** TODO Verify that the conclusions from old notebooks hold
+SCHEDULED:<2019-08-05 Mon> 
 * DONE Check room for 3rd year thesis committee
 CLOSED: [2019-06-11 Tue 17:15] SCHEDULED:<2019-06-11 Tue>
 * DONE Submit application to Training Unit
@@ -107,6 +109,8 @@ CLOSED: [2019-06-13 Thu 19:42] SCHEDULED:<2019-06-13 Thu>
 CLOSED: [2019-06-13 Thu 11:56] SCHEDULED: <2019-06-13 Thu>
 *** DONE Run VEGAS only on iCOGS SNPs
 CLOSED: [2019-07-09 Tue 10:28] SCHEDULED:<2019-07-09 Tue>
+** TODO Re-run BCAC Jupyter analysis
+SCHEDULED:<2019-08-12 Mon> 
 * Manuscript
 ** TODO Prepare method-wise list of biomarkers
 SCHEDULED: <2019-08-05 Mon>
