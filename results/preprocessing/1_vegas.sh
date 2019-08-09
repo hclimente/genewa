@@ -5,4 +5,4 @@ vegas2.nf --bfile genesis_2019 --gencode 31 --genome 37 --buffer 50000 --vegas_p
 tail -n +2 scored_genes.X.vegas.txt >>scored_genes.vegas.txt
 
 rm scored_genes.X.vegas.txt
-../../scripts/ensembl2hgnc.R scored_genes.vegas.txt
+../../scripts/ensembl2hgnc.R scored_genes.vegas.txt ../preprocessing/non_alt_loci_set.txt

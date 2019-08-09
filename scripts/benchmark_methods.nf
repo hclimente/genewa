@@ -12,6 +12,8 @@ scones_nets = ['gs','gm','gi']
 // annotation
 tab2 = file(params.tab2)
 snp2gene = file(params.snp2gene)
+r_ensg2hgnc = file(params.r_ensg2hgnc)
+ensg2hgnc = file(params.ensg2hgnc)
 
 //  SPLIT PREPARATION
 /////////////////////////////////////
@@ -39,13 +41,16 @@ process vegas {
         file FAM from fam
         file BIM from bim
         file SPLIT from splits_vegas
+        file R_ENSG2HGNC from r_ensg2hgnc
+        file ENSG2HGNC from ensg2hgnc
 
     output:
         set file(SPLIT), 'scored_genes.vegas.txt' into vegas
 
     """
     plink --bfile ${BED.baseName} --keep ${SPLIT} --make-bed --out input
-    run_vegas --bfile input --genome 37 --gencode 31 --vegas_params '-top 10 -upper 50000 -lower 50000' -profile bigmem
+    vegas2.nf --bfile input --genome 37 --gencode 31 --buffer 50000 --vegas_params '-top 10' -profile bigmem
+    ${R_ENSG2HGNC} scored_genes.vegas.txt ${ENSG2HGNC}
     """
 
 }
@@ -72,7 +77,7 @@ process scones {
 
     """
     plink --bfile ${BED.baseName} --keep ${SPLIT} --make-bed --out input
-    run_old_scones --bfile input --network ${NET} --snp2gene ${SNP2GENE} --tab2 ${TAB2} -profile bigmem
+    old_scones.nf --bfile input --network ${NET} --snp2gene ${SNP2GENE} --tab2 ${TAB2} -profile bigmem
     echo snp >snps
     grep TRUE cones.tsv | cut -f1 >>snps
     """
@@ -94,7 +99,7 @@ process sigmod {
     """
     wget https://github.com/YuanlongLiu/SigMod/raw/master/SigMod_v2.zip && unzip SigMod_v2.zip
     cut -f2,9 ${VEGAS} | sed 's/Top-0.1-pvalue/Pvalue/' >scored_genes.top10.txt
-    run_sigmod --bfile input --sigmod SigMod_v2 --vegas scored_genes.top10.txt --tab2 ${TAB2} -profile cluster 
+    sigmod.nf --bfile input --sigmod SigMod_v2 --vegas scored_genes.top10.txt --tab2 ${TAB2} -profile cluster 
     R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("selected_genes.sigmod.txt") %>% inner_join(snp2gene, by = "gene") %>% select(snp) %>% write_tsv("snps")'
     """
 
@@ -114,7 +119,7 @@ process lean {
     
     """
     cut -f2,9 ${VEGAS} | sed 's/Top-0.1-pvalue/Pvalue/' >scored_genes.top10.txt
-    run_lean --vegas scored_genes.top10.txt --tab2 ${TAB2} -profile cluster
+    lean.nf --vegas scored_genes.top10.txt --tab2 ${TAB2} -profile cluster
     R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("scored_genes.lean.txt") %>% filter(PLEAN < 0.05) %>% inner_join(snp2gene, by = c("Gene" = "gene")) %>% select(snp) %>% write_tsv("snps")'
     """
 
@@ -134,7 +139,7 @@ process heinz {
 
     """
     cut -f2,9 ${VEGAS} | sed 's/Top-0.1-pvalue/Pvalue/' >scored_genes.top10.txt
-    run_heinz --vegas scored_genes.top10.txt --tab2 ${TAB2} --fdr 0.5 -profile cluster -resume 
+    heinz.nf --vegas scored_genes.top10.txt --tab2 ${TAB2} --fdr 0.5 -profile cluster -resume 
     R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("selected_genes.heinz.txt") %>% inner_join(snp2gene, by = "gene") %>% select(snp) %>% write_tsv("snps")'
     """
 
@@ -154,7 +159,7 @@ process dmgwas {
     
     """
     cut -f2,9 ${VEGAS} | sed 's/Top-0.1-pvalue/Pvalue/' >scored_genes.top10.txt
-    run_dmGWAS --vegas scored_genes.top10.txt --tab2 ${TAB2} -profile cluster
+    dmgwas.nf --vegas scored_genes.top10.txt --tab2 ${TAB2} -profile cluster
     R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("selected_genes.dmgwas.txt") %>% inner_join(snp2gene, by = "gene") %>% select(snp) %>% write_tsv("snps")'
     """
 
