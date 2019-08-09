@@ -1,1 +1,1 @@
-../../scripts/benchmark_methods.nf --bfile genesis_2019 --snp2gene ../preprocessing/snp2hgnc.tsv --tab2 ../preprocessing/hint.ht_complex.hgnc.pseudo.tab2 -resume -with-trace
+../../scripts/benchmark_methods.nf --bfile genesis_2019 --snp2gene ../preprocessing/snp2hgnc.tsv --tab2 ../preprocessing/hint.ht_complex.hgnc.pseudo.tab2 --r_ensg2hgnc ../../scripts/ensembl2hgnc.R --ensg2hgnc ../preprocessing/non_alt_loci_set.txt -resume -with-trace
