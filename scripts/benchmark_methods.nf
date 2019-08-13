@@ -32,7 +32,7 @@ process make_splits {
 
 }
 
-splits .into {splits_vegas; splits_scones}
+splits .into {splits_vegas; splits_nothing; splits_scones}
 
 process vegas {
 
@@ -50,7 +50,7 @@ process vegas {
     """
     plink --bfile ${BED.baseName} --keep ${SPLIT} --make-bed --out input
     vegas2.nf --bfile input --genome 37 --gencode 31 --buffer 50000 --vegas_params '-top 10' -profile bigmem
-    ${R_ENSG2HGNC} scored_genes.vegas.txt ${ENSG2HGNC}
+    ./${R_ENSG2HGNC} scored_genes.vegas.txt ${ENSG2HGNC}
     """
 
 }
@@ -59,6 +59,25 @@ vegas .into {vegas_sigmod; vegas_lean; vegas_heinz; vegas_dmgwas}
 
 //  BIOMARKER SELECTION
 /////////////////////////////////////
+process do_nothing {
+
+    tag { "${SPLIT}" }
+
+    input:
+        file BIM from bim
+        file FAM from fam
+        file SPLIT from splits_nothing
+
+    output:
+        set val("all_snps"), file(SPLIT), 'snps' into all_snps
+
+    """
+    echo snp >snps
+    cut -f2 $BIM >>snps
+    """
+
+}
+
 process scones {
 
     tag { "${NET}, ${SPLIT}" }
@@ -188,7 +207,7 @@ process hierarchichal_hotnet {
 */
 //  RISK COMPUTATION
 /////////////////////////////////////
-snps = scones_snps .mix( sigmod_snps, lean_snps, heinz_snps, dmgwas_snps )
+snps = scones_snps .mix( sigmod_snps, lean_snps, heinz_snps, dmgwas_snps, all_snps )
 
 process lasso {
 
