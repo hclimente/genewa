@@ -12,6 +12,9 @@ scones_nets = ['gs','gm','gi']
 // annotation
 tab2 = file(params.tab2)
 snp2gene = file(params.snp2gene)
+
+// code
+hotnet2_path = file('../hotnet2/hotnet2')
 r_ensg2hgnc = file(params.r_ensg2hgnc)
 ensg2hgnc = file(params.ensg2hgnc)
 
@@ -55,7 +58,7 @@ process vegas {
 
 }
 
-vegas .into {vegas_sigmod; vegas_lean; vegas_heinz; vegas_dmgwas}
+vegas .into {vegas_sigmod; vegas_lean; vegas_heinz; vegas_dmgwas; vegas_hotnet}
 
 //  BIOMARKER SELECTION
 /////////////////////////////////////
@@ -183,8 +186,8 @@ process dmgwas {
     """
 
 }
-/*
-process hierarchichal_hotnet {
+
+process hotnet2 {
 
     tag { "${SPLIT}" }
 
@@ -192,22 +195,22 @@ process hierarchichal_hotnet {
         set file(SPLIT), file(VEGAS) from vegas_hotnet
         file TAB2 from tab2
         file SNP2GENE from snp2gene
+        file HOTNET2_PATH from hotnet2_path
 
     output:
-        set val('hotnet'), file(SPLIT), 'snps' into hotnet_snps, hotnet_snps_stability
-   , dmgwas_snps 
+        set val('hotnet2'), file(SPLIT), 'snps' into hotnet_snps, hotnet_snps_stability
+    
     """
     cut -f2,9 ${VEGAS} | sed 's/Top-0.1-pvalue/Pvalue/' >scored_genes.top10.txt
-    git clone https://github.com/raphael-group/hierarchical-hotnet.git
-    run_hhotnet --scores scored_genes.top10.txt --tab2 ${TAB2} --hhnet_path hierarchical-hotnet/src -profile bigmem
-    R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("selected_genes.hotnet.txt") %>% inner_join(snp2gene, by = "gene") %>% select(snp) %>% write_tsv("snps")'
+    hotnet2.nf --scores scored_genes.top10.txt --tab2 ${TAB2} --hotnet2_path ${HOTNET2_PATH} -profile bigmem
+    R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("selected_genes.hotnet2.txt") %>% inner_join(snp2gene, by = "gene") %>% select(snp) %>% write_tsv("snps")'
     """
 
 }
-*/
+
 //  RISK COMPUTATION
 /////////////////////////////////////
-snps = scones_snps .mix( sigmod_snps, lean_snps, heinz_snps, dmgwas_snps, all_snps )
+snps = scones_snps .mix( sigmod_snps, lean_snps, heinz_snps, dmgwas_snps, all_snps, hotnet_snps )
 
 process lasso {
 
@@ -291,7 +294,7 @@ process join_analyses {
 //  JACCARD
 /////////////////////////////////////
 snps_stability = scones_snps_stability 
-    .mix( sigmod_snps_stability, lean_snps_stability, heinz_snps_stability, dmgwas_snps_stability )
+    .mix( sigmod_snps_stability, lean_snps_stability, heinz_snps_stability, dmgwas_snps_stability, hotnet_snps_stability )
     .groupTuple(size: params.k)
 
 process stability {
