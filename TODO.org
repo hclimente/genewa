@@ -1,3 +1,63 @@
+* Revamp
+** DONE Fix gene boundaries
+CLOSED: [2019-08-07 Wed 15:25] SCHEDULED:<2019-08-07 Wed>
+- State "DONE"       from "WAIT"       [2019-08-07 Wed 15:25]
+- State "WAIT"       from "TODO"       [2019-08-07 Wed 15:25]
+** DONE Re-run VEGAS (GENESIS, BCAC, conventional GWAS)
+CLOSED: [2019-08-18 Sun 16:56] SCHEDULED:<2019-08-19 Mon>
+- State "DONE"       from "WAIT"       [2019-08-18 Sun 16:56]
+- State "WAIT"       from "TODO"       [2019-08-07 Wed 11:37]
+** DONE Check if the results match on X chromosome 
+CLOSED: [2019-08-07 Wed 16:25] SCHEDULED:<2019-08-07 Wed>
+- State "DONE"       from "WAIT"       [2019-08-07 Wed 16:25]
+- State "WAIT"       from "TODO"       [2019-08-07 Wed 16:25]
+** DONE Re-name gene method scripts to new *.nf convention
+CLOSED: [2019-08-07 Wed 15:33] SCHEDULED:<2019-08-07 Wed>
+- State "DONE"       from "WAIT"       [2019-08-07 Wed 15:33]
+- State "WAIT"       from "TODO"       [2019-08-07 Wed 15:33]
+** DONE Progressively check if old results match & update manuscript accordingly 
+CLOSED: [2019-08-12 Mon 18:05] DEADLINE:<2019-08-14 Wed>
+- State "DONE"       from "WAIT"       [2019-08-12 Mon 18:05]
+- State "WAIT"       from "TODO"       [2019-08-12 Mon 18:05]
+** DONE Re-run gene methods 
+CLOSED: [2019-08-12 Mon 12:46] SCHEDULED:<2019-08-12 Mon>
+- State "DONE"       from "WAIT"       [2019-08-12 Mon 12:46]
+- State "WAIT"       from "TODO"       [2019-08-09 Fri 16:33]
+** TODO Implement HotNet2 as in PEGASUS paper
+SCHEDULED:<2019-08-12 Mon> 
+** DONE Do-nothing in Lasso
+CLOSED: [2019-08-13 Tue 16:40] SCHEDULED:<2019-08-12 Mon>
+- State "DONE"       from "WAIT"       [2019-08-13 Tue 16:40]
+- State "WAIT"       from "TODO"       [2019-08-12 Mon 16:14]
+** DONE Work on the manuscript 
+CLOSED: [2019-08-13 Tue 18:15] SCHEDULED:<2019-08-13 Tue>
+- State "DONE"       from "WAIT"       [2019-08-13 Tue 18:15]
+- State "WAIT"       from "TODO"       [2019-08-13 Tue 18:15]
+** DONE Computational time benchmark
+CLOSED: [2019-08-14 Wed 16:25] SCHEDULED:<2019-08-14 Wed>
+- State "DONE"       from "WAIT"       [2019-08-14 Wed 16:25]
+- State "WAIT"       from "TODO"       [2019-08-14 Wed 16:25]
+** TODO HT vs LC+HT comparison 
+SCHEDULED:<2019-08-14 Wed>
+** DONE Try L2 penalty 
+CLOSED: [2019-08-15 Thu 17:56] SCHEDULED:<2019-08-15 Thu>
+- State "DONE"       from "WAIT"       [2019-08-15 Thu 17:56]
+- State "WAIT"       from "TODO"       [2019-08-15 Thu 17:56]
+** WAIT Runtime benchmark
+SCHEDULED:<2019-09-06 Fri>
+** WAIT Runtime LC benchmark
+ 
+SCHEDULED:<2019-09-06 Fri>
+** TODO Print attestation
+SCHEDULED:<2019-08-23 Fri> 
+* Manuscript
+** DONE Introduction
+CLOSED: [2019-08-09 Fri 16:34] DEADLINE:<2019-08-09 Fri>
+- State "DONE"       from "WAIT"       [2019-08-09 Fri 16:34]
+- State "WAIT"       from "TODO"       [2019-08-09 Fri 16:34]
+* OncoDrive paper
+** TODO Run LMM
+SCHEDULED:<2019-08-08 Thu>
 * DONE See possible directions
   CLOSED: [2019-06-07 Fri 16:27]
 ** DONE Check if VEGAS without covariate correction has significant genes
@@ -45,17 +105,24 @@ CLOSED: [2019-07-25 Thu 16:38] SCHEDULED:<2019-07-26 Fri>
   It was done.
 - State "DONE"       from "WAIT"       [2019-07-25 Thu 16:38]
 - State "WAIT"       from "TODO"       [2019-07-25 Thu 16:38]
-** WAIT Run HotNet2
-SCHEDULED:<2019-07-25 Thu> 
+** DONE Run HotNet2
+CLOSED: [2019-08-14 Wed 15:45] SCHEDULED:<2019-08-16 Fri>
+- State "DONE"       from "WAIT"       [2019-08-14 Wed 15:45]
 - State "WAIT"       from "TODO"       [2019-07-25 Thu 18:05]
-** TODO Verify that the conclusions from old notebooks hold
-SCHEDULED:<2019-08-05 Mon> 
+** DONE Verify that the conclusions from old notebooks hold
+CLOSED: [2019-08-06 Tue 18:47] SCHEDULED:<2019-08-05 Mon>
+- State "DONE"       from "WAIT"       [2019-08-06 Tue 18:47]
+- State "WAIT"       from "TODO"       [2019-08-06 Tue 18:47]
+** DONE Check for how many genes VEGAS is mistaken
+CLOSED: [2019-08-07 Wed 11:25] SCHEDULED:<2019-08-07 Wed>
+- State "DONE"       from "WAIT"       [2019-08-07 Wed 11:25]
+- State "WAIT"       from "TODO"       [2019-08-07 Wed 11:25]
+Act accordingly. 
 * DONE Check room for 3rd year thesis committee
 CLOSED: [2019-06-11 Tue 17:15] SCHEDULED:<2019-06-11 Tue>
 * DONE Submit application to Training Unit
 CLOSED: [2019-06-17 Mon 17:43] DEADLINE:<2019-06-17 Mon>
-* TODO Prepare OncoDRIVE paper after GENESIS as Letter.
-DEADLINE:<2019-09-01 Sun>
+* Prepare OncoDRIVE paper after GENESIS as Letter.
 ** DONE Figure out how to correct by population structure
 CLOSED: [2019-07-25 Thu 17:05] DEADLINE:<2019-09-02 Mon>
 - State "DONE"       from "WAIT"       [2019-07-25 Thu 17:05]
@@ -65,8 +132,12 @@ CLOSED: [2019-08-01 Thu 04:21] SCHEDULED:<2019-07-25 Thu>
 - State "DONE"       from "WAIT"       [2019-08-01 Thu 04:21]
 - State "WAIT"       from "TODO"       [2019-07-25 Thu 22:45]
 "To adjust for potential (intra-continental) popu- lation stratification in the OncoArray dataset, principal components analysis was performed using data from 33,661 uncorrelated SNPs (which included 2,318 SNPs specifically selected on informativeness for determining continental ancestry) with a MAF of at least 0.05 and maximum correlation of 0.1 in the OncoArray dataset, using purpose-written software (http://ccge.medschl.cam.ac.uk/software/pccalc). For the main analyses, we used the first ten principal components, as additional components did not further reduce inflation in the test statistics. We used nine principal components for the iCOGS and up to ten principal components for the other GWAS, where this was found to reduce inflation."
-** TODO Check population structure on PCs 
-SCHEDULED:<2019-07-26 Fri>
+** CANCELED Check population structure on PCs 
+CLOSED: [2019-08-07 Wed 11:43] SCHEDULED:<2019-07-26 Fri>
+- State "CANCELED"   from "DONE"       [2019-08-07 Wed 11:43] \\
+  New approach will be used
+- State "DONE"       from "WAIT"       [2019-08-07 Wed 11:43]
+- State "WAIT"       from "TODO"       [2019-08-07 Wed 11:43]
 Find out genomic inflation by # of PC. Find out the number of PCs to use. As we have less samples than the original study, maybe not 10 PCs are needed. 
 * DONE Finish details on GENESIS: dataset and preprocessing 
 CLOSED: [2019-06-18 Tue 17:13] SCHEDULED:<2019-06-18 Tue>
@@ -95,7 +166,21 @@ CLOSED: [2019-07-25 Thu 12:21] SCHEDULED:<2019-07-25 Thu>
 - State "DONE"       from "WAIT"       [2019-07-25 Thu 12:21]
 - State "WAIT"       from "TODO"       [2019-07-25 Thu 12:21]
 * DONE Run Vegas with top 5, 15 and 20%
-CLOSED: [2019-06-20 Thu 16:06] SCHEDULED:<2019-06-20 Thu>
+CLOSED: [2019-08-07 Wed 11:32] SCHEDULED:<2019-06-25 Tue>
+- State "DONE"       from "WAIT"       [2019-08-07 Wed 11:32]
+- State "WAIT"       from "TODO"       [2019-08-07 Wed 11:32]
+- State "WAIT"       from "DONE"       [2019-08-07 Wed 11:31]
+* Alternative to VEGAS
+** DONE Implement SKAT
+CLOSED: [2019-08-06 Tue 19:14] SCHEDULED:<2019-08-06 Tue>
+- State "DONE"       from "WAIT"       [2019-08-06 Tue 19:14]
+- State "WAIT"       from "TODO"       [2019-08-06 Tue 19:14]
+** CANCELED Check others 
+CLOSED: [2019-08-06 Tue 19:14] SCHEDULED:<2019-08-07 Wed>
+- State "CANCELED"   from "DONE"       [2019-08-06 Tue 19:14] \\
+  Just try to fix vegas
+- State "DONE"       from "WAIT"       [2019-08-06 Tue 19:14]
+- State "WAIT"       from "TODO"       [2019-08-06 Tue 19:14]
 * DONE BCAC comparison
 CLOSED: [2019-07-10 Wed 18:28] DEADLINE: <2019-07-05 Fri>
 ** DONE Compare gene results to BCAC
@@ -109,19 +194,27 @@ CLOSED: [2019-06-13 Thu 19:42] SCHEDULED:<2019-06-13 Thu>
 CLOSED: [2019-06-13 Thu 11:56] SCHEDULED: <2019-06-13 Thu>
 *** DONE Run VEGAS only on iCOGS SNPs
 CLOSED: [2019-07-09 Tue 10:28] SCHEDULED:<2019-07-09 Tue>
-** TODO Re-run BCAC Jupyter analysis
-SCHEDULED:<2019-08-12 Mon> 
+** DONE Re-run BCAC Jupyter analysis
+CLOSED: [2019-08-19 Mon 12:26] SCHEDULED:<2019-08-19 Mon>
+- State "DONE"       from "WAIT"       [2019-08-19 Mon 12:26]
+- State "WAIT"       from "TODO"       [2019-08-19 Mon 12:26]
 * Manuscript
-** TODO Prepare method-wise list of biomarkers
-SCHEDULED: <2019-08-05 Mon>
+** DONE Prepare method-wise list of biomarkers
+CLOSED: [2019-08-12 Mon 14:27] SCHEDULED: <2019-08-12 Mon>
+- State "DONE"       from "WAIT"       [2019-08-12 Mon 14:27]
+- State "WAIT"       from "TODO"       [2019-08-12 Mon 14:27]
 ** DONE LEAN 
 CLOSED: [2019-07-01 Mon 16:25] SCHEDULED: <2019-07-01 Mon>
 ** DONE dmGWAS
 CLOSED: [2019-07-02 Tue 15:32] SCHEDULED: <2019-07-02 Tue>i
 ** DONE SigMod
 CLOSED: [2019-07-05 Fri 16:09] SCHEDULED:<2019-07-04 Thu>
-** TODO Finish introduction
-DEADLINE: <2019-08-05 Mon>
+** CANCELED Finish introduction
+CLOSED: [2019-08-07 Wed 11:42] DEADLINE: <2019-08-05 Mon>
+- State "CANCELED"   from "DONE"       [2019-08-07 Wed 11:42] \\
+  New task created not to feel terrible about it
+- State "DONE"       from "WAIT"       [2019-08-07 Wed 11:42]
+- State "WAIT"       from "TODO"       [2019-08-07 Wed 11:42]
 ** DONE Finish SNP and gene-level results
 CLOSED: [2019-07-02 Tue 21:01] DEADLINE:<2019-07-03 Wed>
 ** DONE Fix SConES and dmGWAS
@@ -139,7 +232,7 @@ CLOSED: [2019-06-13 Thu 17:34] SCHEDULED:<2019-06-13 Thu>
 ** DONE Add known BRCA genes to consensus network
 CLOSED: [2019-06-21 Fri 11:18] SCHEDULED:<2019-06-21 Fri>
 ** TODO SNP BCAC comparison 
-SCHEDULED:<2019-08-05 Mon> 
+   SCHEDULED:<2019-08-06 Tue> 
 ** DONE Add software references 
 CLOSED: [2019-07-16 Tue 17:45] SCHEDULED:<2019-07-16 Tue>
 ** DONE Fix several TODOs in the manuscript
@@ -148,8 +241,12 @@ CLOSED: [2019-07-17 Wed 15:55] SCHEDULED: <2019-07-17 Wed>
 CLOSED: [2019-07-17 Wed 15:55] SCHEDULED:<2019-07-17 Wed>
 ** DONE Move Chloe's comments into the manuscript
 CLOSED: [2019-07-18 Thu 18:05] SCHEDULED:<2019-07-18 Thu>
-** TODO Update outdated parts of the manuscript
-SCHEDULED:<2019-08-05 Mon> 
+** CANCELED Update outdated parts of the manuscript
+CLOSED: [2019-08-07 Wed 11:45] SCHEDULED:<2019-08-05 Mon>
+- State "CANCELED"   from "DONE"       [2019-08-07 Wed 11:45] \\
+  new revamp
+- State "DONE"       from "WAIT"       [2019-08-07 Wed 11:45]
+- State "WAIT"       from "TODO"       [2019-08-07 Wed 11:45]
 * HT vs LC networks 
 ** DONE Prepare HINT LC
 CLOSED: [2019-07-16 Tue 15:08] SCHEDULED:<2019-07-16 Tue>
@@ -159,9 +256,14 @@ CLOSED: [2019-07-16 Tue 15:08] SCHEDULED:<2019-07-16 Tue>
 CLOSED: [2019-07-19 Fri 16:22] SCHEDULED:<2019-07-19 Fri>
 - State "DONE"       from "WAIT"       [2019-07-19 Fri 16:22]
 - State "WAIT"       from "TODO"       [2019-07-19 Fri 16:22]
-** WAIT Run benchmark HT+LC 
-SCHEDULED:<2019-07-26 Fri> 
+** DONE Run benchmark HT+LC 
+CLOSED: [2019-08-04 Sun 16:28] SCHEDULED:<2019-07-26 Fri>
+- State "DONE"       from "WAIT"       [2019-08-04 Sun 16:28]
 - State "WAIT"       from "TODO"       [2019-07-25 Thu 16:15]
+** DONE Analyse HT+LC
+CLOSED: [2019-08-04 Sun 16:29] SCHEDULED:<2019-08-05 Mon>
+- State "DONE"       from "WAIT"       [2019-08-04 Sun 16:29]
+- State "WAIT"       from "TODO"       [2019-08-04 Sun 16:29]
 * Genes not in the network
 ** DONE Finish analysis
 CLOSED: [2019-07-16 Tue 17:52] SCHEDULED:<2019-07-16 Tue>
