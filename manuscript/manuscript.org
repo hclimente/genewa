@@ -8,7 +8,7 @@ In human health, genome-wide association studies (GWAS) aim at quantifying how g
 
 GWAS has been successful at identifying the main variants underlying many common diseases. However, the experimental setting also presents intrinsic challenges. Some of them stem from the high-dimensionality of the problem, as every GWAS to date study more variants than samples are genotyped. This limits the statistical power of the experiment, as only variants with large and moderate effects can be detected. However, most of the heritability can be explained by variants with small effects. Additionally, to avoid false positives, a conservative multiple test correction is applied, typically Bonferroni. However, Bonferroni is known to be overly conservative when the statistical tests are correlated. Another open issue is the interpretability of the results, as the functional consequences of most common variants are not well understood. The fact that SNPs in non-coding regions often top the results of GWAS portrays well this challenge. On top of that, recent large-sampled studies suggest that most of the genome contributes to a degree to any complex trait. This opposes to the traditional polygenic model of complex diseases, which postulated that only key genes in key pathways need to be affected. In the recently postulated omnigenic model cite:boyle_expanded_2017, genes are highly interconnected, and influence each others behavior. Hence, a more comprehensive statistical framework is required.
 
-In this context, many authors turn to network biology to handle the complex interplay of biomolecules that lead to disease cite:furlong_human_2013. As the name suggests, network biology models biology as a network, where the genes are nodes, and the edges are selected functional relationships between them. These functional relationships come from evidence that the genes jointly contribute to a biological function; for instance, their expression is correlated, or a protein-protein interaction between their gene products have been discovered. An examination of such networks shows that disease genes are more connected than other genes cite:pinero_uncovering_2016. This was particularly true for cancer driver genes, which tended to be key players in connecting different densely-connected communities of genes. 
+In this context, many authors turn to network biology to handle the complex interplay of biomolecules that lead to disease cite:furlong_human_2013. As its name suggests, network biology models biology as a network, where the biomolecules under study, often genes, are nodes, and selected functional relationships between them are the edges that link them. These functional relationships come from evidence that the genes jointly contribute to a biological function; for instance, their expression is correlated, or a protein-protein interaction between their gene products have been discovered. Under this view, complex diseases are not the consequence of a single altered gene, but of the interaction of multiple interdependent biomolecules cite:barabasi_network_2011. In fact, an examination of biological networks shows that disease genes have differential properties cite:barabasi_network_2011 cite:pinero_uncovering_2016. This was particularly true for cancer driver genes, which tended to be key players in connecting different densely-connected communities of genes. 
 
 TODO read Barrenas 2012, Furlong 2013 and Cowen 2017.
 
@@ -173,8 +173,6 @@ In this work dealt with multiple methods, which use GWAS data at different level
     :END:
 The different high-weight subnetwork discovery algorithms make different assumptions on the nature of the solutions, and employ different strategies to find them. Hence, combining the outcome of the different approaches might provide a more complete outlook on the specific alterations on the GENESIS dataset. We built such consensus network by retaining the nodes that were selected by at least two of the methods. We combined the results of 6 methods: heinz, Hierarchical HotNet, dmGWAS, LEAN, SConES on the GM network, and SigMod.
 
-Additionally, any gene that was selected by one of the networks, and that is currently used as to assess breast cancer susceptibility was added to the network. We used the 153 genes associated with familial breast cancer in DisGeNET cite:pinero_disgenet:_2017. 
-
 ** Validation of selected biomarkers
 *** Classification accuracy of selected biomarkers
     :PROPERTIES:
@@ -190,7 +188,9 @@ TODO Machine learning & SNP paper.
     :PROPERTIES:
     :CUSTOM_ID: methods:bcac
     :END:
-An alternative way to validate the results is comparing our results to an external dataset. For that purpose, we used the summary statistics from the Breast Cancer Association Consortium (BCAC) cite:michailidou_genome-wide_2015. BCAC is one of the largest efforts in GWAS, with over 120000 women from European ancestry, albeit from different countries. As opposed to GENESIS, samples were not selected based on family history, and hence is enriched in sporadic breast cancers. Another difference is that BCAC is a relatively heterogeneous study on a pan-European sample, while GENESIS is a homogeneous dataset focused on the French population. Despite these differences, there should be shared genetic architecture. On top of that, that overlap should become more notorious when the results are aggregated at the gene level. For that purpose, we computed the gene association as in Section [[#methods:node_score]]. iCOGS array was used for genotyping in BCAC cite:sakoda_turning_2013, the same array as for GENESIS cite:sinilnikova_genesis:_2016. Although imputed data is available, we used exclusively the SNPs available on GENESIS after quality control to make the results comparable.
+An alternative way to validate the results is comparing our results to an external dataset. For that purpose, we recovered a list of 153 genes known to be associated to familial breast cancer from DisGeNET cite:pinero_disgenet:_2017. Across this article, we refer to these genes as /familial breast cancer genes/.
+ 
+Additionally, we used the summary statistics from the Breast Cancer Association Consortium (BCAC) cite:michailidou_genome-wide_2015. BCAC is one of the largest efforts in GWAS, with over 120000 women from European ancestry, albeit from different countries. As opposed to GENESIS, samples were not selected based on family history, and hence is enriched in sporadic breast cancers. Another difference is that BCAC is a relatively heterogeneous study on a pan-European sample, while GENESIS is a homogeneous dataset focused on the French population. Despite these differences, there should be shared genetic architecture. On top of that, that overlap should become more notorious when the results are aggregated at the gene level. For that purpose, we computed the gene association as in Section [[#methods:node_score]]. iCOGS array was used for genotyping in BCAC cite:sakoda_turning_2013, the same array as for GENESIS cite:sinilnikova_genesis:_2016. Although imputed data is available, we used exclusively the SNPs available on GENESIS after quality control to make the results comparable.
 
 ** Code availability
 
@@ -198,6 +198,9 @@ This work here presented required developing computational pipelines for several
 
 * Results
 ** FGFR2 is strongly associated with familial breast cancer 
+    :PROPERTIES:
+    :CUSTOM_ID: results:conventional
+    :END:
 
 #+CAPTION:Association in GENESIS. The red line represents the Bonferroni threshold. *(A)* SNP association, measured from the outcome of a 1df \chi^2 allelic test. SNPs that are within a coding gene, or within 50 kilobases of its boundaries are annotated. The Bonferroni threshold is 2.54 \times 10^{-7}. *(B)* Gene association, measured by P-value of VEGAS2v2 cite:mishra_vegas2:_2015 using the 10% of SNPs with the lowest P-values. The Bonferroni threshold is 1.53 \times 10^{-6}.
 #+NAME: fig:snp_gene_manhattan
@@ -207,46 +210,31 @@ We conducted association analyses both at the SNP level and at the gene level in
 
 These results show the overlap between the genetic architecture of the disease between the French population and other cohorts, especially at the gene level. In addition, there are other regions highly associated with familial breast cancer, albeit well above the conventional threshold of significance. The most prominent regions, which have been associated to breast cancer susceptibility in the past, are 3p24 cite:brisbin_meta-analysis_2011, and 8q24 cite:search_newly_2009. This motivates exploring network methods, which trade statistical association for biological significance.
 
-** TODO Network methods produced heterogeneous results
-
-#+CAPTION: Summary statistics on the results of multiple network methods on the gene-gene interaction network. The first row contains the summary statistics on the whole network. 
-#+NAME: tab:solutions
-| Method    | # nodes | # edges | Mean betweenness | Mean gene P-value |
-|-----------+---------+---------+------------------+-------------------|
-| HT HINT   |         |         |                  |                   |
-| dmGWAS    |         |         |                  |                   |
-| heinz     |         |         |                  |                   |
-| Hotnet2   |         |         |                  |                   |
-| LEAN      |         |         |                  |                   |
-| SConES GS |         |         |                  |                   |
-| SConES GM |         |         |                  |                   |
-| SConES GI |         |         |                  |                   |
-| SigMod    |         |         |                  |                   |
-
-We applied six network methods to the GENESIS dataset (Section [[#methods:methods]]). We obtained eight solutions (Supplementary files 1 and 2): one for each of the gene-based methods (Section [[#methods:gene_network]]), and one for each of the SNP networks of SConES (Section [[#methods:snp_network]]). The solutions were very heterogeneous (Table [[tab:solutions]]): none of the subnetworks examined by LEAN was significant (adjusted P-value < 0.05), while dmGWAS produced the largest solution subnetwork with 194 genes. In fact, the overlap between the solution subnetworks is low (Supplementary figure [[sfig:jaccard_methods]]). The methods also differed in the association of the selected genes with the disease. In our experiments, we found SConES GS and SConES GM to favor highly associated genes, while 
-
-TODO Describe the solutions: Put measures of centrality interconnectedness to show how the solutions are.
-
 ** TODO Network methods successfully identify genes linked to breast cancer 
+
+#+CAPTION: Summary statistics on the results of multiple network methods on the gene-gene interaction network. The first row contains the summary statistics on the whole network.
+#+NAME: tab:solutions
+| Method    | # nodes | # edges | Mean betweenness |  Mean gene P-value |
+|-----------+---------+---------+------------------+--------------------|
+| HT HINT   |   13619 |  142541 |            16706 |               0.46 |
+| dmGWAS    |     194 |     450 |            49115 |               0.19 |
+| heinz     |       4 |       3 |           113633 |             0.0012 |
+| Hotnet2   |         |         |                  |                    |
+| LEAN      |       0 |       0 |                - |                  - |
+| SConES GS |       5 |       0 |             9805 | 2.7 \times 10^{-5} |
+| SConES GM |      28 |       2 |             4267 |              0.067 |
+| SConES GI |       0 |       0 |                - |                  - |
+| SigMod    |     142 |     249 |            92603 |             0.0083 |
+
+We applied six network methods to the GENESIS dataset (Section [[#methods:methods]]). We obtained eight solutions (Supplementary files 1 and 2): one for each of the gene-based methods (Section [[#methods:gene_network]]), and one for each of the SNP networks of SConES (Section [[#methods:snp_network]]). The solutions were very heterogeneous (Table [[tab:solutions]]): none of the subnetworks examined by LEAN was significant (adjusted P-value < 0.05), while dmGWAS produced the largest solution subnetwork with 194 genes. However, they succeed at recovering genes involved in the disease: five solution subnetworks are significantly enriched in familial breast cancer genes (dmGWAS, heinz, SConES GS, SConES GM, and SigMod, Fisher's exact test one-sided P-value < 0.03). In fact, the solution subnetworks present other desirable properties. First, all solution subnetworks except LEAN's are, on average, more strongly associated to familial breast cancer than the whole HINT protein-protein interaction network. In our experiments, we observed that SConES GS strongly favor highly associated genes (median gene P-value = 2.7 \times 10^{-5}), while dmGWAS is less conservative (median gene P-value = 0.19). This exemplifies the differences between the methods: dmGWAS performs a greedy search that examines all neighbors at distance 2, and hence considering adding a weakly associated gene if it has a strongly associated neighbor. 
+
+Also, the genes in five solution subnetworks display on average a higher betweenness centrality than the rest of the genes, a difference that is significant in two solutions (dmGWAS and SigMod, Wilcoxon rank-sum test one-sided P-value < 6.9 \times 10^{-22}). This is expected, as disease genes are characterized by being more central than other, non-essential genes cite:pinero_uncovering_2016. TODO
+
+As SConES deals with SNP networks, it is able to study the association of genomic regions not mapped to any gene in the protein-protein interaction network. 
    
     - SNP level analyses for SconES
       - Chromosomic region
       - Non-protein SNPs
-    - Gene level analyses
-      - Pathway enrichment
-      - Biomarkers LASSO
-
-** TODO The consensus subnetwork recovers known genes 
-
-#+CAPTION:Consensus subnetwork on GENESIS (Section [[#methods:consensus]]). The labeled genes have a VEGAS2 P-value < 0.001 and/or are a known to be associated to familial breast cancer in DisGeNET cite:pinero_disgenet:_2017 (colored in pink).
-#+NAME: fig:consensus
-[[./figures/figure_3.pdf]]
-
-We built a consensus subnetwork that captures the mechanisms most shared among the subnetworks from the different methods (Figure [[fig:consensus]], Section [[#methods:consensus]]). It contained 53 genes. Due to the low overlap between the methods, only 6 gene were common only to more than two methods. Three of them are associated to familial breast cancer in DisGeNET (BLM, CASP8, TOX3), three are not (SLC4A7, RAB6A, OFD1). Among the remaining 47 genes, 5 of them are also associated to familial breast cancer on DisGeNET (BABAM1, CENPE, FGFR2, MRE11, NBN). Overall, the consensus subnetwork is enriched in DisGeNET familial breast cancer genes (Fisher's exact test P-value = 1.39 \times 10^{-10}). Driven by those, the consensus subnetwork displayed an enrichment in DNA helicase activity (GO Enrichment Analysis adjusted P-value = 0.01).
-
-unfolded protein binding (GO Enrichment Analysis adjusted P-value = 0.01)
-poly(U) RNA binding (GO Enrichment Analysis adjusted P-value = 0.03)
-structural constituent of cytoskeleton (GO Enrichment Analysis adjusted P-value = 0.03)
 
 ** heinz retrieves a small, highly informative set of biomarkers in a fast and stable fashion
 
@@ -264,6 +252,44 @@ The stability of a method measures its ability to select the same SNPs in face o
 
 In terms of computational runtime, the fastest method was heinz (Figure [[fig:benchmark]]D), which leverages on its ability to find efficiently the solution in a few seconds. The slowest method was SConES using the GI network, with approximately 1 day and 2.38 hours on average. Including the time required to compute the gene scores, however, slows down considerably gene-based methods; on this benchmark, that step took on average 1 day and 9.33 hours. Considering that time, dmGWAS is the slowest method, taking 1 day and 21.81 hours on average. 
 
+** TODO No such a thing as perfect 
+
+#+CAPTION: TODO
+#+NAME: fig:issues
+[[./figures/figure_2.pdf]]
+
+In practice, and despite their similarities and their relatedness to cancer, they different solutions are remarkably different (Supplementary figure [[sfig:jaccard_methods]]). That is due to the particulars of the methods, and directly or indirectly, they provide information about the dataset. For instance, the fact that LEAN did not provide any biomarkers implies that there is no gene such that both itself and its environment are on average strongly associated with the disease. 
+
+In this dataset, heinz's solution is very conservative, providing a small solution with the lowest median P-value for the subnetwork (Table [[tab:solutions]]). Due to this parsimonious and highly associated solution, it was the best method to select a set of good biomarkers for classification. (Figure [[fig:benchmark]]B). Its conservativeness stems from its preprocessing step, which models the gene p-values as a mixture model of a beta and a uniform distribution, controlled by an FDR parameter. Due to the limited signal at the gene level in this dataset (Figure [[fig:snp_gene_manhattan]]B), only 36 of them are considered to be associated to the disease. Hence, heinz's solution subnetwork consists only of 4 genes, which does not provide much insight of the biology of cancer. Importantly, it ignores genes that are strongly associated to cancer in this dataset like FGFR2. 
+
+On the other end of the spectrum, we have large, less conservative solutions provided by dmGWAS and SigMod. In fact both solutions present a relatively large overlap (Jaccard similarity = 0.16). However, they are also the least associated subnetworks on average. In the case of dmGWAS, this is due to the greedy framework used to solve the problem: considering neighbors at distance 2, it accepts genes weakly associated to cancer if they are linked to another, strongly associated gene. This compounds when aggregating the results of successive greedy searches, and in fact we observe a large cluster of unassociated genes. The relatively low signal-to-noise ratio, combined with the large solution imposes additional analyses to draw conclusions from the solution subnetwork.  
+
+# TODO SConES were pretty conservative.
+
+** TODO Aggregating solutions provides insights into the biology of cancer 
+
+#+CAPTION:Consensus subnetwork on GENESIS (Section [[#methods:consensus]]). Each node is represented by a pie chart, which accounts the methods that selected it. The labeled genes have a VEGAS2 P-value < 0.001 and/or are known familial breast cancer genes (colored in pink).
+#+NAME: fig:consensus
+[[./figures/figure_3.pdf]]
+
+To leverage on the strengths of each of the methods and compensate their respective weaknesses, we built a consensus subnetwork that captures the mechanisms most shared among the solution subnetworks (Section [[#methods:consensus]]). The consensus subnetwork(Figure [[fig:consensus]]) contains 53 genes and is enriched in familial breast cancer genes (Fisher's exact test P-value = 1.63 \times 10^{-10}). Due to the limited overlap between methods, only 7 genes were common to more than two of them (Supplementary figure [[sfig:consensus_stats]]A). Interestingly, the more methods selected a gene, the higher its association was (Supplementary figure [[sfig:consensus_stats]]B).
+
+The consensus subnetwork is not completely connected: out of the 53 genes, the largest connected subnetwork includes only 40 genes. A GO enrichment analysis showed that this component is related to three major cellular processes: DNA helicase activity (adjusted P-value = 0.005), unfolded protein binding (adjusted P-value = 0.01), and poly(U) RNA binding (adjusted P-value = 0.01). We found support in the literature of the involvement of each of these functions in the development of cancer. /DNA helicase activity/, for instance, is crucial for DNA repair cite:required. Disruption of the DNA repair machinery is long-known to increase the likelihood of cancer, since mutations of BRCA1/2 were discovered cite:required. Unsurprisingly, it involves three familial breast cancer genes (BLM, NBN, MRE11). Another enriched activity, /unfolded protein binding/, inhibits caspase-dependent apoptosis, improving the chances of developing cancer cite:required. Three heat-shock proteins (HSPA1A, HSPA1B, HSPA1L) participate in this biological function.
+ 
+Remarkably, 4 of the 53 genes are not linked to any other gene. Two of the latter are known familial breast cancer genes: FGFR2 (Section [[#results:conventional]]), and BABAM1 (VEGAS P-value = 3.22 \times 10^{-3}). The other two are SLC4A7 and MRPS30. SLC4A7 (VEGAS P-value = 2.70 \times 10^{5}) is a gene encoding a sodium bicarbonate cotransporter, which is selected by dmGWAS, SigMod, and SConES GM. It has linked to BRCA in the past cite:required. MRPS30 (VEGAS P-value = 0.001) is a nuclear gene encoding a mitochondrial ribosomal protein.
+
+# TODO Out of the 7 genes selected by more than two methods, four familial breast cancer genes (BLM, CASP8, FGFR2, TOX3), and 3 are not (SLC4A7, RAB6A, OFD1).
+# TODO HSPA1A (P-value = 8.37 \times 10^{-4}) - Hsp70 member proteins, including Hsp72, inhibit apoptosis by acting on the caspase-dependent pathway and against apoptosis-inducing agents such as tumor necrosis factor-α (TNFα), staurosporine, and doxorubicin. (https://en.wikipedia.org/wiki/HSPA1A)
+# TODO Discuss poly(U) RNA binding?
+# TODO Talk about how some gene's neighborhood is not altered (FGFR2).
+# TODO Due to the overlap of SConES, we selected GM
+
+** TODO The consensus network has nice properties
+ 
+Disease genes have a higher betweenness centrality than non-disease genes cite:pinero_uncovering_2016. We observe that to be the case in the disease under study (one-tailed Wilcoxon rank-sum test P-value = 2.64 \times 10^{-5}, Supplementary figure [[sfig:consensus_stats]]C). Accordingly, the genes on the consensus network also had a higher betweenness centrality than the rest of the genes (one-tailed Wilcoxon rank-sum test P-value = 4.77 \times 10^{-14}). Interestingly, cancer genes in the consensus network are less central than non-cancer genes in the consensus network (Wilcoxon rank-sum test P-value = 0.05). We studied if highly central genes were selected not because they were associated themselves, but because they were involved in the shortest path between two highly associated genes. As we found a weak correlation supporting this (Pearson correlation coefficient = -0.30, Supplementary figure [[sfig:consensus_stats]]D), we hypothesize that genes highly associated with the disease in this dataset and highly central might contribute to the heritability in the French population. 
+
+# TODO overlap with consensus of the different methods
+
 ** TODO Selected subnetworks are enriched in BCAC-significant genes 
 
 We compared the outcome of the network methods to the association tests conducted on the European cohort of the Breast Cancer Association Consortium (BCAC) cite:michailidou_genome-wide_2015 (Supplementary Figure [[sfig:bcac_comparison]]). BCAC presents crucial differences with GENESIS [[#methods:bcac]]. However, we expect a large overlap in the heritability, and the BCAC's large statistical power provides an appropriate context to evaluate the SNPs selected by the network methods that are not statistically significant in GENESIS. Only dmGWAS and SigMod selected FGFR2, the only gene that was Bonferroni-significant in GENESIS. SConES GS also selected all SNPs that are Bonferroni-significant in GENESIS, and SConES GM most of them. Encouragingly, the solution of every network method was enriched in genes or SNPs that were Bonferroni-significant in BCAC. In practice, this suggests that network methods can find the same signal than more conservative analyses, while providing a biological context. In fact, part of that biological context is associated to the disease in larger-powered dataset, confirming the relevance of network methods in the GWAS setting.
@@ -273,7 +299,7 @@ In our dataset, more than half of the SNPs selected by SConES GS and GM are sign
 TODO The consensus network that aggregates the output of different methods (Section [[#methods:consensus]])
 
 ** TODO Hindrances of network analyses
-*** Peripheral genes are handicapped 
+*** TODO Peripheral genes are handicapped 
 
 The strength of network-based analyses comes from leveraging prior knowledge to boost discovery. However, they falter in front of genes with no prior knowledge, in other words, genes not in the network. Out of the 32767 genes that we can map the genotyped SNPs, 60.7% (19887) are not in the protein-protein interaction network. Out of those 5227 are protein coding (Supplementary figure [[sfig:biotypes_excluded]]). Among them, we find NEK10 (P-value 1.6 \times 10^{-5}), a gene which was linked to breast cancer susceptibility in the past cite:search_newly_2009. Interestingly, NEK10 is found by SConES using both the GS and the GM network, which are based on chromosome structure and gene annotation respectively, and hence does not use PPIN.
 
@@ -281,7 +307,7 @@ TODO Mention POU5F1B as well?
 
 Broadly speaking, protein coding genes that are not included in the network are less associated with the phenotype on average (Wilcoxon rank-sum P-value = 2.79 \times 10^{-8}). As we are dealing with high-throughput interactions, such difference cannot be due to the focus on well-known genes. Likely, it speaks to the fact that interactions involving genes with more interactions are more likely, and disease genes tend to be more central than average cite:pinero_uncovering_2016. However, the difference is rather small: protein-coding genes in the network have a median P-value of 0.43, versus the 0.47 of those absent from it.  
 
-*** TODO RNA genes are excluded 
+*** TODO The choice of network conditions discovery
 
 In aggregate, the largest group of genes absent from the PPI network are non-coding genes, mainly lncRNA, miRNA, and snRNA  (Supplementary figure [[sfig:biotypes_excluded]]). However, the importance of these genes is highlighted at the SNP-level, gene-level and again in SConES GS and GM analyses. For instance, CASC16 came up in all four analyses, while CASC8 was selected by SConES GS and GM. The use of RNA-RNA and RNA-protein databases is beyond the scope of the present manuscript. 
 
@@ -297,7 +323,15 @@ TODO Compare the overlap of the two solutions for each of the methods.
 
 * TODO Discussion
 
+# Trash a bit the state of the art in GWAS. Trash a bit the abundance of solutions. Insights into BRCA of the paper.
+In this article we evaluate the viability of systems biology approach to GWAS, and examine a GWAS dataset on familial breast cancer focused on BRCA1/2 negative French women.
+
+# Say main strenghts and weaknessess observed.
 In this article we reviewed in-depth the performance of six network-guided methods for biomarker discovery on GWAS. 
+
+# Consensus network good. However this is only one dataset.
+
+# We propose a framework to conduct network GWAS. All the code is available. It was hard to make it work.
 
 bibliographystyle:ieeetr
 bibliography:bibliography.bib
@@ -325,6 +359,10 @@ bibliography:bibliography.bib
 #+NAME: sfig:bcac_comparison
 [[./figures/sfigure_4.pdf]]
 
-#+CAPTION:  
+#+CAPTION: TODO
 #+NAME: sfig:lc_ht_comparison
 [[./figures/sfigure_5.pdf]]
+
+#+CAPTION: Genes on the consensus network. Familial breast cancer genes are colored in pink; the rest are colored in grey. TODO B. Outliers removed. 
+#+NAME: sfig:consensus_stats
+[[./figures/sfigure_6.pdf]]
