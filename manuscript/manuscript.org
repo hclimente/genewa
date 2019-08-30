@@ -23,9 +23,11 @@ In this work, we analyze the effectiveness of these six methods to discover new 
 
 GENESIS is a GWAS study of familial breast cancer on the French population cite:sinilnikova_genesis:_2016. The index cases are patients with infiltrating mammary or ductal adenocarcinoma, who had sister with breast cancer, and negative for BRCA1 and BRCA2 mutations. The controls are unaffected colleagues and/or friends of the cases, born around the year of birth of the corresponding case (\pm 3 years). In total, the GENESIS dataset consists of 2577 samples, of which 1279 are controls and 1298 are cases. The genotyping platform was iCOGS, a custom Illumina array designed to study genetic susceptibility of hormone-related cancers cite:sakoda_turning_2013. It contains 210918 SNPs previously associated with cancer susceptibility, survival, or other cancer-related traits; and in selected genes and pathways.
 
+# Molecular subtypes? TNBC, HER2+...
+
 ** Preprocessing and quality control
 
-We discarded SNPs with a minor allele frequency lower than 0.1%, not in Hardy - Weinberg equilibrium (P-value \textless 0.001), and/or those with missing values on more than 10% of the samples. In addition, we removed the samples with more than 10% missing genotypes. 28 samples with ?? were removed. A subset of 20 duplicated SNPs in FGFR2 were also removed. The final dataset included 1271 controls and 1280 cases, genotyped over 197083 SNPs. 
+We discarded SNPs with a minor allele frequency lower than 0.1%, not in Hardy - Weinberg equilibrium (P-value \textless 0.001), and/or those with missing values on more than 10% of the samples. In addition, we removed the samples with more than 10% missing genotypes. 28 samples with TODO were removed. A subset of 20 duplicated SNPs in FGFR2 were also removed. The final dataset included 1271 controls and 1280 cases, genotyped over 197083 SNPs. 
 
 We looked for population structure that could create confounding associations. A PCA revealed no differential population structure between cases and controls (Supplementary Figure [[sfig:pcs]]). Independently, we did not find evidence of genomic inflation (\lambda = 1.05029) either, thus further dismissing the presence of confounding population structure.
 
@@ -149,7 +151,7 @@ TODO Read Gene and Network Analysis of Common Variants Reveals Novel Association
     \underset{S \subseteq G}{\arg \max } \underbrace{\sum_{v \in V_S} w(v)}_{\text { association }}-\underbrace{\lambda \sum_{v \in V_S} \sum_{u \not\in V_S} W_{vu} }_{\text { connectivity }}-\underbrace{\eta \lvert V_S \rvert }_{\text { sparsity }}
     \end{equation}
 
-    where \lambda and \eta are hyperparameters that control the sparsity and the connectivity of the model. For two hyperparameters, the aforementioned problem has a unique solution, that SConES finds using a graph min-cut procedure. We used the version on SConES implemented in R package martini cite:martini. We selected \lambda and \eta by cross-validation, choosing the values that produce the most stable solution across folds. Note that the solution to the above problem can consist of several connected subnetworks which are disconnected from each other.
+    where \lambda and \eta are hyperparameters that control the sparsity and the connectivity of the model. For two hyperparameters, the aforementioned problem has a unique solution, that SConES finds using a graph min-cut procedure. We used the version on SConES implemented in R package martini cite:martini. We selected \lambda and \eta by cross-validation, choosing the values that produce the most stable solution across folds. Note that the solution to the above problem can consist of several connected subnetworks which are disconnected from each other. In this case, the selected hyperparameters were \eta = 3.51, \lambda = 210.29 for SConES GS; \eta = 3.51, \lambda = 97.61 for SConES GM; and \eta = 3.51, \lambda = 45.31 for SConES GI.
 
 TODO Comment similarity with heinz
 
@@ -213,8 +215,8 @@ These results show the overlap between the genetic architecture of the disease b
 ** TODO Network methods successfully identify genes linked to breast cancer 
 
 #+CAPTION: Summary statistics on the results of multiple network methods on the gene-gene interaction network. The first row contains the summary statistics on the whole network.
-#+NAME: tab:solutions
-| Method    | # nodes | # edges | Mean betweenness |  Mean gene P-value |
+#+NAME: tab:gene_solutions
+| Network   | # genes | # edges | Mean betweenness |  Mean gene P-value |
 |-----------+---------+---------+------------------+--------------------|
 | HT HINT   |   13619 |  142541 |            16706 |               0.46 |
 | dmGWAS    |     194 |     450 |            49115 |               0.19 |
@@ -226,15 +228,31 @@ These results show the overlap between the genetic architecture of the disease b
 | SConES GI |       0 |       0 |                - |                  - |
 | SigMod    |     142 |     249 |            92603 |             0.0083 |
 
-We applied six network methods to the GENESIS dataset (Section [[#methods:methods]]). We obtained eight solutions (Supplementary files 1 and 2): one for each of the gene-based methods (Section [[#methods:gene_network]]), and one for each of the SNP networks of SConES (Section [[#methods:snp_network]]). The solutions were very heterogeneous (Table [[tab:solutions]]): none of the subnetworks examined by LEAN was significant (adjusted P-value < 0.05), while dmGWAS produced the largest solution subnetwork with 194 genes. However, they succeed at recovering genes involved in the disease: five solution subnetworks are significantly enriched in familial breast cancer genes (dmGWAS, heinz, SConES GS, SConES GM, and SigMod, Fisher's exact test one-sided P-value < 0.03). In fact, the solution subnetworks present other desirable properties. First, all solution subnetworks except LEAN's are, on average, more strongly associated to familial breast cancer than the whole HINT protein-protein interaction network. In our experiments, we observed that SConES GS strongly favor highly associated genes (median gene P-value = 2.7 \times 10^{-5}), while dmGWAS is less conservative (median gene P-value = 0.19). This exemplifies the differences between the methods: dmGWAS performs a greedy search that examines all neighbors at distance 2, and hence considering adding a weakly associated gene if it has a strongly associated neighbor. 
+#+CAPTION: Summary statistics on the results of multiple network methods on the gene-gene interaction network. The first row contains the summary statistics on the whole network.
+#+NAME: tab:snp_solutions
+| Network   | # SNPs |  # edges | Mean betweenness | Mean SNP P-value |
+|-----------+--------+----------+------------------+------------------|
+| GS        | 197083 |   197060 |                  |             0.49 |
+| SConES GS |   1590 |     1585 |                  |            0.023 |
+|-----------+--------+----------+------------------+------------------|
+| GM        | 197083 |  6442446 |                  |             0.49 |
+| SConES GM |   1692 |   177611 |                  |            0.055 |
+|-----------+--------+----------+------------------+------------------|
+| GI        | 197083 | 28733720 |                  |             0.49 |
+| SConES GI |    408 |      539 |                  |            0.076 |
+
+We applied six network methods to the GENESIS dataset (Section [[#methods:methods]]). We obtained eight solutions (Supplementary files 1 and 2): one for each of the gene-based methods (Section [[#methods:gene_network]]), and one for each of the SNP networks of SConES (Section [[#methods:snp_network]]). The solutions were very heterogeneous (Table [[tab:gene_solutions]]): none of the subnetworks examined by LEAN was significant (adjusted P-value < 0.05), while dmGWAS produced the largest solution subnetwork with 194 genes. However, they succeed at recovering genes involved in the disease: five solution subnetworks are significantly enriched in familial breast cancer genes (dmGWAS, heinz, SConES GS, SConES GM, and SigMod, Fisher's exact test one-sided P-value < 0.03). In fact, the solution subnetworks present other desirable properties. First, all solution subnetworks except LEAN's are, on average, more strongly associated to familial breast cancer than the whole HINT protein-protein interaction network. In our experiments, we observed that SConES GS strongly favor highly associated genes (median gene P-value = 2.7 \times 10^{-5}), while dmGWAS is less conservative (median gene P-value = 0.19). This exemplifies the differences between the methods: dmGWAS performs a greedy search that examines all neighbors at distance 2, and hence considering adding a weakly associated gene if it has a strongly associated neighbor. 
 
 Also, the genes in five solution subnetworks display on average a higher betweenness centrality than the rest of the genes, a difference that is significant in two solutions (dmGWAS and SigMod, Wilcoxon rank-sum test one-sided P-value < 6.9 \times 10^{-22}). This is expected, as disease genes are characterized by being more central than other, non-essential genes cite:pinero_uncovering_2016. TODO
 
-As SConES deals with SNP networks, it is able to study the association of genomic regions not mapped to any gene in the protein-protein interaction network. 
-   
-    - SNP level analyses for SconES
-      - Chromosomic region
-      - Non-protein SNPs
+SConES deals with SNP networks, and hence it studies the association of non-coding regions, as well as SNPs in any gene, coding or else. Importantly, SConES solutions are composed of several disconnected subnetworks. The GS network captures the genomic structure  
+
+# TODO Interestingly, SConES GS and GM (Supplementary figure [[sfig:jaccard_methods]]).   
+# TODO Chromosomic region
+# TODO Non-protein SNPs
+# TODO icogs not real gwas
+# TODO provides SNPs -> biomarkers
+# TODO NEK10!!
 
 ** heinz retrieves a small, highly informative set of biomarkers in a fast and stable fashion
 
@@ -252,19 +270,19 @@ The stability of a method measures its ability to select the same SNPs in face o
 
 In terms of computational runtime, the fastest method was heinz (Figure [[fig:benchmark]]D), which leverages on its ability to find efficiently the solution in a few seconds. The slowest method was SConES using the GI network, with approximately 1 day and 2.38 hours on average. Including the time required to compute the gene scores, however, slows down considerably gene-based methods; on this benchmark, that step took on average 1 day and 9.33 hours. Considering that time, dmGWAS is the slowest method, taking 1 day and 21.81 hours on average. 
 
-** TODO No such a thing as perfect 
+** No such a thing as perfect 
 
-#+CAPTION: TODO
+#+CAPTION: Drawbacks confronted when using network guided methods. *(A)* dmGWAS solution subnetwork. Genes with a P-value < 0.1 are highlighted in red. 
 #+NAME: fig:issues
 [[./figures/figure_2.pdf]]
 
-In practice, and despite their similarities and their relatedness to cancer, they different solutions are remarkably different (Supplementary figure [[sfig:jaccard_methods]]). That is due to the particulars of the methods, and directly or indirectly, they provide information about the dataset. For instance, the fact that LEAN did not provide any biomarkers implies that there is no gene such that both itself and its environment are on average strongly associated with the disease. 
+In practice, and despite their similarities and their involvement in cancer mechanisms, the solutions are remarkably different (Supplementary figure [[sfig:jaccard_methods]]). That is due to the particulars of the methods, and directly or indirectly, they provide information about the dataset. For instance, the fact that LEAN did not provide any biomarkers implies that there is no gene such that both itself and its environment are on average strongly associated with the disease. 
 
-In this dataset, heinz's solution is very conservative, providing a small solution with the lowest median P-value for the subnetwork (Table [[tab:solutions]]). Due to this parsimonious and highly associated solution, it was the best method to select a set of good biomarkers for classification. (Figure [[fig:benchmark]]B). Its conservativeness stems from its preprocessing step, which models the gene p-values as a mixture model of a beta and a uniform distribution, controlled by an FDR parameter. Due to the limited signal at the gene level in this dataset (Figure [[fig:snp_gene_manhattan]]B), only 36 of them are considered to be associated to the disease. Hence, heinz's solution subnetwork consists only of 4 genes, which does not provide much insight of the biology of cancer. Importantly, it ignores genes that are strongly associated to cancer in this dataset like FGFR2. 
+In this dataset, heinz's solution is very conservative, providing a small solution with the lowest median P-value for the subnetwork (Table [[tab:gene_solutions]]). Due to this parsimonious and highly associated solution, it was the best method to select a set of good biomarkers for classification. (Figure [[fig:benchmark]]B). Its conservativeness stems from its preprocessing step, which models the gene p-values as a mixture model of a beta and a uniform distribution, controlled by an FDR parameter. Due to the limited signal at the gene level in this dataset (Figure [[fig:snp_gene_manhattan]]B), only 36 of them are considered to be associated to the disease. Hence, heinz's solution subnetwork consists only of 4 genes, which does not provide much insight of the biology of cancer. Importantly, it ignores genes that are strongly associated to cancer in this dataset like FGFR2. 
 
-On the other end of the spectrum, we have large, less conservative solutions provided by dmGWAS and SigMod. In fact both solutions present a relatively large overlap (Jaccard similarity = 0.16). However, they are also the least associated subnetworks on average. In the case of dmGWAS, this is due to the greedy framework used to solve the problem: considering neighbors at distance 2, it accepts genes weakly associated to cancer if they are linked to another, strongly associated gene. This compounds when aggregating the results of successive greedy searches, and in fact we observe a large cluster of unassociated genes. The relatively low signal-to-noise ratio, combined with the large solution imposes additional analyses to draw conclusions from the solution subnetwork.  
+On the other end of the spectrum, we have large, less conservative solutions provided by dmGWAS and SigMod. In fact both solutions present a relatively large overlap (Jaccard similarity = 0.16). However, they are also the least associated subnetworks on average. In the case of dmGWAS, this is due to the greedy framework used to solve the problem: considering neighbors at distance 2, it accepts genes weakly associated to cancer if they are linked to another, strongly associated gene. This compounds when aggregating the results of successive greedy searches, and in fact we observe a large cluster of unassociated genes (Figure [[fig:issues]]A). The relatively low signal-to-noise ratio, combined with the large solution imposes additional analyses to draw conclusions from the solution subnetwork.  
 
-# TODO SConES were pretty conservative.
+By virtue of using a SNP subnetwork, SConES analyzes each SNP in their context. Thanks to that, it selects SNPs in genes none of whose interactors are associated to the disease, as well as SNPs in non-coding regions or in non-interacting genes. In fact, due to linkage disequilibrium, such genes are favored by SConES, as selecting one favors selecting another one. On the other hand, SConES penalizes selecting SNPs and not their neighbors. This makes it conservative regarding SNPs with many interactions, for instance those mapped to hubs in the GI network. Influenced by this, SConES GI did not select any protein coding gene. Also, the iCOGS platform is not a real GWAS experiment: the genome is not unbiasedly surveyed, some regions are fine-mapped, and others are less studied. This impacts the accuracy with which the GS network captures the genome structure. Also, due to the fine mapping of some of the genes, it distorts the gene structure in the GM and GI networks. 
 
 ** TODO Aggregating solutions provides insights into the biology of cancer 
 
@@ -283,6 +301,7 @@ Remarkably, 4 of the 53 genes are not linked to any other gene. Two of the latte
 # TODO Discuss poly(U) RNA binding?
 # TODO Talk about how some gene's neighborhood is not altered (FGFR2).
 # TODO Due to the overlap of SConES, we selected GM
+# TODO Write to LEAN about the method
 
 ** TODO The consensus network has nice properties
  
@@ -321,17 +340,18 @@ TODO (Supplementary figure [[sfig:lc_ht_comparison]])
 
 TODO Compare the overlap of the two solutions for each of the methods.
 
+*** TODO iCOGS is not a real GWAS
 * TODO Discussion
 
 # Trash a bit the state of the art in GWAS. Trash a bit the abundance of solutions. Insights into BRCA of the paper.
-In this article we evaluate the viability of systems biology approach to GWAS, and examine a GWAS dataset on familial breast cancer focused on BRCA1/2 negative French women.
+In this article we evaluate the viability of systems biology approach to GWAS, and examine a GWAS dataset on familial breast cancer focused on BRCA1/2 negative French women. Systems biology addresses two of the largest GWAS issues: interpretability and an overly conservative statistical framework that hinders discovery. This is achieved by considering the biological context of each of the genes and SNPs, and selecting a threshold of association based on it. However, the method of choice is unclear. Based on divergent considerations of what the desired set of biomarkers is, several methods for network-guided biomarker discovery have been proposed. In this article we reviewed the performance of six network-guided of them on GWAS. Despite their differences, most of them produced a relevant subset of biomarkers, recovering known familial breast cancer genes. 
 
-# Say main strenghts and weaknessess observed.
-In this article we reviewed in-depth the performance of six network-guided methods for biomarker discovery on GWAS. 
+# Say main strenghts and weaknessess observed. Networks still need posprocessing.
 
 # Consensus network good. However this is only one dataset.
+To overcome the problems posed by the individual methods, we proposed combining them into a consensus subnetwork.
 
-# We propose a framework to conduct network GWAS. All the code is available. It was hard to make it work.
+Each method had a different interface, required different preprocessing steps, and some exhibited unexpected behaviors. To facilitate their application to new datasets, we built nextflow pipelines cite:di_tommaso_nextflow_2017 with a consistent interface and, whenever possible, parallelize the computation. They are available on GitHub: https://github.com/hclimente/gwas-tools. Importantly, those methods that had a permissive license were compiled into a Docker image for easier use [[https://hub.docker.com/r/hclimente/gwas-tools][hclimente/gwas-tools]].
 
 bibliographystyle:ieeetr
 bibliography:bibliography.bib
