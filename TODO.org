@@ -24,7 +24,7 @@ CLOSED: [2019-08-12 Mon 12:46] SCHEDULED:<2019-08-12 Mon>
 - State "DONE"       from "WAIT"       [2019-08-12 Mon 12:46]
 - State "WAIT"       from "TODO"       [2019-08-09 Fri 16:33]
 ** TODO Implement HotNet2 as in PEGASUS paper
-SCHEDULED:<2019-08-12 Mon> 
+SCHEDULED:<2019-09-01 Sun> 
 ** DONE Do-nothing in Lasso
 CLOSED: [2019-08-13 Tue 16:40] SCHEDULED:<2019-08-12 Mon>
 - State "DONE"       from "WAIT"       [2019-08-13 Tue 16:40]
@@ -38,7 +38,7 @@ CLOSED: [2019-08-14 Wed 16:25] SCHEDULED:<2019-08-14 Wed>
 - State "DONE"       from "WAIT"       [2019-08-14 Wed 16:25]
 - State "WAIT"       from "TODO"       [2019-08-14 Wed 16:25]
 ** TODO HT vs LC+HT comparison 
-SCHEDULED:<2019-08-14 Wed>
+SCHEDULED:<2019-08-29 Thu>
 ** DONE Try L2 penalty 
 CLOSED: [2019-08-15 Thu 17:56] SCHEDULED:<2019-08-15 Thu>
 - State "DONE"       from "WAIT"       [2019-08-15 Thu 17:56]
@@ -48,13 +48,31 @@ SCHEDULED:<2019-09-06 Fri>
 ** WAIT Runtime LC benchmark
  
 SCHEDULED:<2019-09-06 Fri>
-** TODO Print attestation
-SCHEDULED:<2019-08-23 Fri> 
+** TODO Read network papers
+SCHEDULED:<2019-08-30 Fri>
+** TODO Use LEAN P-value? Write authors? 
+SCHEDULED:<2019-08-30 Fri> 
+** TODO Run SigMod on SNP network
+** DONE Figure 4D: points, log scale?
+SCHEDULED:<2019-09-05 Thu> 
+   CLOSED: [2019-09-05 Thu 15:55]
+   - State "DONE"       from "WAIT"       [2019-09-05 Thu 15:55]
+   - State "WAIT"       from "TODO"       [2019-09-05 Thu 15:55]
+** DONE Remove nodes selected only by one methods
+SCHEDULED:<2019-09-05 Thu> 
+   CLOSED: [2019-09-05 Thu 16:00]
+   - State "DONE"       from "WAIT"       [2019-09-05 Thu 16:00]
+   - State "WAIT"       from "TODO"       [2019-09-05 Thu 16:00]
+** TODO Supp figure with consensus with all genes names
 * Manuscript
 ** DONE Introduction
 CLOSED: [2019-08-09 Fri 16:34] DEADLINE:<2019-08-09 Fri>
 - State "DONE"       from "WAIT"       [2019-08-09 Fri 16:34]
 - State "WAIT"       from "TODO"       [2019-08-09 Fri 16:34]
+** TODO Update all analyses with new SConES
+SCHEDULED:<2019-08-28 Wed>
+** TODO Discussion on biology of familial BRCA 
+SCHEDULED:<2019-08-28 Wed> 
 * OncoDrive paper
 ** TODO Run LMM
 SCHEDULED:<2019-08-08 Thu>
@@ -231,8 +249,10 @@ CLOSED: [2019-06-17 Mon 17:41] SCHEDULED:<2019-06-14 Fri>
 CLOSED: [2019-06-13 Thu 17:34] SCHEDULED:<2019-06-13 Thu>
 ** DONE Add known BRCA genes to consensus network
 CLOSED: [2019-06-21 Fri 11:18] SCHEDULED:<2019-06-21 Fri>
-** TODO SNP BCAC comparison 
-   SCHEDULED:<2019-08-06 Tue> 
+** DONE SNP BCAC comparison 
+   CLOSED: [2019-08-27 Tue 19:54] SCHEDULED:<2019-08-06 Tue>
+   - State "DONE"       from "WAIT"       [2019-08-27 Tue 19:54]
+   - State "WAIT"       from "TODO"       [2019-08-27 Tue 19:54]
 ** DONE Add software references 
 CLOSED: [2019-07-16 Tue 17:45] SCHEDULED:<2019-07-16 Tue>
 ** DONE Fix several TODOs in the manuscript
