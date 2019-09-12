@@ -39,6 +39,9 @@ splits .into {splits_vegas; splits_nothing; splits_scones}
 
 process vegas {
 
+    memory '40 GB'
+    executor 'slurm'
+
     input:
         file BED from bed
         file FAM from fam
@@ -99,7 +102,7 @@ process scones {
 
     """
     plink --bfile ${BED.baseName} --keep ${SPLIT} --make-bed --out input
-    old_scones.nf --bfile input --network ${NET} --snp2gene ${SNP2GENE} --tab2 ${TAB2} -profile bigmem
+    old_scones.nf --bfile input --network ${NET} --snp2gene ${SNP2GENE} --tab2 ${TAB2}
     echo snp >snps
     grep TRUE cones.tsv | cut -f1 >>snps
     """
@@ -121,7 +124,7 @@ process sigmod {
     """
     wget https://github.com/YuanlongLiu/SigMod/raw/master/SigMod_v2.zip && unzip SigMod_v2.zip
     cut -f2,9 ${VEGAS} | sed 's/Top-0.1-pvalue/Pvalue/' >scored_genes.top10.txt
-    sigmod.nf --bfile input --sigmod SigMod_v2 --vegas scored_genes.top10.txt --tab2 ${TAB2} -profile cluster 
+    sigmod.nf --bfile input --sigmod SigMod_v2 --vegas scored_genes.top10.txt --tab2 ${TAB2}
     R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("selected_genes.sigmod.txt") %>% inner_join(snp2gene, by = "gene") %>% select(snp) %>% write_tsv("snps")'
     """
 
@@ -141,7 +144,7 @@ process lean {
     
     """
     cut -f2,9 ${VEGAS} | sed 's/Top-0.1-pvalue/Pvalue/' >scored_genes.top10.txt
-    lean.nf --vegas scored_genes.top10.txt --tab2 ${TAB2} -profile cluster
+    lean.nf --vegas scored_genes.top10.txt --tab2 ${TAB2}
     R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("scored_genes.lean.txt") %>% filter(PLEAN < 0.05) %>% inner_join(snp2gene, by = c("Gene" = "gene")) %>% select(snp) %>% write_tsv("snps")'
     """
 
@@ -161,7 +164,7 @@ process heinz {
 
     """
     cut -f2,9 ${VEGAS} | sed 's/Top-0.1-pvalue/Pvalue/' >scored_genes.top10.txt
-    heinz.nf --vegas scored_genes.top10.txt --tab2 ${TAB2} --fdr 0.5 -profile cluster -resume 
+    heinz.nf --vegas scored_genes.top10.txt --tab2 ${TAB2} --fdr 0.5
     R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("selected_genes.heinz.txt") %>% inner_join(snp2gene, by = "gene") %>% select(snp) %>% write_tsv("snps")'
     """
 
@@ -181,12 +184,12 @@ process dmgwas {
     
     """
     cut -f2,9 ${VEGAS} | sed 's/Top-0.1-pvalue/Pvalue/' >scored_genes.top10.txt
-    dmgwas.nf --vegas scored_genes.top10.txt --tab2 ${TAB2} -profile cluster
+    dmgwas.nf --vegas scored_genes.top10.txt --tab2 ${TAB2}
     R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("selected_genes.dmgwas.txt") %>% inner_join(snp2gene, by = "gene") %>% select(snp) %>% write_tsv("snps")'
     """
 
 }
-
+/*
 process hotnet2 {
 
     tag { "${SPLIT}" }
@@ -202,15 +205,15 @@ process hotnet2 {
     
     """
     cut -f2,9 ${VEGAS} | sed 's/Top-0.1-pvalue/Pvalue/' >scored_genes.top10.txt
-    hotnet2.nf --scores scored_genes.top10.txt --tab2 ${TAB2} --hotnet2_path ${HOTNET2_PATH} -profile bigmem
+    hotnet2.nf --scores scored_genes.top10.txt --tab2 ${TAB2} --hotnet2_path ${HOTNET2_PATH}
     R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("selected_genes.hotnet2.txt") %>% inner_join(snp2gene, by = "gene") %>% select(snp) %>% write_tsv("snps")'
     """
 
 }
-
+*/
 //  RISK COMPUTATION
 /////////////////////////////////////
-snps = scones_snps .mix( sigmod_snps, lean_snps, heinz_snps, dmgwas_snps, all_snps, hotnet_snps )
+snps = scones_snps .mix( sigmod_snps, lean_snps, heinz_snps, dmgwas_snps, all_snps)
 
 process lasso {
 
@@ -255,7 +258,7 @@ process lasso {
     rm(gwas, X, y)
 
     # train and evaluate classifier
-    cvfit <- cv.biglasso(X_train, y_train, penalty = 'lasso', family = "binomial")
+    cvfit <- cv.biglasso(X_train, y_train, penalty = 'ridge', family = "binomial")
     y_pred <- predict(cvfit, X_test, type = "class") %>% as.numeric %>% as.factor
 
     tibble(method = "${METHOD}",
@@ -291,15 +294,18 @@ process join_analyses {
 
 }
 
-//  JACCARD
+//  STABILITY
 /////////////////////////////////////
 snps_stability = scones_snps_stability 
-    .mix( sigmod_snps_stability, lean_snps_stability, heinz_snps_stability, dmgwas_snps_stability, hotnet_snps_stability )
+    .mix( sigmod_snps_stability, lean_snps_stability, heinz_snps_stability, dmgwas_snps_stability)
     .groupTuple(size: params.k)
 
 process stability {
 
+    executor 'slurm'
+
     input:
+        file BIM from bim
         set val(METHOD), file('samples*'), file('snps*') from snps_stability
 
     output:
@@ -311,6 +317,7 @@ process stability {
     import csv
     import numpy as np
     from glob import glob
+    from scipy.stats import pearsonr
 
     def read_snps(path):
         FILE = open(path, 'r')
@@ -320,32 +327,30 @@ process stability {
         snps = set(snps)
         FILE.close()
 
-        return(snps)
+        BIM = open('${BIM}', 'r')
+        lines = BIM.readlines()
+        selected = [ int(line.split('\t')[1] in snps) for line in lines ]
+
+        return(selected)
 
     snps_files = glob('snps*')
     selected_snps = []
-    jaccards = []
+    stats = []
     for i in range(len(snps_files)):
 
         snps1 = read_snps(snps_files[i])
 
         for j in range(len(selected_snps)):
             snps2 = read_snps(snps_files[j])
-            if len(snps1) and len(snps2):
-                intersection = snps1 & snps2
-                union = snps1 | snps2
-                J = len(intersection)/len(union)
-                jaccards.append(('{}-{}'.format(i, j), J))
-            else:
-                jaccards.append(('{}-{}'.format(i, j), 'nan'))
+            stats.append(('{}-{}'.format(i, j), pearsonr(snps1, snps2)[0]))
 
         selected_snps.append(snps1)
 
     with open('stability_method', 'w', newline='') as f_output:
         tsv_output = csv.writer(f_output, delimiter='\t')
-        tsv_output.writerow(['method', 'num_replicates', 'idx', 'jaccard'])
-        for idx, J in jaccards:
-            row = ['${METHOD}', len(snps_files), idx, J ]
+        tsv_output.writerow(['method', 'num_replicates', 'idx', 'pearson'])
+        for idx, p in stats:
+            row = ['${METHOD}', len(snps_files), idx, p ]
             tsv_output.writerow(row)
     """
 
