@@ -236,7 +236,7 @@ process lasso {
     library(biglasso)
     library(snpStats)
     library(tidyverse)
-    library(caret)
+    library(MLmetrics)
 
     # read dataset
     gwas <- read.plink("${BED}", "${BIM}", "${FAM}")
@@ -264,8 +264,10 @@ process lasso {
     tibble(method = "${METHOD}",
            n_selected = length(selected),
            n_active_set = sum(cvfit\$fit\$beta[,cvfit\$lambda == cvfit\$lambda.min][-1] != 0),
-           sensitivity = sensitivity(y_pred, y_test),
-           specificity = specificity(y_pred, y_test)) %>%
+           sensitivity = Sensitivity(y_pred, y_test),
+           specificity = Specificity(y_pred, y_test),
+           f1 = F1_Score(y_pred, y_test),
+           auc = AUC(y_pred, y_test)) %>%
         write_tsv('bm')
     """
 
