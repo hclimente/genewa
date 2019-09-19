@@ -189,7 +189,7 @@ process dmgwas {
     """
 
 }
-/*
+
 process hotnet2 {
 
     tag { "${SPLIT}" }
@@ -210,10 +210,10 @@ process hotnet2 {
     """
 
 }
-*/
+
 //  RISK COMPUTATION
 /////////////////////////////////////
-snps = scones_snps .mix( sigmod_snps, lean_snps, heinz_snps, dmgwas_snps, all_snps)
+snps = scones_snps .mix( sigmod_snps, lean_snps, heinz_snps, dmgwas_snps, hotnet_snps, all_snps)
 
 process lasso {
 
@@ -299,7 +299,7 @@ process join_analyses {
 //  STABILITY
 /////////////////////////////////////
 snps_stability = scones_snps_stability 
-    .mix( sigmod_snps_stability, lean_snps_stability, heinz_snps_stability, dmgwas_snps_stability)
+    .mix( sigmod_snps_stability, lean_snps_stability, heinz_snps_stability, dmgwas_snps_stability, hotnet_snps_stability)
     .groupTuple(size: params.k)
 
 process stability {
