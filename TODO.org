@@ -23,8 +23,10 @@ CLOSED: [2019-08-12 Mon 18:05] DEADLINE:<2019-08-14 Wed>
 CLOSED: [2019-08-12 Mon 12:46] SCHEDULED:<2019-08-12 Mon>
 - State "DONE"       from "WAIT"       [2019-08-12 Mon 12:46]
 - State "WAIT"       from "TODO"       [2019-08-09 Fri 16:33]
-** TODO Implement HotNet2 as in PEGASUS paper
-SCHEDULED:<2019-09-01 Sun> 
+** DONE Implement HotNet2 as in PEGASUS paper
+CLOSED: [2019-09-14 Sat 12:01] SCHEDULED:<2019-09-01 Sun>
+- State "DONE"       from "WAIT"       [2019-09-14 Sat 12:01]
+- State "WAIT"       from "TODO"       [2019-09-12 Thu 19:40]
 ** DONE Do-nothing in Lasso
 CLOSED: [2019-08-13 Tue 16:40] SCHEDULED:<2019-08-12 Mon>
 - State "DONE"       from "WAIT"       [2019-08-13 Tue 16:40]
@@ -37,22 +39,30 @@ CLOSED: [2019-08-13 Tue 18:15] SCHEDULED:<2019-08-13 Tue>
 CLOSED: [2019-08-14 Wed 16:25] SCHEDULED:<2019-08-14 Wed>
 - State "DONE"       from "WAIT"       [2019-08-14 Wed 16:25]
 - State "WAIT"       from "TODO"       [2019-08-14 Wed 16:25]
-** TODO HT vs LC+HT comparison 
-SCHEDULED:<2019-08-29 Thu>
+** DONE HT vs LC+HT comparison 
+CLOSED: [2019-09-09 Mon 14:37] SCHEDULED:<2019-08-29 Thu>
+- State "DONE"       from "WAIT"       [2019-09-09 Mon 14:37]
+- State "WAIT"       from "TODO"       [2019-09-09 Mon 14:37]
 ** DONE Try L2 penalty 
 CLOSED: [2019-08-15 Thu 17:56] SCHEDULED:<2019-08-15 Thu>
 - State "DONE"       from "WAIT"       [2019-08-15 Thu 17:56]
 - State "WAIT"       from "TODO"       [2019-08-15 Thu 17:56]
-** WAIT Runtime benchmark
-SCHEDULED:<2019-09-06 Fri>
+** DONE Runtime benchmark
+CLOSED: [2019-09-14 Sat 12:01] SCHEDULED:<2019-09-06 Fri>
+- State "DONE"       from "WAIT"       [2019-09-14 Sat 12:01]
 ** WAIT Runtime LC benchmark
  
 SCHEDULED:<2019-09-06 Fri>
 ** TODO Read network papers
 SCHEDULED:<2019-08-30 Fri>
-** TODO Use LEAN P-value? Write authors? 
-SCHEDULED:<2019-08-30 Fri> 
+** DONE Use LEAN P-value? Write authors? 
+Use LEAN P-value? Write authors?
+CLOSED: [2019-09-09 Mon 14:35] SCHEDULED:<2019-08-30 Fri>
+- State "DONE"       from "WAIT"       [2019-09-09 Mon 14:35]
+- State "WAIT"       from "TODO"       [2019-09-09 Mon 14:35]
+Checked the vignette:https://cran.r-project.org/web/packages/LEANR/vignettes/CCM-data.html 
 ** TODO Run SigMod on SNP network
+SCHEDULED:<2019-09-16 Mon> 
 ** DONE Figure 4D: points, log scale?
 SCHEDULED:<2019-09-05 Thu> 
    CLOSED: [2019-09-05 Thu 15:55]
@@ -63,16 +73,42 @@ SCHEDULED:<2019-09-05 Thu>
    CLOSED: [2019-09-05 Thu 16:00]
    - State "DONE"       from "WAIT"       [2019-09-05 Thu 16:00]
    - State "WAIT"       from "TODO"       [2019-09-05 Thu 16:00]
-** TODO Supp figure with consensus with all genes names
+** DONE Supp figure with consensus with all genes names
+   CLOSED: [2019-09-09 Mon 14:38]
+   - State "DONE"       from "WAIT"       [2019-09-09 Mon 14:38]
+   - State "WAIT"       from "TODO"       [2019-09-09 Mon 14:38]
+** DONE Replace Jaccard index by Pearson correlation
+CLOSED: [2019-09-10 Tue 16:36] SCHEDULED:<2019-09-10 Tue>
+- State "DONE"       from "WAIT"       [2019-09-10 Tue 16:36]
+- State "WAIT"       from "TODO"       [2019-09-10 Tue 16:36]
+** TODO Replace Lasso by "Comparative performances of machine learning methods for classifying Crohn Disease patients using genome-wide genotyping data"
+SCHEDULED:<2019-09-17 Tue>
+** TODO Parametrize max % of SNPs 
+   SCHEDULED:<2019-09-16 Mon>
+** DONE Add baseline for sensitivity and specificity based on dataset imbalance 
+CLOSED: [2019-09-19 Thu 09:01] SCHEDULED:<2019-09-17 Tue>
+- State "DONE"       from "WAIT"       [2019-09-19 Thu 09:01]
+- State "WAIT"       from "TODO"       [2019-09-19 Thu 09:01]
+** DONE Standardize HotNet2 output 
+CLOSED: [2019-09-19 Thu 08:01] SCHEDULED:<2019-09-19 Thu>
+- State "DONE"       from "WAIT"       [2019-09-19 Thu 08:01]
+- State "WAIT"       from "TODO"       [2019-09-19 Thu 08:01]
+** WAIT Run benchmark with HotNet2 
+SCHEDULED:<2019-09-19 Thu> 
+- State "WAIT"       from "TODO"       [2019-09-19 Thu 08:01]
 * Manuscript
 ** DONE Introduction
 CLOSED: [2019-08-09 Fri 16:34] DEADLINE:<2019-08-09 Fri>
 - State "DONE"       from "WAIT"       [2019-08-09 Fri 16:34]
 - State "WAIT"       from "TODO"       [2019-08-09 Fri 16:34]
-** TODO Update all analyses with new SConES
-SCHEDULED:<2019-08-28 Wed>
-** TODO Discussion on biology of familial BRCA 
-SCHEDULED:<2019-08-28 Wed> 
+** DONE Update all analyses with new SConES
+CLOSED: [2019-09-09 Mon 14:38] SCHEDULED:<2019-08-28 Wed>
+- State "DONE"       from "WAIT"       [2019-09-09 Mon 14:38]
+- State "WAIT"       from "TODO"       [2019-09-09 Mon 14:38]
+** DONE Discussion on biology of familial BRCA 
+CLOSED: [2019-09-09 Mon 14:38] SCHEDULED:<2019-08-28 Wed>
+- State "DONE"       from "WAIT"       [2019-09-09 Mon 14:38]
+- State "WAIT"       from "TODO"       [2019-09-09 Mon 14:38]
 * OncoDrive paper
 ** TODO Run LMM
 SCHEDULED:<2019-08-08 Thu>
