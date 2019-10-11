@@ -38,7 +38,7 @@ We discarded SNPs with a minor allele frequency lower than 0.1%, not in Hardy - 
 
 We looked for population structure that could create confounding associations. A PCA revealed no differential population structure between cases and controls (Supplementary Figure [[sfig:pcs]]). Independently, we did not find evidence of genomic inflation (\lambda = 1.05) either, further confirming the absence of confounding population structure.
 
-** High-weight subnetwork discovery algorithms
+** High-score subnetwork search algorithms
 *** SNP and gene association 
     :PROPERTIES:
     :CUSTOM_ID: methods:node_score
@@ -80,8 +80,8 @@ In addition, we use several matrices that describe different properties of a gra
 | Method  | Field | Nodes | Exhaustive | Solution | Components | Input     | Scoring      |
 |---------+-------+-------+------------+----------+------------+-----------+--------------|
 | /       | <     |       |            |          |            |           |              |
-| heinz   | Omics | Gene  | Yes?       | -        | 1          | Summary   | BUM          |
-| HotNet2 | Omics | Gene  | Yes?       | Modular  | \geq 1     | Summary   | Local FDR    |
+| heinz   | Omics | Gene  | Yes        | -        | 1          | Summary   | BUM          |
+| HotNet2 | Omics | Gene  | Yes        | Modular  | \geq 1     | Summary   | Local FDR    |
 | dmGWAS  | GWAS  | Gene  | No         | -        | 1          | Summary   | -log_{10}(P) |
 | LEAN    | Omics | Gene  | Yes        | Star     | \geq 1     | Summary   | -log_{10}(P) |
 | SConES  | GWAS  | SNP   | Yes        | Modular  | \geq 1     | Genotypes | \chi^2       |
@@ -93,32 +93,23 @@ Beyond the assumption that genes that contribute to the same function will be ne
 # TODO Re-read heinz paper. It's the solution heuristic? If so, how good is it? Efficient enough to be used in SNP network?
 # TODO Reformulate heinz to show similarities to SConES.
 
-- heinz :: The goal of heinz is identifying the highest-scored connected subgraph on the network cite:dittrich_identifying_2008. The problem has a trivial solution when all scores are positive: the whole network; however, it becomes NP-complete when scores are both positive and negative. The authors propose a transformation of the nodes' P-value into a score which takes a negative value when no association with the phenotype is detected, and a positive value when it is. The distinction between both is determined though an FDR approach, and is modeled by a beta-uniform model (BUM). Then, the problem is re-casted as the Prize-Collecting Steiner Tree Problem (PCST). This is the problem of selecting the connected subnetwork S that maximizes the /profit/ p(S):
+- heinz :: The goal of heinz is identifying the highest-scored connected subgraph on the network cite:dittrich_identifying_2008. The authors propose a transformation of the genes' P-value into a score which is negative when no association with the phenotype is detected, and positive value when it is. To that end, the distribution of P-values is modeled by a beta-uniform model (BUM) parameterized by the desired FDR. In this situation the problem is NP-complete. To solve it efficiently it is re-casted as the Prize-Collecting Steiner Tree Problem (PCST), which seeks to select the connected subnetwork S that maximizes the /profit/ p(S):
 
     \begin{equation*}
     p(S) = \sum_{v \in V_S} p(v) - \sum_{e \in E_S} c(e). 
     \end{equation*}
 
-    were p(v) is called profit of adding a node, and c(e) is the cost of the edge, both positive values. These quantities are defined from w' = min_{v \in V_G} w(v):
+    were p(v) = w(v) - w' is the /profit/ of adding a node, c(e) = w' is the /cost/ of adding an edge, and w' = min_{v \in V_G} w(v). All three are positive quantities. PCST has an efficient, provable solution cite:ljubic_algorithmic_2006. We used BioNet's implementation of heinz, available on Bioconductor cite:beisser_bionet:_2010,heinz.
 
-    \begin{multiline}
-    p(v) = w(v) - w', \\
-    c(e) = w'.
-    \end{multiline}
-
-    PCST has a heuristic, efficient solution cite:ljubic_algorithmic_2006. We used the implementation of heinz from BioNet cite:beisser_bionet:_2010, available on Bioconductor cite:heinz.
-
-- HotNet2 :: HotNet2 was developed in the context of tumor driver identification, as a tool to find connected subgraphs of genes mutated more often than expected by chance cite:leiserson_pan-cancer_2015. To that end, it considers both the local topology of the network and the scores of the nodes. The former is captured by an insulated heat diffusion process, modeled by a random walk with restart. At the beginning, the score of the node determines its initial heat. In an iterative procedure, each node gives heat to its "colder" neighbors, and receives heat from its "hotter" neighbors, while retaining part of its heat (hence, /insulated/). This process continues until equilibrium is reached, and results in a similarity matrix F. This matrix is used to compute the similarity matrix E that accounts also for similarities in node scores as 
+- HotNet2 :: HotNet2 was developed to find connected subgraphs of genes frequently mutated in cancer cite:leiserson_pan-cancer_2015. To that end, it considers both the local topology of the network and the scores of the nodes. The former is captured by an insulated heat diffusion process: at the beginning, the score of the node determines its initial heat; iteratively each node yields heat to its "colder" neighbors, and receives heat from its "hotter" neighbors, while retaining part of its own (hence, /insulated/). This process continues until equilibrium is reached, and results in a similarity matrix F. F is used to compute the similarity matrix E that accounts also for similarities in node scores as 
 
     \begin{equation*} 
     E = F \operatorname{diag}(w(V)), 
     \end{equation*}
 
-    where $\operatorname{diag}(w(V))$ is a diagonal matrix with the node scores in its diagonal. HotNet2 explores the similarity network built from E to find densely connected subnetworks. Specifically, it only connects a pair of nodes i and j when E(i,j) \gt \delta. Lastly, HotNet2 evaluates the statistical significance of the subnetworks by comparing their size to the size of networks obtained by permuting the node scores. 
+    where $\operatorname{diag}(w(V))$ is a diagonal matrix with the node scores in its diagonal. We scored the nodes as in cite:nakka_gene_2016, assigning a score of 0 for the genes with low probability of being associated to the disease, and -log_{10}(P-value) to those likely to be. Both are separated using a local FDR approach cite:scheid_twilight;_2005. To obtain densely connected subnetworks, HotNet2 prunes E, only preserving edges such that w(E) \gt \delta. Lastly, HotNet2 evaluates the statistical significance of the subnetworks by comparing their size to the size of networks obtained by permuting the node scores. HotNet2 has two parameters: the restart probability \beta, and the threshold heat \delta. Both parameters are set automatically by the algorithm, and are robust cite:leiserson_pan-cancer_2015. HotNet2 is implemented in Python cite:hotnet2. 
 
-    HotNet2 has two parameters: the restart probability \beta, and the threshold heat \delta. Both parameters are set automatically by the algorithm, and are robust cite:leiserson_pan-cancer_2015. We scored the nodes as in cite:nakka_gene_2016, assigning a score of 0 for the genes with low probability of being associated to the disease, and -log_{10}(P-value) to those likely to be. Both are separated using a local FDR approach cite:scheid_twilight;_2005. HotNet2 worked better when. HotNet2 is implemented in Python cite:hotnet2. 
-
-- dmGWAS :: dmGWAS aims at identifying the connected subgraph with the largest amount of low P-values cite:jia_dmgwas:_2011. To that end, it first searches several candidate subnetwork solutions using a greedy procedure involving the following steps:
+- dmGWAS :: dmGWAS searches the connected subgraph with the highest local density in low P-values cite:jia_dmgwas:_2011. To that end it searches candidate subnetwork solutions using a greedy procedure involving the following steps:
 
   1. Select a seed node.
   2. Compute Stouffer's Z-score Z_m for the current subgraph as
@@ -127,8 +118,8 @@ Beyond the assumption that genes that contribute to the same function will be ne
     Z_m = \frac{\sum z_i}{\sqrt{k}}
     \end{equation*}
 
-    where /k/ is the number of genes in the subgraph, z_i = \phi^{-1}(1 - P_i), and \phi^{-1} is the inverse normal distribution function.
-  3. Identify neighboring nodes i.e. nodes at shortest path \le /d/. We set d = 2.
+    where /k/ is the number of genes in the subgraph, z_i = \phi^{-1}(1 - P-value_i), and \phi^{-1} is the inverse normal distribution function.
+  3. Identify neighboring nodes i.e. nodes at distance \le /d/. We set d = 2.
   4. Add the neighboring nodes whose inclusion increases the Z_{m+1} more than Z_m \times (1 + r). In our experiments, we set r = 0.1.
   5. Repeat 2-4 until no increment Z_m \times (1 + r) is possible.
   
@@ -141,7 +132,8 @@ Beyond the assumption that genes that contribute to the same function will be ne
   where Z_{m}(\pi) represent a vector with 100000 random subsets of the same number of genes.
 
   We used the implementation of dmGWAS in the dmGWAS 3.0 R package cite:dmgwas. We used the function /simpleChoose/ to select the solution subnetwork, which aggregates the top 1% modules into the solution subnetwork.
-- LEAN :: Local enrichment analysis (LEAN) searches disregulated "star" gene subnetworks i.e. subnetworks composed by one central node and all its interactors cite:gwinner_network-based_2016. By imposing this restriction, LEAN is able to exhaustively test all possible solution subnetworks (one per node in the network). For a particular subnetwork of size /m/, the P-values corresponding to the involved nodes are ranked as p_1 \le \dots \le p_m. Then, /k/ binomial tests are conducted, to compute the probability of having /k/ out of /m/ P-values lower or equal to p_k under the null hypothesis. The minimum of these /k/ P-values is the score of the subnetwork. This score is transformed into a P-value through an empirical distribution obtained via a subsampling scheme, where sets of /m/ genes are selected randomly, and their score computed. Lastly, P-values are corrected for multiple testing through a Benjamini-Hochberg correction. We used the implementation of LEAN from the LEANR R package cite:leanr.
+
+- LEAN :: LEAN searches disregulated "star" gene subnetworks i.e. subnetworks composed by one central node and all its interactors cite:gwinner_network-based_2016. By imposing this restriction, LEAN is able to exhaustively test all such subnetworks (one per node). For a particular subnetwork of size /m/, the P-values corresponding to the involved nodes are ranked as p_1 \le \dots \le p_m. Then, /k/ binomial tests are conducted, to compute the probability of having /k/ out of /m/ P-values lower or equal to p_k under the null hypothesis. The minimum of these /k/ P-values is the score of the subnetwork. This score is transformed into a P-value through an empirical distribution obtained via a subsampling scheme, where sets of /m/ genes are selected randomly, and their score computed. Lastly, P-values are corrected for multiple testing through a Benjamini-Hochberg correction. We used the implementation of LEAN from the LEANR R package cite:leanr.
 - SConES :: SConES searches the minimal, maximally interconnected, maximally associated subnetwork in a SNP graph cite:azencott_efficient_2013. Specifically, it solves the problem
 
     #+NAME: eq:scones
