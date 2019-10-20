@@ -5,8 +5,14 @@ Review of network-based GWAS approaches on the GENESIS dataset.
 ## Analyses
 
 * [Conventional GWAS](doc/gwas.ipynb)
-* [Consensus network](doc/consensus.ipynb)
+
+* [Recovering known biomarkers](doc/genesis_bcac_comparison.ipynb)
+* [Method benchmark](doc/benchmark.ipynb)
+
 * [SConES results](doc/scones.ipynb)
+* [Consensus network](doc/consensus.ipynb)
+
+* [Genes excluded from the analysis](doc/bad_genes.ipynb)
 
 ## Manuscript
 
