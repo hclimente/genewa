@@ -205,8 +205,8 @@ process hotnet2 {
     
     """
     cut -f2,9 ${VEGAS} | sed 's/Top-0.1-pvalue/Pvalue/' >scored_genes.top10.txt
-    hotnet2.nf --scores scored_genes.top10.txt --tab2 ${TAB2} --hotnet2_path ${HOTNET2_PATH}
-    R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("selected_genes.hotnet2.txt") %>% inner_join(snp2gene, by = "gene") %>% select(snp) %>% write_tsv("snps")'
+    hotnet2.nf --scores scored_genes.top10.txt --tab2 ${TAB2} --hotnet2_path ${HOTNET2_PATH} --lfdr_cutoff 0.125
+    R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("selected_genes.hotnet2.tsv") %>% inner_join(snp2gene, by = "gene") %>% select(snp) %>% write_tsv("snps")'
     """
 
 }
@@ -254,12 +254,12 @@ process lasso {
     X_train <- X[train, selected] %>% as.big.matrix
     X_test <- X[test, selected] %>% as.big.matrix
     y_train <- y[train]
-    y_test <- y[test] %>% as.factor
+    y_test <- y[test]
     rm(gwas, X, y)
 
     # train and evaluate classifier
-    cvfit <- cv.biglasso(X_train, y_train, penalty = 'ridge', family = "binomial")
-    y_pred <- predict(cvfit, X_test, type = "class") %>% as.numeric %>% as.factor
+    cvfit <- cv.biglasso(X_train, y_train, penalty = 'lasso', family = "binomial")
+    y_pred <- predict(cvfit, X_test, type = "class") %>% as.numeric
 
     tibble(method = "${METHOD}",
            n_selected = length(selected),
