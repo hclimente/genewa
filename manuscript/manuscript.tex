@@ -39,16 +39,18 @@
 \makeatother
 
 \title{Combining network-guided GWAS to discover susceptibility mechanisms for breast cancer}
-\author{Héctor Climente-González$^{1,2,3}$, Christine Lonjou$^{1,2,3}$, Fabienne Lesueur$^{1,2,3}$, GENESIS study collaborators, Dominique Stoppa-Lyonnet$^{4,5,6}$, Nadine Andrieu$^{1,2,3}$, Chloé-Agathe Azencott$^{3,1,2}$}
-\affiliation{$^{1}$Institut Curie, PSL Research University, F-75005 Paris, France;\\
+\author{Héctor Climente-González$^{1,2,3}$, Christine Lonjou$^{1,2,3}$, Fabienne Lesueur$^{1,2,3}$,\\
+GENESIS Study collaborators, Dominique Stoppa-Lyonnet$^{4,5,6}$,\\
+Nadine Andrieu$^{1,2,3}$, Chloé-Agathe Azencott$^{3,1,2}$}
+\date{$^{1}$Institut Curie, PSL Research University, F-75005 Paris, France;\\
   $^{2}$INSERM, U900, F-75005 Paris, France;\\
   $^{3}$MINES ParisTech, PSL Research University, CBIO-Centre for Computational Biology, F-75006 Paris, France;\\
   $^{4}$Service de Génétique, Institut Curie, F-75005 Paris, France;\\
   $^{5}$INSERM, U830, F-75005 Paris, France;\\
-  $^{6}$Université Paris Descartes;\\
+  $^{6}$Université Paris Descartes.\\
 }
 \hypersetup{
-  pdfauthor={Héctor Climente-González, Christine Lonjou, Fabienne Lesueur, GENESIS investigators, Dominique Stoppa-Lyonnet, Nadine Andrieu, Chloé-Agathe Azencott},
+  pdfauthor={Héctor Climente-González, Christine Lonjou, Fabienne Lesueur, GENESIS Study collaborators, Dominique Stoppa-Lyonnet, Nadine Andrieu, Chloé-Agathe Azencott},
   pdftitle={Combining network-guided GWAS to discover susceptibility mechanisms for breast cancer},
   pdfkeywords={},
   pdfsubject={},
@@ -56,11 +58,11 @@
 \begin{document}
 
 \onecolumn
-\MakeTitle
+\maketitle
 
-\begin{abstract}
+\Large\textbf{Abstract}
+
 Systems biology provides a comprehensive approach to biomarker discovery and biological hypothesis building. It does so by jointly considering the statistical association between gene variation and a phenotype, and the biological context of each gene, represented as a network. In this work, we study the utility of six network methods to discover new biomarkers for breast cancer susceptibility by searching subnetworks highly associated to this phenotype. We interrogate a familial breast cancer genome-wide association study (GWAS) focused on \emph{BRCA1/2} negative French women. We perform an in-depth benchmarking of the methods with regards to size of the solution subnetwork, their utility as biomarkers, and the stability and the runtime of the methods. Interestingly, a combination of solution subnetworks provided a concise subnetwork of 93 genes, enriched in known breast cancer susceptibility genes (\emph{BABAM1}, \emph{BLM}, \emph{CASP8}, \emph{FGFR2}, and \emph{TOX3}, Fisher's exact test P-value = $7.8 \times 10^{-5}$ ) and more central than average. Additionally, it includes subnetworks of mechanisms related to cancer, like protein folding (\emph{HSPA1A}, \emph{HSPA1B}, and \emph{HSPA1L}) or mitochondrial ribosomes (\emph{MRPS30}, \emph{MRPS31}, \emph{MRPS18B}). We also observed a general dysregulation in the neighborhood of \emph{COPS5}, a gene related to multiple hallmarks of cancer. By trading statistical astringency for biological meaningfulness, most network methods get more compelling results than standard SNP- and gene-level analyses, recovering causal subnetworks tightly related to cancer susceptibility. 
-\end{abstract}
 
 \section{Introduction}
 
@@ -118,14 +120,14 @@ In addition, we use several matrices that describe different properties of a gra
       SigMod & GWAS & Genes & Yes & Module & 1 & Summary & -log\textsubscript{10}(P) & \cite{liu_sigmod:_2017}\\
     \end{tabular}
     \begin{tablenotes}
-      \textbf{\emph{Field}}: field in which the algorithm was developed.\\
-      \textbf{\emph{Nodes}}: the type of network, either gene (protein-protein interaction network usually) or a SNP network.\\
-      \textbf{\emph{Exhaustive}}: whether all the possible solutions given the selected hyperparameters are explored.\\
-      \textbf{\emph{Solution}}: additional properties are enforced on the solution subnetwork, other than being dense in high scores and connected.\\
-      \textbf{\emph{Components}}: number of connected subnetworks in the solution.\\
-      \textbf{\emph{Input}}: genotype data or GWAS summary statistics.\\
-      \textbf{\emph{Scoring}}: how SNP/gene P-values are transformed into node scores.\\
-      \textbf{\emph{Reference}}: original publication featuring the algorithm.
+      \item \textbf{\emph{Field}}: field in which the algorithm was developed.\\
+      \item \textbf{\emph{Nodes}}: the type of network, either gene (protein-protein interaction network usually) or a SNP network.\\
+      \item \textbf{\emph{Exhaustive}}: whether all the possible solutions given the selected hyperparameters are explored.\\
+      \item \textbf{\emph{Solution}}: additional properties are enforced on the solution subnetwork, other than being dense in high scores and connected.\\
+      \item \textbf{\emph{Components}}: number of connected subnetworks in the solution.\\
+      \item \textbf{\emph{Input}}: genotype data or GWAS summary statistics.\\
+      \item \textbf{\emph{Scoring}}: how SNP/gene P-values are transformed into node scores.\\
+      \item \textbf{\emph{Reference}}: original publication featuring the algorithm.
     \end{tablenotes}
   \end{threeparttable}
 \end{table}
@@ -260,10 +262,10 @@ SConES GI & 0 (1) & 0 & - & - & -\\
 SigMod & 142 & 249 & 92\,603 & 0.0083 & 0.73\\
 \end{tabular}
 \begin{tablenotes}
-  \textbf{\emph{\# genes}}: number of genes selected out of those that are part of the PPIN; for SConES GI the total number of genes, including RNA genes, was added in parentheses.\\
-  \textbf{\mean{Betweenness}}: mean betweenness of the selected genes in the PPIN.\\
-  \textbf{\median{P}\textsubscript{gene}}: median P-value of the selected genes.\\
-  \textbf{\(\rho\)\textsubscript{consensus}}: Pearson's correlation between the subnetwork and the consensus network.
+  \item \textbf{\emph{\# genes}}: number of genes selected out of those that are part of the PPIN; for SConES GI the total number of genes, including RNA genes, was added in parentheses.
+  \item \textbf{\mean{Betweenness}}: mean betweenness of the selected genes in the PPIN.
+  \item \textbf{\median{P}\textsubscript{gene}}: median P-value of the selected genes.
+  \item \textbf{\(\rho\)\textsubscript{consensus}}: Pearson's correlation between the subnetwork and the consensus network.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -386,7 +388,8 @@ GI & 197\,083 & 28\,733\,720 & - & 1.46 \texttimes{} 10\textsuperscript{6} & 0.4
 SConES GI & 408 & 539 & 5 & 9.33 \texttimes{} 10\textsuperscript{6} & 0.076\\
 \end{tabular}
 \begin{tablenotes}
-\mean{Betweenness}: mean betweenness of the selected SNPs in the corresponding full network; \median{P}\textsubscript{SNP}: median P-value of the selected SNPs.
+\item \mean{Betweenness}: mean betweenness of the selected SNPs in the corresponding full network.
+\item \median{P}\textsubscript{SNP}: median P-value of the selected SNPs.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -403,7 +406,8 @@ SConES GS & 5 & 0 & 9\,805 & 2.7 \texttimes{} 10\textsuperscript{-5} & 0.19\\
 SConES GM & 28 & 2 & 4\,267 & 0.067 & 0.12\\
 \end{tabular}
 \begin{tablenotes}
-\mean{Betweenness}: mean betweenness of the selected genes in the full network; \median{P}\textsubscript{gene}: median P-value of the selected genes; $\rho_{consensus}$: Pearson's correlation with the consensus network.
+\item \mean{Betweenness}: mean betweenness of the selected genes in the full network.
+\item \median{P}\textsubscript{gene}: median P-value of the selected genes; $\rho_{consensus}$: Pearson's correlation with the consensus network.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
