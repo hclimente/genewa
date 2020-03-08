@@ -75,7 +75,7 @@ process do_nothing {
         file SPLIT from splits_nothing
 
     output:
-        set val("all_snps"), file(SPLIT), 'snps' into all_snps
+        set val("all_snps"), file(SPLIT), 'snps' into all_snps, all_snps_stability
 
     """
     echo snp >snps
@@ -121,7 +121,7 @@ process sigmod {
         file SNP2GENE from snp2gene
 
     output:
-        set val('sigmod'), file(SPLIT), 'snps' into sigmod_snps, sigmod_snps_stability, sigmod_snps_consensus
+        set val('sigmod'), file(SPLIT), 'snps' into sigmod_snps, sigmod_snps_stability 
         set file(SPLIT), val('sigmod'), 'genes' into sigmod_genes_consensus
    
     """
@@ -144,7 +144,7 @@ process lean {
         file SNP2GENE from snp2gene
 
     output:
-        set val('lean'), file(SPLIT), 'snps' into lean_snps, lean_snps_stability, lean_snps_consensus
+        set val('lean'), file(SPLIT), 'snps' into lean_snps, lean_snps_stability
         set file(SPLIT), val('lean'), 'genes' into lean_genes_consensus
    
     """
@@ -223,24 +223,35 @@ process hotnet2 {
 
 }
 
-genes_consensus = scones_genes_consensus
-    .mix( sigmod_genes_consensus, lean_snps_stability, heinz_snps_stability, dmgwas_snps_stability, hotnet_snps_stability)
+scones_genes_consensus
+    .filter { it -> it[1] == 'scones_gi' }
+    .mix( sigmod_genes_consensus, lean_genes_consensus, heinz_genes_consensus, dmgwas_genes_consensus, hotnet_genes_consensus)
+    .into { consensus_splits; consensus_genes }
+
+genes_consensus = consensus_genes
+    .map { [it[0].baseName, it[2]] }
     .groupTuple()
+splits_consensus = consensus_splits
+    .map { [it[0].baseName, it[0]] }
+    .groupTuple()
+
+final_consensus = genes_consensus
+    .join(splits_consensus)
 
 process consensus {
 
     tag { "${SPLIT}" }
 
     input:
-        set val(SPLIT), file('genes*') from genes_consensus
+        set val(SPLIT), file('genes*'), file('splits*') from final_consensus
         file SNP2GENE from snp2gene
 
     output:
-        set val('consensus'), file(SPLIT), 'snps' into consensus_snps, consensus_snps_stability
+        set val('consensus'), 'splits1', 'snps' into consensus_snps, consensus_snps_stability
 
     """
-    cat genes* | uniq -d | grep -v gene >genes
-    R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}"); read_tsv("genes", col_names = F) %>% inner_join(snp2gene, by = c('X1' = "gene")) %>% select(snp) %>% write_tsv("snps")'
+    cat genes* | sort | uniq -d | grep -v gene >genes
+    R -e 'library(tidyverse); snp2gene <- read_tsv("${SNP2GENE}", col_types = "cc"); read_tsv("genes", col_types = "c", col_names = F) %>% inner_join(snp2gene, by = c("X1" = "gene")) %>% select(snp) %>% write_tsv("snps")'
     """
 
 }
@@ -333,7 +344,7 @@ process join_analyses {
 //  STABILITY
 /////////////////////////////////////
 snps_stability = scones_snps_stability 
-    .mix( sigmod_snps_stability, lean_snps_stability, heinz_snps_stability, dmgwas_snps_stability, hotnet_snps_stability, all_snps, consensus_snps_stability)
+    .mix( sigmod_snps_stability, lean_snps_stability, heinz_snps_stability, dmgwas_snps_stability, hotnet_snps_stability, all_snps_stability, consensus_snps_stability)
     .groupTuple(size: params.k)
 
 process stability {
