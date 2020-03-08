@@ -11,6 +11,9 @@ results/preprocessing/
 *.cov
 scored_genes.top10.txt
 *.gff3
+results/bcac/
+C0346153_disease_gda_summary.tsv
+oncoarray
 
 # software and OS
 templates
@@ -19,6 +22,7 @@ templates
 .nextflow
 *work*
 *.log*
+.vscode
 *RData
 *trace.txt*
 SigMod_v2*
