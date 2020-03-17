@@ -237,7 +237,7 @@ process chi2 {
     """
     plink --bfile ${BED.baseName} --keep ${SPLIT}  --assoc --adjust
     sed 's/ \\+/\\t/g' plink.assoc | sed 's/^\\t//' | sed 's/\\t\$//' >univariate_models.tsv
-    R -e 'library(tidyverse); read_tsv("univariate_models.tsv") %>% filter(P < .05 / n()) %>% select(SNP) %>% write_tsv("snps")'
+    R -e 'library(tidyverse); read_tsv("univariate_models.tsv") %>% filter(P < .05 / n()) %>% select(SNP) %>% rename(snp = SNP) %>% write_tsv("snps")'
     """
 
 }
