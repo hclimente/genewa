@@ -35,7 +35,7 @@ process make_splits {
 
 }
 
-splits .into {splits_vegas; splits_nothing; splits_scones}
+splits .into {splits_vegas; splits_nothing; splits_scones; splits_chi2}
 
 process vegas {
 
@@ -223,6 +223,25 @@ process hotnet2 {
 
 }
 
+process chi2 {
+
+    input:
+        file BED from bed
+        file FAM from fam
+        file BIM from bim
+        file SPLIT from splits_chi2
+
+    output:
+        set val("chi2"), file(SPLIT), 'snps' into chi2_snps, chi2_snps_stability
+
+    """
+    plink --bfile ${BED.baseName} --keep ${SPLIT}  --assoc --adjust
+    sed 's/ \\+/\\t/g' plink.assoc | sed 's/^\\t//' | sed 's/\\t\$//' >univariate_models.tsv
+    R -e 'library(tidyverse); read_tsv("univariate_models.tsv") %>% filter(P < .05 / n()) %>% select(SNP) %>% write_tsv("snps")'
+    """
+
+}
+
 scones_genes_consensus
     .filter { it -> it[1] == 'scones_gi' }
     .mix( sigmod_genes_consensus, lean_genes_consensus, heinz_genes_consensus, dmgwas_genes_consensus, hotnet_genes_consensus)
@@ -258,7 +277,7 @@ process consensus {
 
 //  RISK COMPUTATION
 /////////////////////////////////////
-snps = scones_snps .mix( sigmod_snps, lean_snps, heinz_snps, dmgwas_snps, hotnet_snps, all_snps, consensus_snps)
+snps = scones_snps .mix( sigmod_snps, lean_snps, heinz_snps, dmgwas_snps, hotnet_snps, all_snps, consensus_snps, chi2_snps)
 
 process lasso {
 
@@ -344,7 +363,7 @@ process join_analyses {
 //  STABILITY
 /////////////////////////////////////
 snps_stability = scones_snps_stability 
-    .mix( sigmod_snps_stability, lean_snps_stability, heinz_snps_stability, dmgwas_snps_stability, hotnet_snps_stability, all_snps_stability, consensus_snps_stability)
+    .mix( sigmod_snps_stability, lean_snps_stability, heinz_snps_stability, dmgwas_snps_stability, hotnet_snps_stability, all_snps_stability, consensus_snps_stability, chi2_snps_stability)
     .groupTuple(size: params.k)
 
 process stability {
