@@ -408,7 +408,19 @@ process stability {
 
         for j in range(len(selected_snps)):
             snps2 = read_snps(snps_files[j])
-            stats.append(('{}-{}'.format(i, j), pearsonr(snps1, snps2)[0]))
+            r = pearsonr(snps1, snps2)[0]
+
+            if not np.isnan(r):
+                stats.append(('{}-{}'.format(i, j), r))
+            else:
+                v1 = np.var(snps1)
+                v2 = np.var(snps2)
+
+                if v1 == 0 or v2 == 0:
+                    if v1 == v2:
+                        stats.append(('{}-{}'.format(i, j), 1))
+                    elif v1 != v2:
+                        stats.append(('{}-{}'.format(i, j), 0))
 
         selected_snps.append(snps1)
 
