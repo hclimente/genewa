@@ -1,6 +1,8 @@
 # genewa project
 
-Review of network-based GWAS approaches on the GENESIS dataset.
+Review of network-based GWAS approaches on the GENESIS dataset. This repository contains all the supporting experiments for the following publication:
+
+**Combining network-guided GWAS to discover susceptibility mechanisms for breast cancer.** Héctor Climente-González, Christine Lonjou, Fabienne Lesueur, GENESIS Study collaborators, Dominique Stoppa-Lyonnet, Nadine Andrieu, Chloé-Agathe Azencott. *bioRxiv* 2020.05.04.076661; doi: https://doi.org/10.1101/2020.05.04.076661
 
 ## Analyses
 
