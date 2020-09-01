@@ -3,8 +3,8 @@
 tab2 = file('../../preprocessing/hint.ht_complex.hgnc.pseudo.tab2')
 vegas = file('scored_genes.top10.txt')
 
-rs = Channel. from ( 0.01, 0.05, 0.1, 0.25, 0.5, 1 )
-ds = Channel. from ( 1, 2 )
+rs = Channel. from ( 0.0001, 0.001, 0.01, 0.05, 0.1, 0.25, 0.5, 1 )
+ds = Channel. from ( 1, 2, 3 )
 
 process dmgwas {
 
