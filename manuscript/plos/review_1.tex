@@ -493,7 +493,7 @@ where Z\textsubscript{m}(\(\pi\)) represents a vector containing 100\,000 random
 
 DmGWAS carries out this process on every gene in the PPIN. We used the implementation of dmGWAS in the dmGWAS 3.0 R package \cite{dmgwas}. We used the suggested hyperparameters $d = 2$ and $r = 0.1$. We used the function \texttt{simpleChoose} to select the solution, which aggregates the top 1\% subnetworks.
 
-\item[{heinz}] The goal of heinz is to identify the highest-scored connected subnetwork \cite{dittrich_identifying_2008}. The authors propose a transformation of the genes’ P\=value into a score that is negative under weak association with the phenotype, and positive under a strong one. This transformation is achieved by modeling the distribution of P\=/values by a beta-uniform model (BUM) parameterized by the desired false discovery rate (FDR). Thus formulated, the problem is NP-complete, and hence solving it would require a prohibitively long computational time. To solve it efficiently it is re-cast as the Prize-Collecting Steiner Tree Problem (PCST), which seeks to select the connected subnetwork S that maximizes the \emph{profit} p(S), defined as:
+\item[{heinz}] The goal of heinz is to identify the highest-scored connected subnetwork \cite{dittrich_identifying_2008}. The authors propose a transformation of the genes' P\=value into a score that is negative under weak association with the phenotype, and positive under a strong one. This transformation is achieved by modeling the distribution of P\=/values by a beta-uniform model (BUM) parameterized by the desired false discovery rate (FDR). Thus formulated, the problem is NP-complete, and hence solving it would require a prohibitively long computational time. To solve it efficiently it is re-cast as the Prize-Collecting Steiner Tree Problem (PCST), which seeks to select the connected subnetwork S that maximizes the \emph{profit} p(S), defined as:
 
 \begin{eqnarray}
 p(S) = \sum_{v \in V_S} p(v) - \sum_{e \in E_S} c(e). 
@@ -593,7 +593,7 @@ We ran all the computations on a Slurm cluster, running Ubuntu 16.04.2 on the no
 
 We developed computational pipelines for several steps of GWAS analyses, such as physically mapping SNPs to genes, computing gene scores, and performing six different network analyses. For each of those processes, we created a pipeline with a clear interface that should work on any GWAS dataset. They are compiled in \url{https://github.com/hclimente/gwas-tools}. Although the GENESIS data is not public, the code to apply the pipelines to this data, as well as the code that reproduces all the analyses in this article are available at \url{https://github.com/hclimente/genewa}. We deposited all the produced gene solutions on NDEx (\url{http://www.ndexbio.org}), under the UUID e9b0e22a-e9b0-11e9-bb65-0ac135e8bacf.
 
-Summary statistics for SNPs and genes are available at \url{https://github.com/hclimente/genewa}. We cannot share genotype data publicly for confidentiality reasons, but are available from GENESIS. Interested researchers can contact \href{mailto:nadine.andrieu@curie.fr}{nadine.andrieu@curie.fr}.
+Summary statistics for SNPs and genes are available at \url{https://github.com/hclimente/genewa}. We cannot share genotype data publicly for confidentiality reasons, but are available from GENESIS. Interested researchers can contact \href{mailto:nadine.andrieu@curie.fr}{nadine.andrieu(at)curie.fr}.
 
 \section{Supporting information}
 
