@@ -25,7 +25,7 @@ process sigmod {
         file "sigmod_lambdamax_${lambdamax}_nmax_${nmax}_maxjump_${maxjump}.txt"
 
     """
-    sigmod.nf --sigmod $sigmod --vegas $vegas --tab2 $tab2 --lambdamax $lambdamax --nmax $nmax --maxjump $maxjump -profile bigmem -resume
+    sigmod.nf --sigmod $sigmod --vegas $vegas --tab2 $tab2 --lambdamax $lambdamax --nmax $nmax --maxjump $maxjump
     mv selected_genes.sigmod.txt sigmod_lambdamax_${lambdamax}_nmax_${nmax}_maxjump_${maxjump}.txt
     """
 
