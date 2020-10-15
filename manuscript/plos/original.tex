@@ -230,7 +230,7 @@ with the GENESIS study group\textsuperscript{\textpilcrow}
 \textpilcrow Membership list can be found in the Acknowledgments section.
 
 % Use the asterisk to denote corresponding authorship and provide email address in note below.
-* hector.climente@riken.jp
+* hector.climente(at)riken.jp
 
 \end{flushleft}
 % Please keep the abstract below 300 words
@@ -483,9 +483,7 @@ where Z\textsubscript{m}(\(\pi\)) represents a vector containing 100\,000 random
 \end{enumerate}
 
 DmGWAS carries out this process on every gene in the network. We used the implementation of dmGWAS in the dmGWAS 3.0 R package \cite{dmgwas}. We used the suggested hyperparameters $d = 2$ and $r = 0.1$. We used the function \emph{simpleChoose} to select the solution subnetwork, which aggregates the top 1\% subnetworks.
-\end{description}
 
-\begin{description}
 \item[{heinz}] The goal of heinz is to identify the highest-scored connected subnetwork \cite{dittrich_identifying_2008}. The authors propose a transformation of the genes' P\=/value into a score that is negative under no association with the phenotype, and positive when there is. This transformation is achieved by modelling the distribution of P\=/values by a beta-uniform model (BUM) parameterized by the desired false discovery rate (FDR). Thus formulated, the problem is NP-complete, and hence solving it would require a prohibitively long computational time. To solve it efficiently it is re-cast as the Prize-Collecting Steiner Tree Problem (PCST), which seeks to select the connected subnetwork S that maximizes the \emph{profit} p(S), defined as:
 
 \begin{eqnarray}
@@ -509,9 +507,7 @@ where $\operatorname{diag}(w(V))$ is a diagonal matrix with the node scores in i
 \end{eqnarray}
 
 where \(\lambda\) and \(\eta\) are hyperparameters that control the sparsity and the connectivity of the model. The connectivity term penalizes disconnected solutions, with many edges between nodes that are selected and nodes that are not. Given a $\lambda$ and an $\eta$, the aforementioned problem has a unique solution, that SConES finds using a graph min-cut procedure. As in Azencott et al. \cite{azencott_efficient_2013}, we selected \(\lambda\) and \(\eta\) by cross-validation, choosing the values that produce the most stable solution across folds. In this case, the selected hyperparameters were \(\eta\)~=~3.51, \(\lambda\)~=~210.29 for SConES GS; \(\eta\)~=~3.51, \(\lambda\)~=~97.61 for SConES GM; and \(\eta\)~=~3.51, \(\lambda\)~=~45.31 for SConES GI. We used the version on SConES implemented in the R package martini \cite{martini}.
-\end{description}
 
-\begin{description}
 \item[{SigMod}] SigMod aims at identifying the highest-scoring, most densely connected gene subnetwork \cite{liu_sigmod:_2017}. It addresses an optimization problem similar to that of SConES (Equation \ref{eq:scones}), but the connectivity term encourages connected solutions by favoring solutions where many edges connect two selected nodes, rather than penalizing disconnected ones.  
 
 \begin{eqnarray}
@@ -521,9 +517,7 @@ where \(\lambda\) and \(\eta\) are hyperparameters that control the sparsity and
 As SConES, this optimization problem can also be solved by a graph min-cut approach. 
 
 SigMod presents three important differences with SConES. First it is designed for gene-gene networks. Second, it favors subnetworks containing many edges. SConES, instead, penalizes connections between the selected and unselected nodes. Third, it explores the grid of hyperparameters differently, and processes their respective solutions. Specifically, for the range of \(\lambda\)~=~\(\lambda\)\textsubscript{min}, \dots{}, \(\lambda\)\textsubscript{max} for the same \(\eta\), it prioritizes the solution with the largest change in size from \(\lambda\)\textsubscript{n} to \(\lambda\)\textsubscript{n+1}. Such a large change implies that the network is densely interconnected. This results in one candidate solution for each \(\eta\), which are processed by removing any node not connected to any other. A score is assigned to each candidate solution by summing their node scores and normalizing by size. The candidate solution with the highest standardized score is the chosen solution. SigMod is implemented in an R package \cite{sigmod}.
-\end{description}
 
-\begin{description}
 \item[{Consensus}] We built a consensus network by retaining the nodes that were selected by at least two of the six methods (using SConES GI for SConES).
 \end{description}
 
