@@ -1,0 +1,63 @@
+\documentclass[twocolumn, 11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[format=hang,labelfont=bf,textfont=small,singlelinecheck=false,justification=justified,margin={20pt,20pt},figurename=Fig.]{caption}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage{threeparttable}
+\usepackage[numbers]{natbib}
+\usepackage{lmodern} % Chloe: better font rendering
+\usepackage[shortcuts]{extdash} 
+\newcommand{\mean}[1]{$\overline{\mbox{#1}}$}
+\newcommand{\median}[1]{$\hat{\mbox{#1}}$}
+
+% Chloe's commands
+\usepackage[dvipsnames]{xcolor}
+\usepackage[normalem]{ulem} 
+\newcommand{\cazcom}[2]{{\uline{#1}}\unskip\space\textcolor{MidnightBlue}{[CA: #2]}}
+\newcommand{\caz}[2]{{\sout{#1}}\unskip\space\textcolor{MidnightBlue}{#2}}
+%%% To get the original text before my comments:
+% \newcommand{\cazcom}[2]{#1}
+% \newcommand{\caz}[2]{#1}
+%%% To get the corrected text and remove my comments:
+% \newcommand{\cazcom}[2]{#1}
+% \newcommand{\caz}[2]{#2}
+
+\begin{document}
+
+\onecolumn
+
+\begin{table}[htbp]
+\begin{threeparttable}
+\centering
+\begin{tabular}{lrrllr}
+Network & SNPs & Edges & Subnetworks & \mean{Betweenness} & \median{P}\textsubscript{SNP}\\
+\hline
+GS & 197\,083 & 197\,060 & - & 2.03 \texttimes{} 10\textsuperscript{7} & 0.49\\
+SConES GS & 1\,590 & 1\,585 & 5 & 2.52 \texttimes{} 10\textsuperscript{7} & 0.023\\
+\hline
+GM & 197\,083 & 6\,442\,446 & - & 3.99 \texttimes{} 10\textsuperscript{6} & 0.49\\
+SConES GM & 1\,692 & 177\,611 & 5 & 4.40 \texttimes{} 10\textsuperscript{6} & 0.055\\
+\hline
+GI & 197\,083 & 28\,733\,720 & - & 1.46 \texttimes{} 10\textsuperscript{6} & 0.49\\
+SConES GI & 408 & 539 & 5 & 9.33 \texttimes{} 10\textsuperscript{6} & 0.076\\
+\end{tabular}
+\begin{tablenotes}
+  \footnotesize{
+    \item \mean{Betweenness}: mean betweenness of the selected SNPs in the corresponding full network.\median{P}\textsubscript{SNP}: median P\=/value of the selected SNPs.
+  }
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\end{document}
