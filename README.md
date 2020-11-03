@@ -10,7 +10,7 @@ This repository is organized into four main subfolders:
 
 ## Analyses
 
-* [Conventional GWAS](doc/gwas.ipynb), including [SNP-](conventional_gwas/univariate_models.no_covars.tsv) and [gene-level](preprocessing/scored_genes.vegas.txt) summary statistics.
+* [Conventional GWAS](doc/gwas.ipynb), including [SNP-](results/conventional_gwas/univariate_models.no_covars.tsv) and [gene-level](results/preprocessing/scored_genes.vegas.txt) summary statistics.
 * [Recovering known biomarkers](doc/genesis_bcac_comparison.ipynb)
 * [Method benchmark](doc/benchmark.ipynb)
 * [SConES results](doc/scones.ipynb)
