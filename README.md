@@ -1,6 +1,6 @@
 In this repository, we evaluate six network-based GWAS tools on the [GENESIS dataset](http://bmccancer.biomedcentral.com/articles/10.1186/s12885-015-2028-9). It containts the accompanying scripts, results, and laboratory notebooks of the following article:
 
-> **Combining network-guided GWAS to discover susceptibility mechanisms for breast cancer.** Héctor Climente-González, Christine Lonjou, Fabienne Lesueur, GENESIS Study collaborators, Dominique Stoppa-Lyonnet, Nadine Andrieu, Chloé-Agathe Azencott. *bioRxiv* 2020.05.04.076661; doi: https://doi.org/10.1101/2020.05.04.076661
+> **Biological networks and GWAS: comparing and combining network methods to understand the genetics of familial breast cancer susceptibility in the GENESIS study.** Héctor Climente-González, Christine Lonjou, Fabienne Lesueur, GENESIS Study collaborators, Dominique Stoppa-Lyonnet, Nadine Andrieu, Chloé-Agathe Azencott,  GENESIS study group. *bioRxiv* 2020.05.04.076661; doi: https://doi.org/10.1101/2020.05.04.076661
 
 This repository is organized into four main subfolders:
 
@@ -10,7 +10,7 @@ This repository is organized into four main subfolders:
 
 ## Analyses
 
-* [Conventional GWAS](doc/gwas.ipynb)
+* [Conventional GWAS](doc/gwas.ipynb), including [SNP-](conventional_gwas/univariate_models.no_covars.tsv) and [gene-level](preprocessing/scored_genes.vegas.txt) summary statistics.
 * [Recovering known biomarkers](doc/genesis_bcac_comparison.ipynb)
 * [Method benchmark](doc/benchmark.ipynb)
 * [SConES results](doc/scones.ipynb)
@@ -20,6 +20,6 @@ This repository is organized into four main subfolders:
 
 ## Manuscript
 
-* [Draft](manuscript/manuscript.org)
-* [Figures](manuscript/figures.ipynb)
-* [Supplementary figures](manuscript/supp_figures.ipynb)
+* [Manuscript](manuscript/plos/review_1.pdf)
+* [Figures](manuscript/plos/figures.ipynb)
+* [Supplementary figures](manuscript/plos/supp_figures.ipynb)
