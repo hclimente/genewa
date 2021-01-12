@@ -656,7 +656,7 @@ To produce the two consensus solutions, we faced practical challenges due to the
 \paragraph*{S1 Fig.}
 \label{sfig:pcs}
 \textbf{GENESIS shows no differential population structure between cases and controls.} \textbf{(A,B,C,D)}~Eight main principal components, computed on the genotypes of GENESIS. Cases are colored in green, controls in orange.
-% \includegraphics[width=.9\linewidth]{./figures/sfigure_1.pdf}
+%\includegraphics[width=.9\linewidth]{./figures/sfigure_1.pdf}
 
 \paragraph*{S2 Fig.}
 \label{sfig:snp_gene_manhattan}
@@ -666,47 +666,47 @@ To produce the two consensus solutions, we faced practical challenges due to the
 \paragraph*{S3 Fig.}
 \label{sfig:consensus_stats}
 \textbf{Relationship between the log\textsubscript{10} of the betweenness centrality and the -log\textsubscript{10} of the VEGAS2 P\=/value of the genes in the consensus solution.} The blue line represents a fitted generalized linear model.
-% \includegraphics[width=.65\textwidth]{./figures/sfigure_3.pdf}
+%\includegraphics[width=.65\textwidth]{./figures/sfigure_3.pdf}
   
 \paragraph*{S4 Fig.}
 \label{sfig:additional-benchmarks}
 \textbf{Additional benchmarks of the network methods.} \textbf{(A)}~Precision and recall of the evaluated methods with respect to Bonferroni-significant SNPs/genes in BCAC. For reference, we added a gray line with a slope of 1. This panel is identical to Fig~\ref{fig:consensus}. \textbf{(B)}~Sensitivity and specificity on the test set of the L1-penalized logistic regression trained on the features selected by each of the methods. The performance of the classifier trained on all SNPs is also displayed. Points are the average over the 5 runs; the error bars represent the standard error of the mean.
-% \includegraphics[width=.675\linewidth]{./figures/sfigure_4.pdf
+%\includegraphics[width=.675\linewidth]{./figures/sfigure_4.pdf
 
 \paragraph*{S5 Fig.}
 \label{sfig:pearson_methods}
 \textbf{Pearson correlation between the different solutions.} \textbf{(A)}~Correlation between selected SNPs. \textbf{(B)}~Correlation between selected genes. In general, the solutions display a very low overlap.
-%\includegraphics[width=.9\linewidth]{./figures/sfigure_6.pdf}
+%\includegraphics[width=.9\linewidth]{./figures/sfigure_5.pdf}
   
 \paragraph*{S6 Fig.}
 \label{sfig:rewirings}
 \textbf{Number of times a gene was selected by either dmGWAS, heinz, LEAN, or SigMod in 100 rewirings of the PPIN (Section~\ref{methods:rewiring}) and its centrality degree.} This figure is equivalent to Fig~\ref{fig:issues}B, split by method. 
-% \includegraphics[width=.9\linewidth]{./figures/sfigure_5.pdf
+%\includegraphics[width=.9\linewidth]{./figures/sfigure_6.pdf
 
 \paragraph*{S7 Fig.}
 \label{sfig:params_size}
 \textbf{Size of the solutions obtained under different parameters.} \textbf{(A)}~Size of the solution produced by different parameter values, expressed as a percentage of the maximum solution size for the method, or the highest tested value for the parameter, respectively. The size of the solution is the median among all the solution sizes for the same parameter. \textbf{(B)}~Boxplot of the solution sizes of the methods under the explored parameters (Section~\ref{methods:parameters}).
-% \includegraphics[width=.9\linewidth]{./figures/sfigure_7.pdf
+%\includegraphics[width=.9\linewidth]{./figures/sfigure_7.pdf
 
 \paragraph*{S8 Fig.}
 \label{sfig:params_pearson}
 \textbf{Pearson correlation between the solutions obtained under different parameters, computed as in Section~\ref{methods:algorithm_comparison}.} Grey tiles represent the cases where we could not compute the Pearson correlation because the two vectors were either all ones (all genes/SNPs were selected) or zeros (no genes/SNPs were selected).
-% \includegraphics[width=.9\linewidth]{./figures/sfigure_8.pdf
+%\includegraphics[width=.9\linewidth]{./figures/sfigure_8.pdf
 
 \paragraph*{S9 Fig.}
 \label{sfig:biotypes_excluded}
 \textbf{Biotypes of genes from the annotation that are not present in the HINT PPIN.}
-% \includegraphics[width=.9\linewidth]{./figures/sfigure_8.pdf}
+%\includegraphics[width=.9\linewidth]{./figures/sfigure_9.pdf}
   
 \paragraph*{S10 Fig.}
 \label{sfig:lc_ht_comparison}
 \textbf{Comparison of the benchmark on high-throughput (HT) interactions to the benchmark on both high-throughput and literature curated interactions (HT+LC).} Grey lines represent no change in the statistic between the benchmarks (1 for ratios mean(HT) / mean(HT + LC), 0 for differences mean(HT) - mean(HT + LC)). \textbf{(A)}~Ratios of the selected features between both benchmarks and of the active set (Section~\ref{methods:classifier}). \textbf{(B)}~Shifts in sensitivity and specificity. \textbf{(C)}~Shift in Pearson correlation between benchmarks. \textbf{(D)}~Ratio between the runtimes of the benchmarks. For gene-based methods, inverted triangles represent the ratio of runtimes of the algorithms themselves, and circles the total time, which includes the algorithm themselves and the additional 119\,980 seconds (1 day and 9.33 hours) that VEGAS2 took on average to compute the gene scores from SNP summary statistics. In general, adding additional interactions slightly improved the stability of the solution. However, it increased the solution size and the required runtime, and had mixed effects on the sensitivity and specificity.
-% \includegraphics[width=.85\linewidth]{./figures/sfigure_9.pdf}
+%\includegraphics[width=.85\linewidth]{./figures/sfigure_10.pdf}
   
 \paragraph*{S11 Fig.}
 \label{sfig:scones_gsm}
 \textbf{Overview of the solutions produced by the SConES on the GS and GM networks (Section~\ref{methods:networks}) on the GENESIS dataset.} \textbf{(A)}~Manhattan plots of SNPs (Section~\ref{methods:conventional}); in black, the method’s solution. The red line indicates the Bonferroni threshold (2.54 \texttimes{} 10\textsuperscript{-7}). \textbf{(B)}~Precision and recall of the evaluated methods with respect to Bonferroni-significant SNPs (SConES) or genes (other methods) in BCAC. For reference, we added a gray line with a slope of 1. \textbf{(C)}~Solution networks.
-% \includegraphics[width=\linewidth]{./figures/sfigure_10.png}
+%\includegraphics[width=\linewidth]{./figures/sfigure_11.png}
 
 \section*{Acknowledgments}
 
