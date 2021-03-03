@@ -1,0 +1,1205 @@
+% Template for PLoS
+% Version 3.5 March 2018
+%
+% % % % % % % % % % % % % % % % % % % % % %
+%
+% -- IMPORTANT NOTE
+%
+% This template contains comments intended 
+% to minimize problems and delays during our production 
+% process. Please follow the template instructions
+% whenever possible.
+%
+% % % % % % % % % % % % % % % % % % % % % % % 
+%
+% Once your paper is accepted for publication, 
+% PLEASE REMOVE ALL TRACKED CHANGES in this file 
+% and leave only the final text of your manuscript. 
+% PLOS recommends the use of latexdiff to track changes during review, as this will help to maintain a clean tex file.
+% Visit https://www.ctan.org/pkg/latexdiff?lang=en for info or contact us at latex@plos.org.
+%
+%
+% There are no restrictions on package use within the LaTeX files except that 
+% no packages listed in the template may be deleted.
+%
+% Please do not include colors or graphics in the text.
+%
+% The manuscript LaTeX source should be contained within a single file (do not use \input, \externaldocument, or similar commands).
+%
+% % % % % % % % % % % % % % % % % % % % % % %
+%
+% -- FIGURES AND TABLES
+%
+% Please include tables/figure captions directly after the paragraph where they are first cited in the text.
+%
+% DO NOT INCLUDE GRAPHICS IN YOUR MANUSCRIPT
+% - Figures should be uploaded separately from your manuscript file. 
+% - Figures generated using LaTeX should be extracted and removed from the PDF before submission. 
+% - Figures containing multiple panels/subfigures must be combined into one image file before submission.
+% For figure citations, please use "Fig" instead of "Figure".
+% See http://journals.plos.org/plosone/s/figures for PLOS figure guidelines.
+%
+% Tables should be cell-based and may not contain:
+% - spacing/line breaks within cells to alter layout or alignment
+% - do not nest tabular environments (no tabular environments within tabular environments)
+% - no graphics or colored text (cell background color/shading OK)
+% See http://journals.plos.org/plosone/s/tables for table guidelines.
+%
+% For tables that exceed the width of the text column, use the adjustwidth environment as illustrated in the example table in text below.
+%
+% % % % % % % % % % % % % % % % % % % % % % % %
+%
+% -- eqnarrayS, MATH SYMBOLS, SUBSCRIPTS, AND SUPERSCRIPTS
+%
+% IMPORTANT
+% Below are a few tips to help format your eqnarrays and other special characters according to our specifications. For more tips to help reduce the possibility of formatting errors during conversion, please see our LaTeX guidelines at http://journals.plos.org/plosone/s/latex
+%
+% For inline eqnarrays, please be sure to include all portions of an eqnarray in the math environment.  For example, x$^2$ is incorrect; this should be formatted as $x^2$ (or $\mathrm{x}^2$ if the romanized font is desired).
+%
+% Do not include text that is not math in the math environment. For example, CO2 should be written as CO\textsubscript{2} instead of CO$_2$.
+%
+% Please add line breaks to long display eqnarrays when possible in order to fit size of the column. 
+%
+% For inline eqnarrays, please do not include punctuation (commas, etc) within the math environment unless this is part of the eqnarray.
+%
+% When adding superscript or subscripts outside of brackets/braces, please group using {}.  For example, change "[U(D,E,\gamma)]^2" to "{[U(D,E,\gamma)]}^2". 
+%
+% Do not use \cal for caligraphic font.  Instead, use \mathcal{}
+%
+% % % % % % % % % % % % % % % % % % % % % % % % 
+%
+% Please contact latex@plos.org with any questions.
+%
+% % % % % % % % % % % % % % % % % % % % % % % %
+
+\documentclass[10pt,letterpaper]{article}
+\usepackage[top=0.85in,left=2.75in,footskip=0.75in]{geometry}
+
+% amsmath and amssymb packages, useful for mathematical formulas and symbols
+\usepackage{amsmath,amssymb}
+
+% Use adjustwidth environment to exceed column width (see example table in text)
+\usepackage{changepage}
+
+% Use Unicode characters when possible
+\usepackage[utf8x]{inputenc}
+
+% textcomp package and marvosym package for additional characters
+\usepackage{textcomp,marvosym}
+
+% cite package, to clean up citations in the main text. Do not remove.
+\usepackage{cite}
+
+% Use nameref to cite supporting information files (see Supporting Information section for more info)
+\usepackage{nameref,hyperref}
+
+% line numbers
+\usepackage[right]{lineno}
+
+% ligatures disabled
+\usepackage{microtype}
+\DisableLigatures[f]{encoding = *, family = * }
+
+% color can be used to apply background shading to table cells only
+\usepackage[table]{xcolor}
+
+% array package and thick rules for tables
+\usepackage{array}
+
+% author's packages
+\usepackage[shortcuts]{extdash}
+\usepackage{lmodern} % Chloe: better font rendering 
+
+% create "+" rule type for thick vertical lines
+\newcolumntype{+}{!{\vrule width 2pt}}
+
+% create \thickcline for thick horizontal lines of variable length
+\newlength\savedwidth
+\newcommand\thickcline[1]{%
+  \noalign{\global\savedwidth\arrayrulewidth\global\arrayrulewidth 2pt}%
+  \cline{#1}%
+  \noalign{\vskip\arrayrulewidth}%
+  \noalign{\global\arrayrulewidth\savedwidth}%
+}
+
+% \thickhline command for thick horizontal lines that span the table
+\newcommand\thickhline{\noalign{\global\savedwidth\arrayrulewidth\global\arrayrulewidth 2pt}%
+\hline
+\noalign{\global\arrayrulewidth\savedwidth}}
+
+
+% Remove comment for double spacing
+%\usepackage{setspace} 
+%\doublespacing
+
+% Text layout
+\raggedright
+\setlength{\parindent}{0.5cm}
+\textwidth 5.25in 
+\textheight 8.75in
+
+% Bold the 'Figure #' in the caption and separate it from the title/caption with a period
+% Captions will be left justified
+\usepackage[aboveskip=1pt,labelfont=bf,labelsep=period,justification=raggedright,singlelinecheck=off]{caption}
+\renewcommand{\figurename}{Fig}
+
+% Use the PLoS provided BiBTeX style
+\bibliographystyle{plos2015}
+
+% Remove brackets from numbering in List of References
+\makeatletter
+\renewcommand{\@biblabel}[1]{\quad#1.}
+\makeatother
+
+
+
+% Header and Footer with logo
+\usepackage{lastpage,fancyhdr,graphicx}
+\usepackage{epstopdf}
+%\pagestyle{myheadings}
+\pagestyle{fancy}
+\fancyhf{}
+%\setlength{\headheight}{27.023pt}
+%\lhead{\includegraphics[width=2.0in]{PLOS-submission.eps}}
+\rfoot{\thepage/\pageref{LastPage}}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrule}{\hrule height 2pt \vspace{2mm}}
+\fancyheadoffset[L]{2.25in}
+\fancyfootoffset[L]{2.25in}
+\lfoot{\today}
+
+%% Include all macros below
+
+\newcommand{\lorem}{{\bf LOREM}}
+\newcommand{\ipsum}{{\bf IPSUM}}
+\newcommand{\mean}[1]{$\overline{\mbox{#1}}$}
+\newcommand{\median}[1]{$\hat{\mbox{#1}}$}
+
+%% END MACROS SECTION
+
+
+\usepackage[shortcuts]{extdash} 
+
+\begin{document}
+\vspace*{0.2in}
+
+% Title must be 250 characters or less.
+\begin{flushleft}
+{\Large
+\textbf\newline{Boosting GWAS using biological networks: a study on susceptibility to familial breast cancer} % Please use "sentence case" for title and headings (capitalize only the first word in a title (or heading), the first word in a subtitle (or subheading), and any proper nouns).
+}
+\newline
+% Insert author names, affiliations and corresponding author email (do not include titles, positions, or degrees).
+\\
+Héctor Climente-González\textsuperscript{1,2,3,4*}, 
+Christine Lonjou\textsuperscript{1,2,3}, 
+Fabienne Lesueur\textsuperscript{1,2,3},
+GENESIS study group\textsuperscript{\textpilcrow},
+Dominique Stoppa-Lyonnet\textsuperscript{5,6,7\textcurrency}, 
+Nadine Andrieu\textsuperscript{1,2,3}, 
+Chloé-Agathe Azencott\textsuperscript{3,1,2}
+\\
+\bigskip
+\textbf{1} Institut Curie, PSL Research University, Paris, France;\\
+\textbf{2} INSERM, U900, Paris, France;\\
+\textbf{3} MINES ParisTech, PSL Research University, CBIO-Centre for Computational Biology, Paris, France;\\
+\textbf{4} RIKEN Center for Advanced Intelligence Project (AIP), Tokyo, Japan; \\
+\textbf{5} Service de Génétique, Institut Curie, Paris, France;\\
+\textbf{6} INSERM, U830, Paris, France;\\
+\textbf{7} Université Paris Descartes, Paris, France.\\
+\bigskip
+
+% Insert additional author notes using the symbols described below. Insert symbol callouts after author names as necessary.
+% 
+% Remove or comment out the author notes below if they aren't used.
+%
+% Primary Equal Contribution Note
+% \Yinyang These authors contributed equally to this work.
+
+% Additional Equal Contribution Note
+% Also use this double-dagger symbol for special authorship notes, such as senior authorship.
+% \ddag These authors also contributed equally to this work.
+
+% Current address notes
+\textcurrency For the GENESIS study group % change symbol to "\textcurrency a" if more than one current address note
+% \textcurrency b Insert second current address 
+% \textcurrency c Insert third current address
+
+% Deceased author note
+% \dag Deceased
+
+% Group/Consortium Author Note
+\textpilcrow Membership list can be found in the Acknowledgments section.
+
+% Use the asterisk to denote corresponding authorship and provide email address in note below.
+* hector.climente(at)riken.jp
+
+\end{flushleft}
+% Please keep the abstract below 300 words
+\section*{Abstract}
+Genome-wide association studies (GWAS) explore the genetic causes of complex diseases. However, classical approaches ignore the biological context of the genetic variants and genes under study. To address this shortcoming, one can use biological networks, which model functional relationships, to search for functionally related susceptibility loci. Many such network methods exist, each arising from different mathematical frameworks, pre-processing steps, and assumptions about the network properties of the susceptibility mechanism. Unsurprisingly, this results in disparate solutions. To explore how to exploit these heterogeneous approaches, we selected six network methods and applied them to GENESIS, a nationwide French study on familial breast cancer. First, we verified that network methods recovered more interpretable results than a standard GWAS. We addressed the heterogeneity of their solutions by studying their overlap, computing what we called the \emph{consensus}. The key gene in this consensus solution was \emph{COPS5}, a gene related to multiple cancer hallmarks. Another issue we observed was that network methods were unstable, selecting very different genes on different subsamples of GENESIS. Therefore, we proposed a \emph{stable consensus} solution formed by the 68 genes most consistently selected across multiple subsamples. This solution was also enriched in genes known to be associated with breast cancer susceptibility (\emph{BLM}, \emph{CASP8}, \emph{CASP10}, \emph{DNAJC1}, \emph{FGFR2}, \emph{MRPS30}, and \emph{SLC4A7}, P\=/value~=~$3 \times 10^{-4}$). The most connected gene was \emph{CUL3}, a regulator of several genes linked to cancer progression. Lastly, we evaluated the biases of each method and the impact of their parameters on the outcome. In general, network methods preferred highly connected genes, even after random rewirings that stripped the connections of any biological meaning. In conclusion, we present the advantages of network-guided GWAS, characterize their shortcomings, and provide strategies to address them. To compute the consensus networks, implementations of all six methods are available at \url{https://github.com/hclimente/gwas-tools}.
+
+% Please keep the Author Summary between 150 and 200 words
+% Use first person. PLOS ONE authors please skip this step. 
+% Author Summary not valid for PLOS ONE submissions.   
+\section*{Author summary}
+Genome-wide association studies (GWAS) scan thousands of genomes to identify variants associated with a complex trait. Over the last 15 years, GWAS have advanced our understanding of the genetics of complex diseases, and in particular of cancers. However, they have led to an apparent paradox: the more we perform such studies, the more it seems that the entire genome is involved in every disease. The omnigenic model offers an appealing explanation: only a limited number of \emph{core} genes are directly involved in the disease, but gene functions are deeply interrelated, and so many other genes can alter the function of the core genes. These interrelations are often modeled as networks, and multiple algorithms have been proposed to use these networks to identify the subset of core genes involved in a specific trait. This study applies and compares six such network methods on GENESIS, a GWAS dataset for familial breast cancer in the French population. Combining these approaches allows us to identify potentially novel breast cancer susceptibility genes and provides a mechanistic explanation for their role in the development of the disease. We provide ready-to-use implementations of all the examined methods.
+\linenumbers
+
+% Use "Eq" instead of "eqnarray" for eqnarray citations.
+% For figure citations, please use "Fig" instead of "Figure".
+% Place figure captions after the first paragraph in which they are cited.
+\section{Introduction}
+
+In human health, genome-wide association studies (GWAS) aim at quantifying how single-nucleotide polymorphisms (SNPs) predispose to complex diseases, like diabetes or some forms of cancer \cite{bush_chapter_2012}. To that end, in a typical GWAS, thousands of unrelated samples are genotyped: the cases, suffering from the disease of interest, and the controls, taken from the general population. Then, a statistical test of association (e.g., based on logistic regression) is conducted between each SNP and the phenotype. Those SNPs with a P\=/value lower than a conservative Bonferroni threshold are candidates to further studies in independent cohorts. Once the risk SNPs have been discovered, they can be used for risk assessment and deepening our understanding of the disease.
+
+GWAS have successfully identified thousands of variants underlying many common diseases \cite{buniello_nhgri-ebi_2019}. However, this experimental setting also presents inherent challenges. Some of them stem from the high dimensionality of the problem, as every GWAS to date studies more variants than samples are genotyped. This limits the statistical power of the experiment, as it can only detect variants with larger effects \cite{visscher_10_2017}. This is particularly problematic since the prevailing view is that most genetic architectures involve many variants with small effects \cite{visscher_10_2017}. Additionally, to avoid false positives, most GWAS apply a conservative multiple test correction, typically the previously mentioned Bonferroni correction. However, Bonferroni correction is overly conservative when the statistical tests correlate, as happens in GWAS \cite{wang_statistical_2018}. Another open issue is the interpretation of the results, as the functional consequences of most common variants are unknown. On top of that, recent large-sampled studies suggest that numerous loci spread all along the genome contribute to a degree to any complex trait, in accordance with the infinitesimal model \cite{barton_infinitesimal_2017}. The recently proposed omnigenic model \cite{boyle_expanded_2017} offers an explanation: genes are strongly interrelated and influence each other's function, which allows alterations in most genes to impact the subset of ``core'' genes directly involved in the disease's mechanism. Hence, a comprehensive statistical framework that includes the structure of biological data might help alleviate the issues above.
+
+For this reason, many authors turn to network biology to handle the complex interplay of biomolecules that lead to disease \cite{furlong_human_2013,leisersonNetworkAnalysisGWAS2013}. As its name suggests, network biology models biology as a network, where the biomolecules under study, often genes, are nodes, and selected functional relationships are edges that link them. These relationships come from evidence that the genes jointly contribute to a biological function; for instance, their expressions are correlated, or their products establish a protein-protein interaction. Under this view, complex diseases are not the consequence of a single altered gene, but of the interaction of multiple interdependent molecules \cite{barabasi_network_2011}. In fact, an examination of biological networks shows that disease genes have differential properties \cite{barabasi_network_2011,cai_broker_2010}: they tend to occupy central positions in the network (although not the most central ones); disease genes for the same pathology tend to cluster in modules; and often they are bottlenecks that interconnect modules.
+
+Network-based discovery methods exploit the differential properties described above to identify disease genes using GWAS data \cite{azencott_network-guided_2016,huang_systematic_2018}. In essence, each gene receives a score of association with the disease, computed from the GWAS data, and a set of biological relationships, given by a network built on prior knowledge. Then, the problem becomes finding a functionally-related set of highly-scoring genes. Multiple solutions have been proposed to this problem, often stemming from different mathematical frameworks and considerations of what the optimal solution looks like. For example, some methods restrict the problem to specific types of subnetworks. Such is the case of LEAN \cite{gwinner_network-based_2016}, which focuses on ``star'' subnetworks, i.e., instances where both a gene and its direct interactors are associated with the disease. Other algorithms, like dmGWAS \cite{jia_dmgwas:_2011} and heinz \cite{dittrich_identifying_2008}, do not impose such strong constraints and search for subnetworks interconnecting genes with high association scores. However, they differ in their tolerance to the inclusion of low-scoring nodes and the topology of the solution. Lastly, other methods also consider the topology of the network, favoring groups of nodes that are not only high-scoring but also densely interconnected; such is the case of HotNet2 \cite{leiserson_pan-cancer_2015}, SConES \cite{azencott_efficient_2013}, and SigMod \cite{liu_sigmod:_2017}.
+
+In this work, we studied the relevance of network-based approaches to genetics by applying these six network methods to GWAS data. They use different interpretations of the omnigenic model and provide a representative view of the field. We worked on the GENESIS dataset \cite{sinilnikova_genesis:_2016}, a study on familial breast cancer conducted in the French population. After a classical GWAS approach, we used these network methods to identify additional breast cancer susceptibility genes. Lastly, we compared the solutions obtained by the different methods and studied their intersection to obtain consensus solutions of predisposition to familial breast cancer that addressed their shortcomings. 
+
+\section{Materials and methods}
+
+\subsection{GENESIS dataset, preprocessing, and quality control}
+\label{methods:data}
+
+The GENE Sisters (GENESIS) study investigated risk factors for familial breast cancer in the French population \cite{sinilnikova_genesis:_2016}. Index cases were patients with infiltrating mammary or ductal adenocarcinoma, who had a sister with breast cancer, and tested negative for \emph{BRCA1} and \emph{BRCA2} pathogenic variants. Controls were unaffected colleagues or friends of the cases born around the year of birth of their corresponding case (\textpm{} 3 years). We focused on the 2\,577 samples of European ancestry, of which 1\,279 were controls, and 1\,298 were cases. The genotyping platform was the iCOGS array, a custom Illumina array designed to study the genetic susceptibility to hormone-related cancers \cite{sakoda_turning_2013}. It contained 211\,155 SNPs, including SNPs putatively associated with breast, ovarian, and prostate cancers, SNPs associated with survival after diagnosis, and SNPs associated to other cancer-related traits, as well as candidate functional variants in selected genes and pathways.
+
+We discarded SNPs with a minor allele frequency lower than 0.1\%, those not in Hardy--Weinberg equilibrium in controls (P\=/value \textless~0.001), and those with genotyping data missing on more than 10\% of the samples. We also removed a subset of 20 duplicated SNPs in \emph{FGFR2}. We excluded the samples with more than 10\% missing genotypes. After controlling for relatedness, we excluded 17 additional samples (6 for sample identity error, 6 controls related to other samples, 2 cases related to an index case, and 3 additional controls having a high relatedness score). Lastly, based on study selection criteria, 11 other samples were removed (1 control having cancer, 4 index cases with no affected sister, 3 half-sisters, 1 sister with lobular carcinoma \emph{in situ}, 1 with a \emph{BRCA1} or \emph{BRCA2} pathogenic variant detected in the family, 1 with unknown molecular diagnosis). The final dataset included 1\,271 controls, 1\,280 cases, and 197\,083 SNPs. 
+
+We looked for population structure that could produce spurious associations. A principal component analysis revealed no visual differential population structure between cases and controls (\nameref{sfig:pcs}). Independently, we did not find evidence of genomic inflation (\(\lambda\)~=~1.05) either, further confirming the absence of confounding population structure.
+
+\subsection{SNP- and gene-based GWAS}
+\label{methods:conventional}
+
+To measure the association between genotype and susceptibility to breast cancer, we performed a per-SNP 1~d.f.~$\chi^2$ allelic test using PLINK v1.90 \cite{chang_second-generation_2015}. To obtain significant SNPs, we performed a Bonferroni correction to keep the family-wise error rate below 5\%. The threshold used was $\frac {0.05} {197083} = 2.54 \times 10^{-7}$. The summary statistics of the analyzed SNPs are available in \nameref{stab:snp_summary}.
+
+Then, we used VEGAS2 \cite{mishra_vegas2:_2015} to compute the gene-level association score from the P\=/values of the SNPs mapped to them. More specifically, we mapped SNPs to genes through their genomic coordinates: all SNPs located within the boundaries of a gene, \textpm 50 kb, were mapped to that gene. We computed VEGAS2 scores for each gene using only the 10\% of SNPs with the lowest P\=/values among all those mapped to it. We used the 62\,193 genes described in GENCODE 31 \cite{frankish_gencode_2019}, although only 54\,612 mapped to at least one SNP. Out of those, we focused exclusively on the 32\,767 that had a gene symbol. Out of the 197\,083 SNPs remaining after quality control, 164\,037 mapped to at least one of these genes. We also performed a Bonferroni correction to obtain significant genes; in this case, the threshold of significance was $\frac {0.05} {32767} = 1.53 \times 10^{-6}$. The summary statistics of the analyzed genes are available in \nameref{stab:gene_summary}.
+
+\subsection{Network methods}
+
+\subsubsection{Mathematical notations}
+\label{methods:notation}
+In this article, we used undirected, vertex-weighted networks, or graphs, $G = (V,E,w)$. $V = \{v_{1}, \dots{}, v_{n}\}$ refers to the vertices (or nodes), with weights $w: V \rightarrow \mathbb{R}$. Equivalently, $E \subseteq \{\{x,y\} | x,y \in V \wedge x \neq y\}$ refers to the edges. When referring to a subnetwork $S$, $V_{S}$ is the set of nodes in $S$ and $E_{S}$ is the set of edges in $S$. A special case of subgraphs are \emph{connected} subgraphs, which occur when every node in the subgraph can be reached from any other node.
+
+Nodes can be described by properties provided by the topology of the graph. We focused on the betweenness centrality, or \emph{betweenness}: the number of times a node participates in a shortest path between two other nodes. We normalized the betweenness by dividing it by $\frac {(N-1)(N-2)} {2}$, where $N$ is the number of nodes.
+
+We also used two matrices that describe two different properties of a graph. Both matrices are square and have as many rows and columns as nodes are in the network. The element $(i,j)$ hence represents a relationship between $v_i$ and $v_j$. The \emph{adjacency matrix} $W_G$ contains a 1 when the corresponding nodes are connected, and 0 otherwise; its diagonal is zero. The \emph{degree matrix} $D_G$ is a diagonal matrix that contains the number of edges of each node.
+
+\subsubsection{Networks}
+\label{methods:networks}
+
+\paragraph{Gene networks}
+The mathematical formulations of the different network methods are compatible with any type of biological network (e.g., from protein interactions or gene co-expression). Here, we used protein-protein interaction networks (PPIN) for all gene-centric network methods, as PPINs are interpretable, well-characterized, and the methods were designed to run efficiently on them. We built our PPIN from both binary and co-complex interactions stored in the HINT database (release April 2019) \cite{das_hint:_2012}. Unless otherwise specified, we used only interactions coming from high-throughput experiments, leaving out targeted studies that might bias the topology of the PPIN. Out of the 146\,722 interactions from high-throughput experiments that HINT stores, we could map 142\,541 to a pair of gene symbols, involving 13\,619 genes. 12\,880 of those mapped to a genotyped SNP after quality control, involving 127\,604 interactions. The scoring function for the nodes changed from method to method (Section~\ref{methods:methods}).
+
+Additionally, we compared the results obtained on this PPIN with those obtained on a PPIN built using interactions coming from both high-throughput and targeted studies. In that case, out of the 179\,332 interactions in HINT, 173\,797 mapped to a pair of gene symbols. Out of those, 13\,735 mapped to a genotyped SNP after quality control, involving 156\,190 interactions.
+
+\paragraph{SNP networks}
+SConES \cite{azencott_efficient_2013} was the only network method designed to handle SNP networks. As in gene networks, two SNPs were connected in a SNP network when there was evidence of shared functionality between them. Azencott et al. \cite{azencott_efficient_2013} proposed three ways of building such networks: connecting the SNPs consecutive in the genomic sequence (``GS network''); interconnecting all the SNPs mapped to the same gene, on top of GS (``GM network''); and interconnecting all SNPs mapped to two genes for which a protein-protein interaction exists, on top of GM (``GI network''). We focused on the GI network using the PPIN described above, as it fitted the scope of this work better. However, at different stages, we also compared GI to GS and GM to understand how including the PPIN affects SConES' output. For the GM network, we used the mapping described in Section~\ref{methods:snp2gene}. In all three, we scored the nodes using the 1~d.f.~\(\chi\)\textsuperscript{2} statistic of association. The properties of these three subnetworks are available in \nameref{stab:snp_solutions}.
+
+\subsubsection{High-score subnetwork search algorithms}
+\label{methods:methods}
+
+Genes that contribute to the same function are nearby in the PPIN and can be topologically related to each other in diverse ways (densely interconnected modules, nodes around a hub, a path, etc.). Several aspects have to be considered when developing a network method: how to score the nodes, whether the affected mechanisms form a single connected component or several, how to frame the problem in a computationally efficient fashion, which network to use, etc. Unsurprisingly, multiple solutions have been proposed. We examined six of them: five that explore the PPIN, and one which explores SNP networks. We selected open-source methods that had an implementation available and accessible documentation. We summarize their main differences in Table~\ref{tab:method_comparison}. We scored both SNPs and genes with the P-values (or transformations) computed in Section~\ref{methods:conventional}.
+
+\begin{table}[!ht]
+  \begin{adjustwidth}{-2.25in}{0in} % Comment out/remove adjustwidth environment if table fits in text column.
+  \centering
+  \caption{
+  {\bf Summary of the differences between the network methods.}}
+  \begin{tabular}{l|llllllll}
+  {\bf Method} & {\bf Field } & {\bf Nodes} & {\bf Exhaustive} & {\bf Solution} & {\bf Comp.} & {\bf Input} & {\bf Scoring} & {\bf Ref.}\\ \thickhline
+  dmGWAS & GWAS & Genes & No & - & 1 & Summary & -log\textsubscript{10}(P) & \cite{jia_dmgwas:_2011}\\
+  heinz & Omics & Genes & Yes & - & 1 & Summary & BUM & \cite{dittrich_identifying_2008}\\
+  HotNet2 & Omics & Genes & Yes & Module & \(\ge\) 1 & Summary & Local FDR & \cite{leiserson_pan-cancer_2015}\\
+  LEAN & Omics & Genes & Yes & Star & \(\ge\) 1 & Summary & -log\textsubscript{10}(P) & \cite{gwinner_network-based_2016}\\
+  SConES & GWAS & SNPs & Yes & Module & \(\ge\) 1 & Genotypes & 1 d.f. \(\chi\)\textsuperscript{2} & \cite{azencott_efficient_2013}\\
+  SigMod & GWAS & Genes & Yes & Module & \(\ge\) 1 & Summary & $\Phi$\textsuperscript{-1}(1 - P) & \cite{liu_sigmod:_2017}\\
+  \end{tabular}
+  \begin{flushleft} \textbf{\emph{Field}}: field in which the algorithm was developed. \textbf{\emph{Nodes}}: the type of nodes in the network, either genes (PPIN) or SNPs. \textbf{\emph{Exhaustive}}: whether the method explores all the possible solutions given the selected parameters. \textbf{\emph{Solution}}: additional properties enforced on the solution, other than containing high scoring, connected nodes. \textbf{\emph{Comp.}}: number of connected components in the solution. \textbf{\emph{Input}}: genotype data or GWAS summary statistics. \textbf{\emph{Scoring}}: how SNP/gene P\=/values were transformed into node scores. In the case of heinz, BUM stands for beta-uniform model; for SigMod, $\Phi$\textsuperscript{-1} represents the inverse of the cumulative distribution function of the standard Normal distribution. \textbf{\emph{Ref.}}: original publication featuring the algorithm.
+  \end{flushleft}
+  \label{tab:method_comparison}
+  \end{adjustwidth}
+\end{table}
+
+\begin{description}
+\item[{dmGWAS}] dmGWAS seeks the subgraph with the highest local density in low P\=/values \cite{jia_dmgwas:_2011}. To that end, it searches candidate solutions using a greedy, ``seed and extend'', heuristic:
+
+\begin{enumerate}
+\item Select a seed node $i$ and form the subnetwork $S_i=\{i\}$.
+\item Compute Stouffer's Z-score Z\textsubscript{m} for $S_i$ as
+
+\begin{eqnarray} 
+Z_m = \frac{1}{\sqrt{k}} \sum_{j \in S_i} z_j,
+\end{eqnarray}
+
+where \emph{k} is the number of genes in $S_i$, z\textsubscript{j} is the Z score of gene $j$, computed as \(\phi\)\textsuperscript{-1}(1 - P\=/value\textsubscript{j}), and \(\phi\)\textsuperscript{-1} is the inverse normal distribution function.
+\item Identify neighboring nodes of $S_i$, i.e., nodes at distance \(\le\) \texttt{d}.
+\item Add the neighboring nodes whose inclusion increases Z\textsubscript{m+1} by more than a threshold Z\textsubscript{m}~\texttimes{}~(1 + \texttt{r}).
+\item Repeat 2-4 until no further enlargement is possible.
+\item Add $S_i$ to the list of subnetworks to return. Normalize its Z-score as
+
+\begin{eqnarray}
+Z_{N}=\frac{Z_{m}-\operatorname{mean}\left(Z_{m}(\pi)\right)}{\operatorname{SD}\left(Z_{m}(\pi)\right)},
+\end{eqnarray} 
+
+where Z\textsubscript{m}(\(\pi\)) represents a vector containing 100\,000 random subsets of the same number of genes.
+\end{enumerate}
+
+DmGWAS carries out this process on every gene in the PPIN. We used the implementation of dmGWAS in the dmGWAS 3.0 R package \cite{dmgwas}. Unless otherwise specified, we used the suggested parameters \texttt{d} $ = 2$ and \texttt{r} $ = 0.1$. We used the function \texttt{simpleChoose} to select the solution, which aggregates the top 1\% subnetworks.
+
+\item[{heinz}] The goal of heinz is to identify the highest-scored connected subnetwork \cite{dittrich_identifying_2008}. The authors proposed a transformation of the genes' P\=/value into a score that is negative under weak association with the phenotype, and positive under a strong one. This transformation is achieved by modeling the distribution of P\=/values by a beta-uniform model (BUM) parameterized by the desired false discovery rate (FDR). Thus formulated, the problem is NP-complete, and hence solving it would require a prohibitively long computational time. To solve it efficiently, it is re-cast as the Prize-Collecting Steiner Tree Problem, which seeks to select the connected subnetwork S that maximizes the \emph{profit} p(S), defined as:
+
+\begin{eqnarray}
+p(S) = \sum_{v \in V_S} p(v) - \sum_{e \in E_S} c(e). 
+\end{eqnarray}
+
+were $p(v)~=~w(v) - w'$ is the \emph{profit} of adding a node, $c(e)~=~w'$ is the \emph{cost} of adding an edge, and $w' = min_{v \in V_{G}} w(v)$ is the smallest node weight of $G$. All three are positive quantities. Heinz implements the algorithm from Ljubić et al. \cite{ljubic_algorithmic_2006} which, in practice, is often fast and optimal, although neither is guaranteed. We used BioNet's implementation of heinz \cite{beisser_bionet:_2010,heinz}.
+
+\item[{HotNet2}] HotNet2 was developed to find connected subgraphs of genes frequently mutated in cancer \cite{leiserson_pan-cancer_2015}. To that end, it considers both the local topology of the PPIN and the nodes' scores. An insulated heat diffusion process captures the former: at initialization, the score of the node determines its initial heat; iteratively each node yields heat to its ``colder'' neighbors and receives heat from its ``hotter'' neighbors while retaining part of its own (hence, \emph{insulated}). This process continues until a stationary state is reached, in which the temperature of the nodes does not change anymore, and results in a diffusion matrix $F$. $F$ is used to compute the similarity matrix $E$ that models exchanged heat as
+\begin{eqnarray} 
+E = F \operatorname{diag}(w(V)), 
+\end{eqnarray}
+where $\operatorname{diag}(w(V))$ is a diagonal matrix with the node scores in its diagonal. For any two nodes $i$ and $j$, $E_{ij}$ models the amount of heat that diffuses from node $j$ to node $i$. Hence, $E_{ij}$ can be interpreted as a (non-symmetric) similarity between those two nodes. To obtain densely connected solutions, HotNet2 prunes $E$, only preserving edges such that $w(E) > \delta$. Lastly, HotNet2 evaluates the statistical significance of the solutions by comparing their size to the size of PPINs obtained by permuting the node scores. We assigned the initial node scores as in Nakka et al. \cite{nakka_gene_2016}, giving a 0 to the genes unlikely to be truly associated with the disease, and -log\textsubscript{10}(P\=/value) to those likely to be. In the GENESIS dataset, the threshold separating both was a P\=/value of 0.125, which we obtained using a local FDR approach \cite{scheid_twilight;_2005}. HotNet2 has two parameters: the restart probability \(\beta\), and the threshold heat \(\delta\). Both parameters are set automatically by the algorithm, which is robust to their values \cite{leiserson_pan-cancer_2015}. HotNet2 is implemented in Python \cite{hotnet2}.
+
+\item[{LEAN}] LEAN searches altered ``star'' subnetworks, that is, subnetworks composed of one central node and all its interactors \cite{gwinner_network-based_2016}. By imposing this restriction, LEAN can exhaustively test all such subnetworks (one per node). For a particular star subnetwork of size \emph{m} LEAN performs three steps:
+
+\begin{enumerate}
+\item Rank the P\=/values of the involved nodes as p\textsubscript{1} \(\le\) \dots{} \(\le\) p\textsubscript{m}. 
+\item Conduct \emph{k} binomial tests to compute the probability of having \emph{k} out of \emph{m} P\=/values lower or equal to p\textsubscript{k} under the null hypothesis. The minimum of these \emph{k} P\=/values is the score of the subnetwork.
+\item Transform this score into a P\=/value through an empirical distribution obtained via a subsampling scheme, where gene sets of the same size are selected randomly, and their score computed. 
+\end{enumerate}
+
+We adjust these P\=/values for multiple testing through a Benjamini-Hochberg correction. We used the implementation of LEAN from the \texttt{LEANR} R package \cite{leanr}.
+
+\item[{SConES}] SConES searches the minimal, modular, and maximally associated subnetwork in a SNP graph \cite{azencott_efficient_2013}. Specifically, it solves the problem
+
+\begin{eqnarray}
+\label{eq:scones}
+\underset{S \subseteq G}{\arg \max } \underbrace{\sum_{v \in V_S} w(v)}_{\text { association }} - \underbrace{\lambda \sum_{v \in V_S} \sum_{u \not\in V_S} {W}_{vu} }_{\text { connectivity }}-\underbrace{\eta \lvert V_S \rvert }_{\text { sparsity }},
+\end{eqnarray}
+
+where \(\lambda\) and \(\eta\) are parameters that control the sparsity and the connectivity of the model. The connectivity term penalizes disconnected solutions, with many edges between selected and unselected nodes. Given a $\lambda$ and an $\eta$, Eq~\ref{eq:scones} has a unique solution that SConES finds using a graph min-cut procedure. As in Azencott et al. \cite{azencott_efficient_2013}, we selected \(\lambda\) and \(\eta\) by cross-validation, choosing the values that produce the most stable solution across folds. In this case, the selected parameters were \(\eta\)~=~3.51, \(\lambda\)~=~210.29 for SConES GS; \(\eta\)~=~3.51, \(\lambda\)~=~97.61 for SConES GM; and \(\eta\)~=~3.51, \(\lambda\)~=~45.31 for SConES GI. We used the version on SConES implemented in the R package \texttt{martini} \cite{martini,climente-gonzalezMartiniPackageGenomewide2021}.
+
+\item[{SigMod}] SigMod searches the highest-scoring, most densely connected subnetwork \cite{liu_sigmod:_2017}. It addresses an optimization problem similar to that of SConES (Eq~\ref{eq:scones}), but with a different connectivity term that favors solutions containing many edges:  
+
+\begin{eqnarray}
+\underset{S \in G}{\arg \max } \underbrace{\sum_{v \in V_S} w(v)}_{\text { association }} + \underbrace{\lambda \sum_{v \in V_S} \sum_{u \in V_S} W_{vu} }_{\text { connectivity }} -\underbrace{\eta \lvert V_S \rvert }_{\text { sparsity }}.
+\end{eqnarray}
+
+As for SConES, this optimization problem can also be solved by a graph min-cut approach. 
+
+SigMod presents three important differences with SConES. First, it was designed for PPINs. Second, it favors solutions containing many edges between the selected nodes. SConES, instead, penalizes connections between selected and unselected nodes. Third, it explores the grid of parameters differently, and processes their respective solutions. Specifically, for the range of \(\lambda\)~=~\(\lambda\)\textsubscript{min}, \dots{}, \(\lambda\)\textsubscript{max} for the same \(\eta\), it prioritizes the solution with the largest change in size from \(\lambda\)\textsubscript{n} to \(\lambda\)\textsubscript{n+1}. Additionally, that change needs to be larger than a user-specified threshold \texttt{maxjump}. Such a large change implies that the network is densely interconnected. This results in one candidate solution for each \(\eta\), which is processed by removing any node not connected to any other. A score is assigned to each candidate solution by summing their node scores and normalizing by size. Finally, SigMod chooses the candidate solution with the highest standardized score, and that is not larger than a user-specified threshold (\texttt{nmax}). We used the default parameters \texttt{maxjump} $ = 10$ and \texttt{nmax} $= 300$. SigMod is implemented in an R package \cite{sigmod}.
+
+\item[{Consensus}] We built a consensus solution by retaining the genes selected by at least two of the six methods (using SConES GI for SConES). It includes any edge between the selected genes in the PPIN.
+\end{description}
+
+We performed all the computations in the cluster described in Section~\ref{methods:computation}. 
+
+\subsubsection{Parameter space}
+\label{methods:parameters}
+
+We used the network methods with the parameters recommended by their authors, or with the default parameters in their absence. Additionally, we explored the parameter space of the different methods to study how they alter the output.
+
+\begin{description}
+\item[{dmGWAS}] We tested multiple values for \texttt{r} (0.0001, 0.001, 0.01, 0.05, 0.1, 0.25, 0.5, and 1) and \texttt{d} (1, 2, and 3). 
+\item[{heinz}] We tested multiple FDR thresholds (0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1).
+\item[{HotNet2}] We tested different thresholds to decide which genes would receive a score of 0 and which ones a score of $-log_{10}$(P-value): 0.001, 0.01, 0.05, 0.125, 0.25, and 0.5.
+\item[{LEAN}] We used the following significance cutoffs for LEAN's P-values (0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, and 1).
+\item[{SConES}] We used the values of $\lambda$ and $\eta$ that \texttt{martini} explores by default (35.54, 5.40, 0.82, 0.12, 0.02, 0.01, 4.39e-4, 6.68e-5, 1.02e-5, and 1.55e-6 in both cases)
+\item[{SigMod}] We tested multiple values for the parameters \texttt{nmax} (10, 50, 100, 300, 700, 1000, and 10\,000) and \texttt{maxjump} (5, 10, 20, 30, and 50).
+\end{description}
+
+\subsubsection{Comparing SNP-based methods to gene-based methods and vice versa}
+\label{methods:snp2gene}
+
+In multiple steps of this article, we compared the outcome of a method that works on genes with the outcome of one that works on SNPs. For this purpose, we used the SNP-gene correspondence described in Section~\ref{methods:conventional}. To convert a list of SNPs into a list of genes, we included all the genes mapped to any of those SNPs. Conversely, to convert a list of genes into a list of SNPs, we included all the SNPs mapped to any of those genes.
+
+\subsection{Pathway enrichment analysis}
+\label{methods:pathway_enrichment}
+
+We searched for pathways enriched in the solution of each network method. We conducted a hypergeometric test on pathways from Reactome \cite{Jassal2019} using the function \texttt{enrichPathway} from the \texttt{ReactomePA} R package \cite{Yu2016}. The universe of genes included any gene that we could map to a SNP in the iCOGS array (Section~\ref{methods:conventional}). We adjusted the P-values for multiple testing as in Benjamini and Hochberg \cite{Benjamini1995} (BH): pathways with a BH adjusted P\=/value \textless~0.05 were deemed significant.
+
+\subsection{Benchmark of methods}
+\label{methods:benchmark}
+
+We evaluated multiple properties of the different methods (described in Sections~\ref{methods:algorithm_comparison} and \ref{methods:classifier}) through a 5-fold subsampling setting. We applied each method to 5 random subsets of the original GENESIS dataset containing 80\% of the samples (\emph{train set}). When pertinent, we evaluated the solution on the remaining 20\% (\emph{test set}). We used the 5 repetitions to estimate the average and the standard deviation of the different measures. Every method and repetition was run in the same computational settings (Section~\ref{methods:computation}).
+
+\subsubsection{Properties of the solution}
+\label{methods:algorithm_comparison}
+
+We compared the runtime, the number of selected features (genes or SNPs), and the stability (sensitivity to the choice of train set) of the different network methods. Nogueira and Brown \cite{nogueira_measuring_2016} proposed quantifying a method's stability using the Pearson correlation between the genes selected on different subsamples. This correlation was calculated between vectors with the length of the total number of features, containing a 0 at position $i$ if feature $i$ was not selected and a 1 if it was.
+
+\subsubsection{Classification accuracy of selected SNPs}
+\label{methods:classifier}
+
+A desirable solution offers good predictive power on the unseen test samples. We evaluated the predicting power of the SNPs selected by the different methods through the performance of an L1-penalized logistic regression classifier, which searches for a small subset of SNPs that provides good classification accuracy at predicting the outcome (case/control). The L1 penalty helps to account for linkage disequilibrium by reducing the number of SNPs included in the model (\emph{active set}). The active set was a plausible, more sparse solution with comparable predictive power to the original solution. The L1 penalty was set by cross-validation, choosing the value that minimized misclassification error.
+
+We applied each network method to each train set. Then, we trained the classifier on the same train set using only the selected SNPs. When the method retrieved a list of genes, we proceeded as explained in Section~\ref{methods:snp2gene}. Lastly we evaluated the sensitivity and the specificity of the classifier on the test set. To obtain a baseline, we also trained the classifier on all the SNPs of the train set.
+
+We did not expect a linear model on selected SNPs to separate cases from controls well. Indeed, the lifetime cumulative incidence of breast cancer among women with a family history of breast or ovarian cancer, and no \emph{BRCA1/2} mutations, is only 3.9 times more than in the general population \cite{Metcalfe2008}. However, classification accuracy may be one additional informative criterion on which to evaluate solutions.
+
+\subsection{Comparison to state-of-the-art}
+\label{methods:bcac}
+
+An alternative way to evaluate the methods is by comparing their solutions to an external dataset. For that purpose, we used the 153 genes associated to familial breast cancer on DisGeNET \cite{pinero_disgenet:_2017}. Across this article, we refer to these genes as \emph{breast cancer susceptibility genes}.
+
+Additionally, we used the summary statistics from the Breast Cancer Association Consortium (BCAC), a meta-analysis of case-control studies conducted in multiple countries. BCAC included 13\,250\,641 SNPs genotyped or imputed on 228\,951 women of European ancestry, mostly from the general population \cite{Michailidou2017}. Through imputations, BCAC includes more SNPs than the iCOGS array used for GENESIS (Section~\ref{methods:data}). However, in all the comparisons in this paper we focused on the SNPs that passed quality control in GENESIS. Hence, we used the same Bonferroni threshold as in Section~\ref{methods:conventional} to determine the significant SNPs in BCAC. We also computed gene-scores in the BCAC data using VEGAS2, as in Section~\ref{methods:data}. In this case, we did use the summary statistics of all 13\,250\,641 available SNPs and the genotypes from European samples from the 1000 Genomes Project \cite{the_1000_genomes_project_consortium_global_2015} to compute the LD patterns. Since these genotypes did not include chromosome X, we excluded it from this analysis. All comparisons included only the genes in common between GENESIS and BCAC, so we used a different Bonferroni threshold ($1.66 \times 10^{-6}$) to call gene significance. 
+
+\subsection{Network rewirings}
+\label{methods:rewiring}
+
+Rewiring the PPIN while preserving the number of edges of each gene allowed to study the impact of the topology on the output of network methods. Indeed, the edges lose their biological meaning while the topology of the network is conserved. We produced 100 such rewirings by randomly swapping edges in the PPIN. We still scored the genes as described in Section~\ref{methods:methods}. We applied only four methods on the rewirings: heinz, dmGWAS, LEAN, and SigMod. We excluded HotNet2 and SConES since they took notably longer to run. As on the real PPIN, LEAN did not produce significant results on any of the rewirings either.
+
+\subsection{Computational resources}
+\label{methods:computation}
+
+We ran all the computations on a Slurm cluster, running Ubuntu 16.04.2 on the nodes. The CPU models on the nodes were Intel Xeon CPU E5-2450 v2 at 2.50GHz and Intel Xeon E5-2440 at 2.40GHz. The nodes running heinz and HotNet2 had 20GB of memory; the ones running dmGWAS, LEAN, SConES, and SigMod, 60GB. For the benchmark (Section~\ref{methods:benchmark}), we ran each of the methods on the same Ubuntu 16.04.2 node, with a CPU Intel Xeon E5-2450 v2 at 2.50GHz, and 60GB of memory.
+
+\subsection{Code and data availability}
+\label{methods:code}
+
+We developed computational pipelines for several steps of GWAS analyses, such as physically mapping SNPs to genes, computing gene scores, and running six different network methods. We created a pipeline with a clear interface that should work on any GWAS dataset for each of those processes. They are compiled in \url{https://github.com/hclimente/gwas-tools}. The code that applies them to GENESIS, as well as the code that reproduces all the analyses in this article are available at \url{https://github.com/hclimente/genewa}. We deposited all the produced gene solutions on NDEx (\url{http://www.ndexbio.org}), under the UUID e9b0e22a-e9b0-11e9-bb65-0ac135e8bacf.
+
+Summary statistics for SNPs and genes are available at \url{https://github.com/hclimente/genewa}. We cannot share genotype data publicly for confidentiality reasons, but are available from GENESIS. Interested researchers can contact Séverine Eon-Marchais (severine.eon-marchais(at)curie.fr).
+
+% Results and Discussion can be combined.
+\section{Results}
+
+\subsection{Conventional SNP- and gene-based analyses retrieve the \emph{FGFR2} locus in the GENESIS dataset}
+\label{results:conventional}
+
+We conducted association analyses in the GENESIS dataset (Section~\ref{methods:data}) at both SNP and gene levels (Section~\ref{methods:conventional}). At the SNP level, two genomic regions had a P\=/value lower than the Bonferroni threshold on chromosomes 10 and 16 (S2A Fig). The former overlaps with the gene \emph{FGFR2}, the latter with \emph{CASC16} and the protein-coding gene \emph{TOX3}. Variants in both \emph{FGFR2} and \emph{TOX3} have been repeatedly associated with breast cancer susceptibility in other case-control studies \cite{Michailidou2017}, in studies on \emph{BRCA1} and \emph{BRCA2} carriers \cite{Mulligan2011}, and in hereditary breast and ovarian cancer families negative for mutations in \emph{BRCA1} and \emph{BRCA2} \cite{rinella_genetic_2013}. At the gene level, only \emph{FGFR2} was significantly associated with breast cancer (S2B Fig).
+
+Closer examination revealed two other regions (3p24 and 8q24) having low, albeit not genome-wide significant, P\=/values. Both of them have been associated with breast cancer susceptibility in the past \cite{brisbin_meta-analysis_2011,search_newly_2009}. We applied an L1-penalized logistic regression using all GENESIS genotypes as input and the phenotype (cancer/healthy) as the outcome (Section~\ref{methods:classifier}). The algorithm selected 100 SNPs, both from all regions mentioned above and new ones (S2C Fig). However, it was unclear why those SNPs were selected, as emphasized by the high P\=/value of some of them, which further complicates the biological interpretation. Moreover, and in opposition to what would be expected under the omnigenic model, the genes to which these SNPs map (Section~\ref{methods:snp2gene}) were not interconnected in the protein-protein interaction network (PPIN, Section~\ref{methods:networks}). Moreover, the classification performance of the model was low (sensitivity = 55\%, specificity = 55\%, Section~\ref{methods:benchmark}). Together, these issues motivated exploring network methods, which consider not only statistical association but also the location of each gene in a PPIN to find susceptibility genes.
+
+\subsection{Network methods successfully identify genes associated with breast cancer}
+\label{results:separate_networks}
+
+We applied six network methods to the GENESIS dataset (Section~\ref{methods:methods}). As none of the networks examined by LEAN was significant (Benjamini-Hochberg [BH] correction adjusted P\=/value $<$ 0.05), we obtained five solutions (Fig~\ref{fig:solution_overview}): one for each of the remaining four gene-based methods, and one for SConES GI (which works at the SNP level).
+
+\begin{figure}[!ht]
+  \centering
+  %\includegraphics[width=\textwidth]{./figures/figure_1.png}
+  \caption{\textbf{Overview of the solutions produced by the different network methods (Section~\ref{methods:methods}) on the GENESIS dataset.} As LEAN did not produce any significant solution (BH adjusted P\=/value~$<$~0.05), it is not shown. Unless indicated otherwise, results refer to SNPs for SConES GI, and to genes for the other methods. \textbf{(A)}~Overlap between the genes selected by each method, measured by Pearson correlation between indicator vectors (Sections~\ref{methods:algorithm_comparison} and \ref{methods:snp2gene}). \textbf{(B)}~Distribution of VEGAS2 P-values of the genes in the PPIN not selected by any network method (12\,213), and of those selected by 1 (575), 2 (73), or 3 (20) methods. \textbf{(C)}~Solution networks produced by the different methods. \textbf{(D)}~Manhattan plots of SNPs/genes; in black, the method's solution. The red line indicates the Bonferroni threshold (2.54~\texttimes{}~10\textsuperscript{-7} for SNPs, 1.53~\texttimes{}~10\textsuperscript{-6} for genes).}
+  \label{fig:solution_overview}
+\end{figure}
+
+These solutions differed in many aspects, making it hard to draw joint conclusions. For starters, the overlap between the genes featured in each solution was relatively small (Fig~\ref{fig:solution_overview}A). However, the methods tended to agree on the genes with the strongest signal: genes selected by more methods tended to have lower P-value of association (Fig~\ref{fig:solution_overview}B).
+
+Another major difference was the solution size: the largest solution, produced by HotNet2, contained 440 genes, while heinz's contained only 4 genes. While SConES GI did not recover any protein coding gene, working with SNP networks rather than gene networks allowed it to retrieve four subnetworks in intergenic regions and another subnetwork overlapping an RNA gene (\emph{RNU6-420P}).
+
+The topologies of the five solutions differed as well (Fig~\ref{fig:solution_overview}C), as measured by the median betweenness and the number of connected components (Table~\ref{tab:gene_solutions}). Three methods yielded more than one connected component: SConES, as described above, SigMod, and HotNet2. HotNet2 produced 135 subnetworks, 115 of which have fewer than five genes. The second largest subnetwork (13 nodes) contained the two breast cancer susceptibility genes \emph{CASP8} and \emph{BLM} (Section~\ref{methods:bcac}).
+
+\begin{table}[!ht]
+  \begin{adjustwidth}{-2.25in}{0in} % Comment out/remove adjustwidth environment if table fits in text column.
+  \centering
+  \caption{
+  {\bf Summary statistics on the solutions of multiple network methods on the PPIN. The first row contains the summary statistics on the whole PPIN.}}
+  \begin{tabular}{lrrrrrr}
+  {\bf Network } & {\bf \# genes } & {\bf \# edges } & {\bf \# components } & {\bf \mean{Betweenness} } & {\bf \median{P}\textsubscript{gene} } & {\bf \# genes in consensus } \\
+  \thickhline
+  HINT HT           & 13\,619 & 142\,541  & 15  & $1.8 \times 10^{-4}$ & 0.46  & 93/93 \\
+  \hline
+  dmGWAS            & 194     & 450       & 1   & $5.3 \times 10^{-4}$ & 0.19  & 55/93 \\
+  heinz             & 4       & 3         & 1   & $1.2 \times 10^{-3}$ & 0.001 & 4/93  \\
+  HotNet2           & 440     & 374       & 130 & $8.3 \times 10^{-5}$ & 0.048 & 63/93 \\
+  LEAN              & 0       & 0         & 0   & -         & -     & 0/93  \\
+  SConES GI         & 0 (1)   & 0         & 0   & -         & -     & 0/93  \\
+  SigMod            & 142     & 249       & 11  & $1 \times 10^{-3}$   & 0.008 & 84/93 \\
+  \hline
+  Consensus         & 93      & 186       & 21  & $5.5 \times 10^{-4}$ & 0.006 & 93/93 \\
+  Stable consensus  & 68      & 49        & 32  & $1 \times 10^{-3}$   & 0.005 & 43/93 \\
+  \end{tabular}
+  \begin{flushleft} \textbf{\# genes}:~number of genes selected out of those that are part of the PPIN; for SConES GI, the total number of genes, including RNA genes, was added in parentheses. \textbf{\# components}:~number of connected components. \textbf{\mean{Betweenness}}:~median (normalized) betweenness of the selected genes in the PPIN. \textbf{\median{P}\textsubscript{gene}}:~median VEGAS2 P\=/value of the selected genes. \textbf{\# genes in consensus}:~number of genes in common between the method's solution and the 93 genes in the consensus solution.
+  \end{flushleft}
+  \label{tab:gene_solutions}
+  \end{adjustwidth}
+\end{table}
+
+Lastly, pathway enrichment analyses on each method's solution (Section~\ref{methods:pathway_enrichment}) also revealed similarities and differences between them. It linked different parts of SigMod's solution to four processes (\nameref{stab:sigmod_pwy}): protein translation (including mitochondrial), mRNA splicing, protein misfolding, and keratinization (BH adjusted P\=/values~$<$~0.03). Interestingly, the dmGWAS solution (\nameref{stab:dmgwas_pwy}) was also related to protein misfolding (\emph{attenuation phase}, BH adjusted P\=/value~=~0.01). However, it additionally included proteins related to mitosis, DNA damage, and regulation of TP53 (BH adjusted P\=/values~$<$~0.05), which match previously known mechanisms of breast cancer susceptibility \cite{nielsen_hereditary_2016}. As with SigMod, the genes in HotNet2's solution (\nameref{stab:hotnet2_pwy}) were involved in mitochondrial translation (BH adjusted P\=/value~=~1.87 \texttimes{} 10\textsuperscript{-4}), but also in glycogen metabolism and transcription of nuclear receptors (BH adjusted P\=/value~$<$~0.04).
+
+Despite their differences, there were additional common themes. All obtained solutions had lower association P\=/values than the whole PPIN (median VEGAS2 P\=/value $\ll 0.46$, Table~\ref{tab:gene_solutions}), despite containing genes with higher P\=/values as well (Fig~\ref{fig:solution_overview}D). This illustrates the trade-off between controlling for type I error and biological relevance. However, there are nuances between solutions in this regard: heinz strongly favored genes with lower P\=/values, while dmGWAS was less conservative (median VEGAS2 P\=/values 0.0012 and 0.19, respectively); SConES tended to select whole LD-blocks; and HotNet2 and SigMod were less likely to select low scoring genes.
+
+Additionally, the solutions presented other desirable properties. First, four of them were enriched in known breast cancer susceptibility genes (dmGWAS, heinz, HotNet2, and SigMod, Fisher's exact test one-sided P\=/value~$<$~0.03). Second, the genes in three solutions displayed, on average, a significantly higher betweenness centrality than the rest of the genes (dmGWAS, HotNet2, and SigMod, Wilcoxon rank-sum test P\=/value~$<$~1.4~\texttimes{}~10\textsuperscript{-21}). This agrees with the notion that disease genes are more central than other non-essential genes \cite{pinero_uncovering_2016}, an observation that holds in breast cancer (one-tailed Wilcoxon rank-sum test P\=/value~=~2.64 \texttimes{} 10\textsuperscript{-5} when comparing the betweenness of known susceptibility genes versus the rest). Interestingly, the SNPs in SConES' solution were also more central than the average SNP (\nameref{stab:snp_solutions}), suggesting that causal SNPs are also more central than non-associated SNPs.
+
+\subsection{A case study: the consensus solution}
+\label{results:consensus}
+
+Despite their shared properties, the differences between the solutions suggested that each of them captured different aspects of cancer susceptibility. Indeed, out of the 668 genes that were selected by at least one method, only 93 were selected by at least two, 20 by three, and none by four or more. Encouragingly, the more methods selected a gene, the higher its association score to the phenotype (Fig~\ref{fig:solution_overview}B), a relationship that plateaued at 2. Hence, to leverage their strengths and compensate for their respective weaknesses, we built a consensus solution using the genes shared among at least two solutions (Section~\ref{methods:methods}). This solution (Fig~\ref{fig:consensus}A) contained 93 genes and exhibited the aforementioned properties of the individual solutions: enrichment in breast cancer susceptibility genes and higher betweenness centrality than the rest of the genes. 
+
+\begin{figure}[!ht]
+  \centering
+  %\includegraphics[width=.9\linewidth]{./figures/figure_2.pdf}
+  \caption{ \textbf{Consensus solution on GENESIS (Section~\ref{methods:methods}).} \textbf{(A)}~Manhattan plot of genes; in black, the ones in the consensus solution. The red line indicates the Bonferroni threshold (1.53~\texttimes{}~10\textsuperscript{-6} for genes). \textbf{(B)}~Consensus network. Each gene is represented by a pie chart, which shows the methods that selected it. We enlarged the two most central genes (\emph{COPS5} and \emph{OFD1}), the known breast cancer susceptibility genes, and the BCAC-significant genes (Section~\ref{methods:bcac}). \textbf{(C)}~The nodes are in the same disposition as in panel B, but we indicated every gene name. We colored in pink the names of known breast cancer susceptibility genes and BCAC-significant genes.}
+  \label{fig:consensus}
+\end{figure}
+
+A pathway enrichment analysis of the genes in the consensus solution also showed similar pathways as the individual solutions (\nameref{stab:consensus_pwy}). We found two involved mechanisms: \emph{mitochondrial translation} and \emph{attenuation phase}. The former is supported by genes like \emph{MRPS30} (VEGAS2 P\=/value~=~0.001), which encode a mitochondrial ribosomal protein and was also linked to breast cancer susceptibility \cite{quigley_5p12_2014}. Interestingly, increased mitochondrial translation has been found in cancer cells \cite{Yu2016Repositioning}, and its inhibition was proposed as a therapeutic target. With regards to the attenuation phase of heat shock response, it involved three Hsp70 chaperones: HSPA1A, HSPA1B, and HSPA1L. The genes encoding these proteins are all near each other at 6p21, in the region known as HLA. In fact, out of the 22 SNPs mapped to any of these three genes, 9 mapped to all three, and 4 to two, which made it hard to disentangle their effects. \emph{HSPA1A} was the most strongly associated gene (VEGAS2 P\=/value~=~8.37~\texttimes{}~10\textsuperscript{-4}).  
+
+Topologically, the consensus consisted of a connected component composed of 49 genes and multiple smaller subnetworks (Fig~\ref{fig:consensus}B and \ref{fig:consensus}C). Among the latter, 19 genes were in subnetworks containing a single gene or two connected nodes. This implied that they did not have a consistently altered neighborhood but were strongly associated themselves and hence picked by at least two methods. The large connected component contained genes that are highly central in the PPIN. This property weakly anticorrelated with the P\=/value of association to the disease (Pearson correlation coefficient~=~-0.26, \nameref{sfig:consensus_stats}). This anticorrelation suggested that these genes were selected because they were on the shortest path between two high scoring genes. Because of this, we hypothesize that highly central genes might contribute to the heritability through alterations of their neighborhood, consistent with the omnigenic model of disease \cite{boyle_expanded_2017}. For instance, the most central node in the consensus solution was \emph{COPS5}, a component of the COP9 signalosome that regulates multiple signaling pathways. \emph{COPS5} is related to multiple hallmarks of cancer and is overexpressed in multiple tumors, including breast and ovarian cancer \cite{liu_jab1_cops5_2018}. Despite its lack of association in GENESIS or in studies conducted by the Breast Cancer Association Consortium (BCAC) \cite{Michailidou2017} (VEGAS2 P\=/value of 0.22 and 0.14, respectively), its neighbors in the consensus solution had consistently low P\=/values (median VEGAS2 P\=/value~=~0.006).
+
+\subsection{Network methods boost discovery}
+\label{results:boost}
+
+We compared the results obtained with different network methods to the European sample of BCAC, the largest GWAS to date on breast cancer (Section~\ref{methods:bcac}). Although BCAC case-control studies do not necessarily target cases with a familial history of breast cancer like GENESIS does, this comparison is pertinent since we expect a shared genetic architecture at the gene level, at which most network methods operate. Together with BCAC's scale (90 times more samples than GENESIS), this shared genetic architecture provided a reasonable counterfactual of what we would expect if GENESIS had a larger sample size. We computed a gene association score on BCAC (Section~\ref{methods:bcac}). The solutions provided by the different  network methods overlapped significantly with BCAC hits (Fisher's exact test P\=/value \textless~0.019). The gene-based methods achieved comparable precision (2\%-25\%) and recall (1.3-12.1\%) at recovering BCAC-significant genes (S4A Fig). Interestingly, while SConES GI achieved a similar recall at the SNP-level (8.6\%), it showed a much higher precision (47.3\%).
+
+\subsection{Network methods share limitations}
+\label{results:benchmark}
+
+We compared the six network methods in a 5-fold subsampling setting (Section~\ref{methods:benchmark}). In this comparison we measured properties (Figs~\ref{fig:benchmark} and S4): the size of the solution; the sensitivity and the specificity of an L1-penalized logistic regression classifier on the selected SNPs; the stability of the methods; and their computational runtime. The solution size varies greatly between the different methods (Fig~\ref{fig:benchmark}A). Heinz produced the smallest solutions, with an average of 182 selected SNPs (Section~\ref{methods:snp2gene}) while the largest ones came from SConES GI (6\,256.6 SNPs) and dmGWAS (4\,255.0 SNPs). LEAN did not produce any solution in any of the subsamples. 
+
+To determine whether the selected SNPs could predict cancer susceptibility, we computed the classifiers' performances on \emph{test sets} (S4B Fig). The different classifiers displayed similarly low sensitivities and specificities, all in the 0.52 -- 0.56 range. Interestingly, the classifier trained on all the SNPs had a similar performance, despite being the only method aiming to minimize prediction error. Of course, although these performances were low, we did not expect to separate cases from controls well using exclusively genetic data \cite{deloscamposComplexTraitPredictionEra2018}.
+
+\begin{figure}[!ht]
+  \centering
+  %\includegraphics[width=.8\linewidth]{./figures/figure_3.pdf}
+  \caption{\textbf{Comparison of network methods on GENESIS.} Each method was run 5 times on a random subset containing 80\% of the samples and tested on the remaining samples (Section~\ref{methods:benchmark}). As LEAN did not select any gene, we excluded it from panels A and B. \textbf{(A)}~Number of SNPs selected by each method and number of SNPs in the active set (i.e., the number of SNPs selected by the classifier, Section~\ref{methods:classifier}). Points are the average over the 5 runs; the error bars represent the standard error of the mean. A grey diagonal line with slope 1 is added for comparison, indicating the upper bound of the active set. For reference, the active set of the classifier using all the SNPs as input included, on average, 154\,117.4 SNPs. \textbf{(B)}~Pairwise Pearson correlations of the solutions produced by different methods. A Pearson correlation of 1 means the two solutions are the same. \textbf{(C)}~Runtime of the evaluated methods, by type of network used (PPIN or SNP). For gene-based methods, inverted triangles represent the runtime of the algorithm alone, and circles the total time, which includes the algorithm themselves and the additional 119\,980 seconds (1 day and 9.33 hours) that VEGAS2 took on average to compute the gene scores from SNP summary statistics. \textbf{(D)}~True positive rate and false positive rate of the methods, obtained using different parameter combinations (Section~\ref{results:parameters}). We used as true positives BCAC-significant SNPs (for SConES and $\chi^2$ + Bonferroni) and genes (for the remaining methods, Section~\ref{methods:bcac}). We used the whole dataset in this panel.}
+  \label{fig:benchmark}
+  \end{figure}
+
+Another desirable quality of a selection algorithm is the stability of the solution with respect to small changes in the input (Section~\ref{methods:algorithm_comparison}). Heinz was highly stable in our benchmark, while the other methods displayed similarly low stabilities (Fig~\ref{fig:benchmark}B).
+
+In terms of computational runtime, the fastest method was heinz (Fig~\ref{fig:benchmark}C), which returned a solution in a few seconds. HotNet2 was the slowest (3 days and 14 hours on average). Including the time required to compute the gene scores, however, slowed down considerably gene-based methods; on this benchmark, that step took on average 1 day and 9.33 hours. Including this first step, it took 5 days on average for HotNet2 to produce a result.
+
+Using different combinations of parameters (Section~\ref{methods:parameters}), we computed how good each of the methods was at recovering the results of a conventional GWAS on BCAC (Section~\ref{methods:bcac}, Fig~\ref{fig:benchmark}D). SConES exhibits the largest area under the curve since, when $\lambda = 0$ (i.e., network topology is disregarded), it is equivalent to a Bonferroni correction. The remaining network methods have similar areas under the curve, with heinz having the largest one.
+
+\subsection{Network topology and association scores matter and might lead to ambiguous results}
+\label{results:drawbacks}
+
+As shown above, and despite their similarities, the different ways of modeling the problem led to remarkably different solutions. Importantly, understanding which assumptions the methods made allowed us to understand the results more in depth. For instance, the fact that LEAN did not return any gene implied that there was no gene such that both itself and its environment were, on average, strongly associated with the disease.
+
+In the GENESIS dataset, heinz's solution was very conservative, providing a small solution with the lowest median P\=/value (Table~\ref{tab:gene_solutions}). By repeatedly selecting this compact solution, heinz was the most stable method (Fig~\ref{fig:benchmark}B). Its conservativeness stemmed from its preprocessing step, which modeled the gene P\=/values as a mixture model of a beta distribution and a uniform distribution, controlled by an FDR parameter. Due to the limited signal at the gene level in this dataset (S2B Fig), only 36 genes retained a positive score after that transformation. However, this small solution did not provide much insight into the susceptibility mechanisms to cancer. Importantly, it ignored genes that were associated with cancer in this dataset, like \emph{FGFR2}. 
+
+On the other end of the spectrum, dmGWAS, HotNet2, and SigMod produced large solutions. DmGWAS' solution was the lowest scoring solution on average because of its greedy framework, which is biased towards larger solutions \cite{nikolayeva_network_2018}. It considered all nodes at distance 2 of the examined subnetwork and accepted a weakly associated gene if it was linked to another, high scoring one. Aggregating the results of successive greedy searches exacerbates this bias, leading to a large, tightly connected cluster of unassociated genes (Fig~\ref{fig:issues}A). This relatively low signal-to-noise ratio combined with the large solution requires additional analyses to draw conclusions, such as enrichment analyses. In the same line, HotNet2's solution was even harder to interpret, being composed of 440 genes divided into 135 subnetworks. Lastly, SigMod missed some of the highest scoring breast cancer susceptibility genes in the dataset, like \emph{FGFR2} and \emph{TOX3}.
+
+\begin{figure}[!ht]
+  \centering
+  %\includegraphics[width=.8\linewidth]{./figures/figure_4.pdf}
+  \caption{\textbf{Drawbacks encountered when using network methods.} \textbf{(A)}~DmGWAS solution, with the genes colored according to the -log$_{10}$ of their P\=/value. \textbf{(B)}~Number of times a gene was selected by either dmGWAS, heinz, LEAN, or SigMod in 100 rewirings of the PPIN (Section~\ref{methods:pathway_enrichment}) and its betweenness. \textbf{(C)}~Betweenness and -log\textsubscript{10} of the VEGAS2 P\=/value in BCAC for each of the nodes in the PPIN. We highlighted the genes selected by each method and the ones selected by more than one (``Consensus''). We labeled the three most central genes that were picked by any method. \textbf{(D)}~Overlap between the solutions of SConES GS, GM, or GI. Barplots are colored based on whether the SNPs map to a gene or not (Section~\ref{methods:snp2gene}).}
+  \label{fig:issues}
+  \end{figure}
+
+Another peculiarity of network methods was their relationship to betweenness centrality. We studied random rewirings of the PPIN that preserved node centrality (Section~\ref{methods:rewiring}). In this setting, network methods favored central genes (Fig~\ref{fig:issues}B) even though highly central genes often had no association to breast cancer susceptibility (Fig~\ref{fig:issues}C). We found this bias especially in SigMod (\nameref{sfig:rewirings}), which selected three highly central, unassociated genes in both the PPIN and in many of the random rewirings: \emph{COPS5}, \emph{CUL3}, and \emph{FN1}. However, as we showed in Section~\ref{results:consensus} and will show in \ref{results:stable-consensus}, there is evidence in the literature of the contribution of the first two to breast cancer susceptibility. With regards to \emph{FN1}, it encodes a fibronectin, a protein of the extracellular matrix involved in cell adhesion and migration. Overexpression of \emph{FN1} has been observed in breast cancer \cite{Ioachim2002}, and it anticorrelates with poor prognosis in other cancer types \cite{Yi2016,Sponziello2016}.
+
+By using a SNP subnetwork, SConES analyzed each SNP in its functional context. Therefore, it could select SNPs located in genes not included in the PPIN and in non-coding regions. We compared the solution of SConES in the GI network (using PPIN information), to the one using only positional information (GS network) and to the one using positional and gene annotations (GM network). Importantly, SConES produced similar results on the GS and GM networks (\nameref{sfig:pearson_methods}). While the solutions on those two considerably overlap with SConES GI's, they contained additional gene-coding segments (Fig~\ref{fig:issues}D). In fact, both SConES GS and GM selected chromosome regions related to breast cancer, like 3p24 (\emph{SLC4A7}/\emph{NEK10} \cite{ahmed_newly_2009}), 5p12 (\emph{FGF10}, \emph{MRPS30} \cite{quigley_5p12_2014}), 10q26 (\emph{FGFR2}), and 16q12 (\emph{TOX3}). In addition to those, SConES GS selected region 8q24, also linked to breast cancer (\emph{POU5F1B} \cite{breyer_expressed_2014}). 
+
+\subsection{Different parameters produce similarly-sized solutions}
+\label{results:parameters}
+
+We explored methods' parameter space by running them under different combinations of parameters (Section~\ref{methods:parameters}). In agreement with their formulations (Section~\ref{methods:methods}), larger values of specific parameters produced less stringent solutions (S7A Fig): for HotNet2 and heinz, this is the threshold above which genes receive a positive score; for dmGWAS, it is the \texttt{d} parameter, which controls how far neighbors could be added; for SigMod, it is \texttt{nmax}, which specifies the maximum size of the solution; and for LEAN, it is the P-value threshold to consider a solution significant. Two parameters had the opposite effect (the larger, the more stringent): SigMod's \texttt{maxjump}, which sets the threshold to consider an increment in $\lambda$ ``large enough''; and SConES' $\eta$, where higher values produce smaller solutions. However, two of the parameters did not have the expected effect: dmGWAS' \texttt{r}, which controls the minimum increment in the score required to add a gene; and SigMod's \texttt{maxjump}, which sets the threshold to consider an increment in $\lambda$ ``large enough''. In both cases, the size of the solution was very similar across the different values. Despite the differences in size, the solutions' size was relatively robust to the choice of parameters (Fig S7B).
+
+We computed the Pearson correlation between the different solutions as in Section~\ref{methods:algorithm_comparison} to study how the parameters affected which genes and SNPs were selected (\nameref{sfig:params_pearson}). This analysis showed that dmGWAS and SigMod were robust to two parameters: the parameter \texttt{d} determined dmGWAS' output more than \texttt{r}; for SigMod, it was $nmax$ rather than $maxjump$.
+
+SConES presented an interesting case in terms of feature selection: most of the explored combinations of parameters led to trivial solutions (they included either all the SNPs or none of them) (\nameref{sfig:params_pearson}). To explore a more meaningful parameter space, we selected the parameters in two rounds in our experiments. First, we explored the whole sample space. Then, we focused on a range of $\eta$ and $\lambda$ 1.5 orders of magnitude above and below the best parameters, respectively. This second parameter space was more diverse, which allowed to find more interesting solutions.
+
+\subsection{Building a stable consensus network preserves global network properties}
+\label{results:stable-consensus}
+
+Most network methods, including the consensus, were highly unstable (Fig~\ref{fig:benchmark}B), raising questions about the results' reliability. We built a new, \emph{stable consensus} solution using the genes selected most often across the 30 solutions obtained by running the 6 methods on 5 different splits of the data (Section~\ref{methods:benchmark}). Such a network should capture the subnetworks more often found altered, and hence should be more resistant to noise. We used only genes selected in at least 7 solutions, which corresponded to 1\% of all genes selected at least once. The resulting stability-based consensus was composed of 68 genes (Fig~\ref{fig:stable-consensus}A). This network shared most of the properties of the consensus: breast cancer susceptibility genes were overrepresented (P\=/value = 3 \texttimes{} 10\textsuperscript{-4}), as well as genes involved in mitochondrial translation and the attenuation phase (adjusted P\=/values 0.001 and 3 \texttimes{} 10\textsuperscript{-5} respectively); the selected genes were more central than average (P\=/value = 1.1 \texttimes{} 10\textsuperscript{-14}); and a considerable number of nodes (19) were isolated (Fig~\ref{fig:stable-consensus}B and \ref{fig:stable-consensus}C).
+
+\begin{figure}[!ht]
+  \centering
+  %\includegraphics[width=.8\linewidth]{./figures/figure_5.pdf}
+  \caption{ \textbf{Stable consensus solution on GENESIS (Section~\ref{results:stable-consensus})}. \textbf{(A)}~Manhattan plot of genes; in black, the ones in the stable consensus solution. The red line indicates the Bonferroni threshold (1.53~\texttimes{}~10\textsuperscript{-6} for genes). \textbf{(B)}~Stable consensus network. Each gene is represented by a pie chart, which shows the methods that selected it. We enlarged the most central gene (\emph{CUL3}), the known breast cancer susceptibility genes, and the BCAC-significant genes (Section~\ref{methods:bcac}). \textbf{(C)}~The nodes are in the same disposition as in panel B, but we indicated every gene name. We colored in pink the names of known breast cancer susceptibility genes and BCAC-significant genes.}
+  \label{fig:stable-consensus}
+  \end{figure}
+
+Despite these similarities, the consensus and the stable consensus included different genes. In the stable consensus network, the most central gene was \emph{CUL3}, which was absent from the previous consensus solution and had a low association score in both GENESIS and BCAC (P\=/values of 0.04 and 0.26, respectively). This gene is a component of Cullin-RING ubiquitin ligases. It impacts the protein levels of multiple genes relevant for cancer progression \cite{Chen2016}, and its overexpression has also been linked to increased sensitivity to carcinogens \cite{Loignon2009}.
+
+\section{Discussion}
+
+In recent years, the GWAS' ability to unravel the mechanisms leading to complex diseases has been called into question \cite{boyle_expanded_2017}. First, the omnigenic model proposes that gene functions are interwoven in a dense co-function network. The practical consequence is that larger and larger GWAS will lead to discovering an uninformative wide-spread pleiotropy. Second, its conservative statistical framework hinders GWAS discovery. Network methods elegantly address these two issues by using both association scores and an interaction network to consider the biological context of each of the genes and SNPs. Based on what could be considered diverse interpretations of the omnigenic model, several methods for network-guided discovery have been proposed in recent years. In this article we evaluated six of these methods (Section~\ref{methods:methods}) by applying them to the GENESIS GWAS dataset on familial breast cancer (Section~\ref{methods:data}).
+
+DmGWAS, Heinz, HotNet2, SConES, and SigMod all yielded compelling solutions, which include (but are not limited to) known breast cancer susceptibility genes (Section~\ref{results:separate_networks}). In general, the selected genes and SNPs were more central than most other genes and SNPs, agreeing with the observation that disease genes are more central \cite{pinero_uncovering_2016}. However, very central nodes are also more likely to be connecting any given random pair of nodes, making them more likely to be selected by network methods (Section~\ref{results:drawbacks}). However, we found support in the literature for the involvement of the selected highly central genes (\emph{COPS5}, \emph{FN1}, and \emph{CUL3}) in breast cancer susceptibility (Sections~\ref{results:consensus}, \ref{results:drawbacks}, and \ref{results:stable-consensus}). Despite these similarities, the methods' solutions were notably different. At one end of the spectrum, SConES and heinz preferred high scoring solutions, which were also small and hence did not shed much light on the disease's etiology. On the other end, dmGWAS, HotNet2 and SigMod gravitated towards lower scoring but larger solutions, which provided a wide overview of the biological context. While this deepens our understanding of breast cancer susceptibility and provides biological hypotheses, interpreting their solutions required further analyses. For instance, we examined the centrality of the selected genes to understand how much that property was driving their selection (Section~\ref{results:drawbacks}). However, all solutions shared two drawbacks. First, they were all equally bad at discriminating cases from controls. However, the classification accuracy of network methods was similar to that of a classifier trained on the entire genome (Section~\ref{results:benchmark}), which suggests that cases and controls are difficult to separate in the GENESIS dataset. This may be due to limited statistical power, which reduces the ability to identify relevant SNPs. However, in any event, we do not expect to separate people who have or will develop cancer from others on the sole basis of their genomes, ignoring all environmental factors and chance events. Hence, network methods were preferable to the logistic regression classifier since they did ``no worse'' at classification while providing an interpretable solution. Using an algorithm other than L1-penalized logistic regression might improve classification accuracy. Specifically, PRS-based strategies seem to perform slightly better on GENESIS \cite{lonjouGenePathwayLevel2021}. Second, all methods were remarkably unstable, yielding different solutions for slightly different inputs. This might partly have been caused by the instability of the P\=/values themselves in low statistical power settings \cite{halseyFickleValueGenerates2015}. Hence, heinz's conservative transformation of P\=/values, which favored only the most extreme ones, led to improved stability. Another source of instability might have been the redundancy inherent to biological networks, a consequence of an evolutionary pressure to avoid single points of failure \cite{wagnerAlternativeRoutesMutational2007}. Hence, biological networks will often have multiple paths connecting two high-scoring nodes. 
+
+To overcome these limitations while exploiting each method's strengths, we proposed combining them into a consensus solution. We used the straightforward strategy of including any node that was recovered by at least two methods. We thus proposed two solutions (Sections~\ref{results:consensus} and \ref{results:stable-consensus}): a consensus solution, which addressed the heterogeneity of the solutions, and a stable consensus solution, which addresseded the instability of the methods. They both included the majority of the strongly associated smaller solutions and captured genes and broader mechanisms related to cancer, thus synthesizing the mechanisms altered in breast cancer cases. Thanks to their smaller size and network structure, they provided compelling hypotheses on genes like \emph{COPS5} and \emph{CUL3}, which lack genome-wide association with the disease but are related to cancer at the expression level and consistently interact with high scoring genes. Notably, while the consensus approach was as unstable as the individual network-guided methods, the stable consensus network retained the ability to provide compelling hypotheses and had better stability. This supported that redundant but equivalent mechanisms might cause instability and supported the conclusions obtained on the individual solutions.
+
+In this work, we have compared our results to significant genes and SNPs in the BCAC study \cite{Michailidou2017}. Network methods showed modest precision but much higher recall at recovering BCAC hits (Section~\ref{results:boost}). While precision might be desirable when a subset of useful markers is required (for instance, for diagnosis), higher recall is desirable in exploratory settings. Nonetheless, BCAC was not an ideal ground truth. First, the studied populations are not entirely overlapping: BCAC focused on a pan-European cohort, while GENESIS targeted the French population. Second, the study designs differed: a high proportion of breast cancer cases investigated in BCAC were sporadic (not selected according to family history), while GENESIS was a homogeneous dataset not included in BCAC focused on the French high-risk population attending the family cancer clinics. Finally, and this is indeed the motivation for this study, GWAS are unlikely to identify all genes relevant for the disease: some might only show up in rare-variant studies; others might have too small effect sizes. Network methods account for this by including genes with low association scores but with relevant topological properties. Hence, network methods and GWAS, even when well-powered, are unlikely to capture exactly the same sets of genes. This might partly excuse the low precisions displayed in Section~\ref{results:boost} and the low AUC displayed in Section~\ref{results:benchmark}.
+
+As not all PPIN databases compiled the same interactions, the choice of the PPIN determines the final output. In this work, we used only interactions from HINT from high-throughput experiments (Section~\ref{methods:networks}). This responded to concerns about adding interactions identified in targeted studies and falling into ``rich getting richer'' problems: since popular genes have a higher proportion of their interactions described \cite{cai_broker_2010,das_hint:_2012}, they might bias discovery towards themselves by reducing the average shortest path length between two random nodes. On the other hand, Huang et al. \cite{huang_systematic_2018} found that larger networks were more useful than smaller networks to identify disease genes. This would support using the largest networks in our experiments. However, when we compared the impact of using a larger PPIN containing interactions from both high-throughput experiments and the literature (Section~\ref{methods:networks}), for most of the methods it did not change much the size or the stability of the solution, the classification accuracy, or the runtime (\nameref{sfig:lc_ht_comparison}). This supports using only interactions from high-throughput experiments, which produced similar solutions and avoided falling into ``circular reasonings'', where the best-known genes were artificially pushed into the solutions, as we observed in Section~\ref{results:drawbacks}. 
+
+The strength of network-based analyses comes from leveraging prior knowledge to boost discovery. In consequence, they show their shortcomings on understudied genes, especially those not in the network. Out of the 32\,767 genes to which we mapped the genotyped SNPs, 60.7\% (19\,887) were not in the PPIN. The majority of those (14\,660) are non-coding genes, mainly lncRNA, miRNA, and snRNA (\nameref{sfig:biotypes_excluded}). Nevertheless, RNA genes like \emph{CASC16} were associated to breast cancer (Section~\ref{results:conventional}), reminding us of the importance of using networks beyond coding genes. Besides, even protein-coding genes linked to breast cancer susceptibility \cite{ahmed_newly_2009}, like \emph{NEK10} (P\=/value 1.6 \texttimes{} 10\textsuperscript{-5}, overlapping with \emph{SLC4A7}) or \emph{POU5F1B}, were absent from the PPIN. However, on average protein-coding genes absent from the PPIN were less associated with breast cancer susceptibility (Wilcoxon rank-sum P\=/value~=~2.79 \texttimes{} 10\textsuperscript{-8}, median P\=/values of 0.43 and 0.47). This could not be due to well-known genes having more known interactions because we only used interactions from high-throughput experiments. As disease genes tend to be more central \cite{pinero_uncovering_2016}, we hypothesize that it was due to interactions between central genes being more likely. It is worth noting that network methods that do not use PPIs, like SConES GS and GM, recovered SNPs in \emph{NEK10} and \emph{CASC16}. Moreover, both SConES GM and GI recovered intergenic regions, which might contain key regulatory elements \cite{gallagherPostGWASEraAssociation2018}, but are excluded from gene-centric approaches. This shows the potential of SNP networks, in which SNPs are linked when there is evidence of co-function, to perform network-guided GWAS even in the absence of gene-level interactions. Lastly, all the methods are heavily affected by how SNPs are mapped to genes, and other strategies (e.g., eQTLs, SNPs associated to gene expression) might lead to different results. 
+
+A crucial step for the gene-based methods is the computation of gene scores. In this work, we used VEGAS2 \cite{mishra_vegas2:_2015} due to the flexibility it offers to use user-specified gene annotations. However, it presents known problems: selection of an appropriate percentage of top SNPs, long runtimes and P\=/value precision limited to the number of permutations \cite{nakka_gene_2016}). Additionally, other algorithms like PEGASUS \cite{nakka_gene_2016}, SKAT \cite{ionita-laza_sequence_2013} or COMBAT \cite{wang_combat:_2017} might have more statistical power.
+
+How to handle linkage disequilibrium (LD) is often a concern among GWAS practitioners. Often, the question is whether an LD-based pruning of the analyzed SNPs will improve the results. VEGAS2 accounts for LD patterns, and hence an LD pruning step would not impact gene-based network methods, although it would speed up VEGAS2's computation time. In Section~\ref{results:consensus} we highlighted ambiguities that appear when genes overlap or contain SNPs that are in LD. The presented case is paradigmatic since all three genes are in the HLA region, the most gene-dense region of the genome \cite{Xie2003}. Network methods are prone to selecting such genes when they are functionally related, and hence interconnected in the PPIN. But the opposite case is also true: when genes are not functionally related (and hence disconnected in the PPIN), network methods might disregard them even if they have high association scores. With regards to SConES, fewer SNPs would lead to simpler SNP networks and, possibly, shorter runtimes. However, LD patterns also affect SConES' in other ways, since its formulation penalizes selecting a SNP and not its neighbors, via a nonzero parameter $\eta$ in Eq~\ref{eq:scones}. Due to LD, nearby SNPs' P-values correlate; since positional information determines SNP networks, nearby SNPs are likely to be connected. Hence, SConES tends to select LD-blocks formed by low P-value SNPs. This might explain why SConES produced similar results on the GS and GM networks, heavily affected by LD (Section~\ref{results:drawbacks}). However, this same behavior raises the burden of proof required to select SNPs with many interactions, like those mapped to hub genes in the PPIN. For this reason, SConES GI did not select any protein coding gene. This could be caused by the absence of joint association of a gene and most of its neighbors, a hypothesis supported by LEAN's lack of results. Yet, a different combination of parameters could lead to a more informative SConES' solution (e.g., a lower \(\lambda\) in Eq~\ref{eq:scones}), although it is unclear how to find it. In addition, due to the design of the iCOGS array (Section~\ref{methods:data}), the genome of GENESIS participants has not been unbiasedly surveyed: some regions are fine-mapped --- which might distort gene structure in GM and GI networks --- while others are understudied --- hindering the accuracy with which the GS network captures the genome structure. A strong LD pruning might address such problems. 
+
+To produce the two consensus solutions, we faced practical challenges due to the differences in interfaces, preprocessing steps, and unexpected behaviors of the various methods. To make it easier for others to apply these methods to new datasets and aggregate their solutions, we built six \texttt{nextflow} pipelines \cite{di_tommaso_nextflow_2017} with a consistent interface and, whenever possible, parallelized computation. They are available on GitHub: \href{https://github.com/hclimente/gwas-tools}{hclimente/gwas-tools} (Section~\ref{methods:code}). Importantly, we compiled those methods with a permissive license into a Docker image for easier use, available on Docker Hub \href{https://hub.docker.com/r/hclimente/gwas-tools}{hclimente/gwas-tools}.
+
+\section*{Acknowledgments}
+
+We wish to thank Om Kulkarni for helpful discussion on gene-based GWAS and PPIN databases, Vivien Goepp for his constructive comments of the manuscript, and the genetic epidemiology platform (the PIGE, Plateforme d'Investigation en Génétique et Epidemiologie: S. Eon-Marchais, M. Marcou, D. Le Gal, L. Toulemonde, J. Beauvallet, N. Mebirouk, E. Cavaciuti), the biological resource center (S. Mazoyer, F. Damiola, L. Barjhoux, C. Verny-Pierre, V. Sornin).
+
+We thank all the GENESIS collaborating cancer clinics (Clinique Sainte Catherine, Avignon: H. Dreyfus; Hôpital Saint Jacques, Besançon: M-A. Collonge-Rame; Institut Bergonié, Bordeaux: M.Longy, A. Floquet, E. Barouk-Simonet; CHU, Brest: S. Audebert; Centre François Baclesse, Caen: P. Berthet; Hôpital Dieu, Chambéry: S. Fert-Ferrer; Centre Jean Perrin, Clermont-Ferrand: Y-J. Bignon; Hôpital Pasteur, Colmar: J-M. Limacher; Hôpital d’Enfants CHU – Centre Georges François Leclerc, Dijon: L. Faivre-Olivier; CHU, Fort de France: O. Bera; CHU Albert Michallon, Grenoble: D. Leroux; Hôpital Flaubert, Le Havre: V. Layet; Centre Oscar Lambret, Lille: P. Vennin, C. Adenis; Hôpital Jeanne de Flandre, Lille: S. Lejeune-Dumoulin, S. Manouvier-Hanu; CHRU Dupuytren, Limoges: L. Venat-Bouvet; Centre Léon Bérard, Lyon: C. Lasset, V. Bonadona; Hôpital Edouard Herriot, Lyon: S. Giraud; Institut Paoli-Calmettes, Marseille: F. Eisinger, L. Huiart; Centre Val d’Aurelle – Paul Lamarque, Montpellier: I. Coupier; CHU Arnaud de Villeneuve, Montpellier: I. Coupier, P. Pujol; Centre René Gauducheau, Nantes: C. Delnatte; Centre Catherine de Sienne, Nantes: A. Lortholary; Centre Antoine Lacassagne, Nice: M. Frénay, V. Mari; Hôpital Caremeau, Nîmes: J. Chiesa; Réseau Oncogénétique Poitou Charente, Niort: P. Gesta; Institut Curie, Paris: D. Stoppa-Lyonnet, M. Gauthier-Villars, B. Buecher, A. de Pauw, C. Abadie, M. Belotti; Hôpital Saint-Louis, Paris: O. Cohen-Haguenauer; Centre Viggo-Petersen, Paris: F. Cornélis; Hôpital Tenon, Paris: A. Fajac; GH Pitié Salpétrière et Hôpital Beaujon, Paris: C. Colas, F. Soubrier, P. Hammel, A. Fajac; Institut Jean Godinot, Reims: C. Penet, T. D. Nguyen; Polyclinique Courlancy, Reims: L. Demange*, C. Penet; Centre Eugène Marquis, Rennes: C. Dugast*; Centre Henri Becquerel, Rouen: A. Chevrier, T. Frebourg, J. Tinat, I. Tennevet, A. Rossi; Hôpital René Huguenin/Institut Curie, Saint Cloud: C. Noguès, L. Demange*, E. Mouret-Fourme; CHU, Saint-Etienne: F. Prieur; Centre Paul Strauss, Strasbourg: J-P. Fricker, H. Schuster; Hôpital Civil, Strasbourg: O. Caron, C. Maugard; Institut Claudius Regaud, Toulouse: L. Gladieff, V. Feillel; Hôpital Bretonneau, Tours: I. Mortemousque; Centre Alexis Vautrin, Vandoeuvre-les-Nancy: E. Luporsi; Hôpital de Bravois, Vandoeuvre-les-Nancy: P. Jonveaux; Gustave Roussy, Villejuif: A. Chompret*, O. Caron).
+*Deceased prematurely
+
+\nolinenumbers
+
+% \bibliography{bibliography.bib} 
+\begin{thebibliography}{10}
+
+  \bibitem{bush_chapter_2012}
+  Bush WS, Moore JH.
+  \newblock Chapter 11: {Genome}-{Wide} {Association} {Studies}.
+  \newblock PLoS Computational Biology. 2012;8(12):e1002822.
+  \newblock doi:{10.1371/journal.pcbi.1002822}.
+  
+  \bibitem{buniello_nhgri-ebi_2019}
+  Buniello A, MacArthur JA, Cerezo M, Harris LW, Hayhurst J, Malangone C, et~al.
+  \newblock The {NHGRI}-{EBI} {GWAS} {Catalog} of published genome-wide
+    association studies, targeted arrays and summary statistics 2019.
+  \newblock Nucleic Acids Research. 2019;47(D1):D1005--D1012.
+  \newblock doi:{10.1093/nar/gky1120}.
+  
+  \bibitem{visscher_10_2017}
+  Visscher PM, Wray NR, Zhang Q, Sklar P, McCarthy MI, Brown MA, et~al.
+  \newblock 10 {Years} of {GWAS} {Discovery}: {Biology}, {Function}, and
+    {Translation}.
+  \newblock The American Journal of Human Genetics. 2017;101(1):5--22.
+  \newblock doi:{10.1016/j.ajhg.2017.06.005}.
+  
+  \bibitem{wang_statistical_2018}
+  Wang MH, Cordell HJ, Van~Steen K.
+  \newblock Statistical methods for genome-wide association studies.
+  \newblock Seminars in Cancer Biology.
+    2018;doi:{10.1016/j.semcancer.2018.04.008}.
+  
+  \bibitem{barton_infinitesimal_2017}
+  Barton NH, Etheridge AM, Véber A.
+  \newblock The infinitesimal model: {Definition}, derivation, and implications.
+  \newblock Theoretical Population Biology. 2017;118:50--73.
+  \newblock doi:{10.1016/j.tpb.2017.06.001}.
+  
+  \bibitem{boyle_expanded_2017}
+  Boyle EA, Li YI, Pritchard JK.
+  \newblock An {Expanded} {View} of {Complex} {Traits}: {From} {Polygenic} to
+    {Omnigenic}.
+  \newblock Cell. 2017;169(7):1177--1186.
+  \newblock doi:{10.1016/j.cell.2017.05.038}.
+  
+  \bibitem{furlong_human_2013}
+  Furlong LI.
+  \newblock Human diseases through the lens of network biology.
+  \newblock Trends in Genetics. 2013;29(3):150--159.
+  \newblock doi:{10.1016/j.tig.2012.11.004}.
+  
+  \bibitem{leisersonNetworkAnalysisGWAS2013}
+  Leiserson MD, {Eldridge, Jonathan V}, {Ramachandran, Sohini}, {Raphael,
+    Benjamin J}.
+  \newblock Network analysis of {GWAS} data.
+  \newblock Current Opinion in Genetics \& Development. 2013;23(6):602--610.
+  
+  \bibitem{barabasi_network_2011}
+  Barabási AL, Gulbahce N, Loscalzo J.
+  \newblock Network medicine: a network-based approach to human disease.
+  \newblock Nature Reviews Genetics. 2011;12(1):56--68.
+  \newblock doi:{10.1038/nrg2918}.
+  
+  \bibitem{cai_broker_2010}
+  Cai JJ, Borenstein E, Petrov DA.
+  \newblock Broker {Genes} in {Human} {Disease}.
+  \newblock Genome Biology and Evolution. 2010;2:815--825.
+  \newblock doi:{10.1093/gbe/evq064}.
+  
+  \bibitem{azencott_network-guided_2016}
+  Azencott CA.
+  \newblock Network-{Guided} {Biomarker} {Discovery}.
+  \newblock In: Machine {Learning} for {Health} {Informatics}. vol. 9605. Cham:
+    Springer International Publishing; 2016. p. 319--336.
+  \newblock Available from:
+    \url{http://link.springer.com/10.1007/978-3-319-50478-0_16}.
+  
+  \bibitem{huang_systematic_2018}
+  Huang JK, Carlin DE, Yu MK, Zhang W, Kreisberg JF, Tamayo P, et~al.
+  \newblock Systematic {Evaluation} of {Molecular} {Networks} for {Discovery} of
+    {Disease} {Genes}.
+  \newblock Cell Systems. 2018;6(4):484--495.e5.
+  \newblock doi:{10.1016/j.cels.2018.03.001}.
+  
+  \bibitem{gwinner_network-based_2016}
+  Gwinner F, Boulday G, Vandiedonck C, Arnould M, Cardoso C, Nikolayeva I, et~al.
+  \newblock Network-based analysis of omics data: {The} {LEAN} method.
+  \newblock Bioinformatics. 2016; p. btw676.
+  \newblock doi:{10.1093/bioinformatics/btw676}.
+  
+  \bibitem{jia_dmgwas:_2011}
+  Jia P, Zheng S, Long J, Zheng W, Zhao Z.
+  \newblock {dmGWAS}: dense module searching for genome-wide association studies
+    in protein–protein interaction networks.
+  \newblock Bioinformatics. 2011;27(1):95--102.
+  \newblock doi:{10.1093/bioinformatics/btq615}.
+  
+  \bibitem{dittrich_identifying_2008}
+  Dittrich MT, Klau GW, Rosenwald A, Dandekar T, Muller T.
+  \newblock Identifying functional modules in protein-protein interaction
+    networks: an integrated exact approach.
+  \newblock Bioinformatics. 2008;24(13):i223--i231.
+  \newblock doi:{10.1093/bioinformatics/btn161}.
+  
+  \bibitem{leiserson_pan-cancer_2015}
+  Leiserson MDM, Vandin F, Wu HT, Dobson JR, Eldridge JV, Thomas JL, et~al.
+  \newblock Pan-cancer network analysis identifies combinations of rare somatic
+    mutations across pathways and protein complexes.
+  \newblock Nature Genetics. 2015;47(2):106--114.
+  \newblock doi:{10.1038/ng.3168}.
+  
+  \bibitem{azencott_efficient_2013}
+  Azencott CA, Grimm D, Sugiyama M, Kawahara Y, Borgwardt KM.
+  \newblock Efficient network-guided multi-locus association mapping with graph
+    cuts.
+  \newblock Bioinformatics. 2013;29(13):i171--i179.
+  \newblock doi:{10.1093/bioinformatics/btt238}.
+  
+  \bibitem{liu_sigmod:_2017}
+  Liu Y, Brossard M, Roqueiro D, Margaritte-Jeannin P, Sarnowski C, Bouzigon E,
+    et~al.
+  \newblock {SigMod}: an exact and efficient method to identify a strongly
+    interconnected disease-associated module in a gene network.
+  \newblock Bioinformatics. 2017; p. btx004.
+  \newblock doi:{10.1093/bioinformatics/btx004}.
+  
+  \bibitem{sinilnikova_genesis:_2016}
+  Sinilnikova OM, Dondon MG, Eon-Marchais S, Damiola F, Barjhoux L, Marcou M,
+    et~al.
+  \newblock {GENESIS}: a {French} national resource to study the missing
+    heritability of breast cancer.
+  \newblock BMC Cancer. 2016;16(1):13.
+  \newblock doi:{10.1186/s12885-015-2028-9}.
+  
+  \bibitem{sakoda_turning_2013}
+  Sakoda LC, Jorgenson E, Witte JS.
+  \newblock Turning of {COGS} moves forward findings for hormonally mediated
+    cancers.
+  \newblock Nature Genetics. 2013;45(4):345--348.
+  \newblock doi:{10.1038/ng.2587}.
+  
+  \bibitem{chang_second-generation_2015}
+  Chang CC, Chow CC, Tellier LC, Vattikuti S, Purcell SM, Lee JJ.
+  \newblock Second-generation {PLINK}: rising to the challenge of larger and
+    richer datasets.
+  \newblock GigaScience. 2015;4(1):7.
+  \newblock doi:{10.1186/s13742-015-0047-8}.
+  
+  \bibitem{mishra_vegas2:_2015}
+  Mishra A, Macgregor S.
+  \newblock {VEGAS}2: {Software} for {More} {Flexible} {Gene}-{Based} {Testing}.
+  \newblock Twin Research and Human Genetics. 2015;18(1):86--91.
+  \newblock doi:{10.1017/thg.2014.79}.
+  
+  \bibitem{frankish_gencode_2019}
+  Frankish A, Diekhans M, Ferreira AM, Johnson R, Jungreis I, Loveland J, et~al.
+  \newblock {GENCODE} reference annotation for the human and mouse genomes.
+  \newblock Nucleic Acids Research. 2019;47(D1):D766--D773.
+  \newblock doi:{10.1093/nar/gky955}.
+  
+  \bibitem{das_hint:_2012}
+  Das J, Yu H.
+  \newblock {HINT}: {High}-quality protein interactomes and their applications in
+    understanding human disease.
+  \newblock BMC Systems Biology. 2012;6(1):92.
+  \newblock doi:{10.1186/1752-0509-6-92}.
+  
+  \bibitem{dmgwas}
+  Wang Q, Jia P. dmGWAS 3.0; 2014.
+  \newblock \url{https://bioinfo.uth.edu/dmGWAS/}.
+  
+  \bibitem{ljubic_algorithmic_2006}
+  Ljubić I, Weiskircher R, Pferschy U, Klau GW, Mutzel P, Fischetti M.
+  \newblock An {Algorithmic} {Framework} for the {Exact} {Solution} of the
+    {Prize}-{Collecting} {Steiner} {Tree} {Problem}.
+  \newblock Mathematical Programming. 2006;105(2-3):427--449.
+  \newblock doi:{10.1007/s10107-005-0660-x}.
+  
+  \bibitem{beisser_bionet:_2010}
+  Beisser D, Klau GW, Dandekar T, Muller T, Dittrich MT.
+  \newblock {BioNet}: an {R}-{Package} for the functional analysis of biological
+    networks.
+  \newblock Bioinformatics. 2010;26(8):1129--1130.
+  \newblock doi:{10.1093/bioinformatics/btq089}.
+  
+  \bibitem{heinz}
+  Dittrich M, Beisser D. BioNet; 2008.
+  \newblock \url{https://bioconductor.org/packages/BioNet/}.
+  
+  \bibitem{nakka_gene_2016}
+  Nakka P, Raphael BJ, Ramachandran S.
+  \newblock Gene and {Network} {Analysis} of {Common} {Variants} {Reveals}
+    {Novel} {Associations} in {Multiple} {Complex} {Diseases}.
+  \newblock Genetics. 2016;204(2):783--798.
+  \newblock doi:{10.1534/genetics.116.188391}.
+  
+  \bibitem{scheid_twilight;_2005}
+  Scheid S, Spang R.
+  \newblock twilight; a {Bioconductor} package for estimating the local false
+    discovery rate.
+  \newblock Bioinformatics. 2005;21(12):2921--2922.
+  \newblock doi:{10.1093/bioinformatics/bti436}.
+  
+  \bibitem{hotnet2}
+  Leiserson MDM, Vandin F, Wu HT, Dobson JR, Eldridge JV, Thomas JL, et~al..
+    HotNet2; 2018.
+  \newblock \url{https://github.com/raphael-group/hotnet2}.
+  
+  \bibitem{leanr}
+  Gwinner F. LEANR; 2016.
+  \newblock \url{https://cran.r-project.org/web/packages/LEANR/}.
+  
+  \bibitem{martini}
+  Climente-González H, Azencott CA. martini; 2019.
+  \newblock \url{https://www.bioconductor.org/packages/martini/}.
+  
+  \bibitem{climente-gonzalezMartiniPackageGenomewide2021}
+  Climente-González H, Azencott CA.
+  \newblock martini: an {R} package for genome-wide association studies using
+    {SNP} networks.
+  \newblock Bioinformatics; 2021.
+  \newblock Available from:
+    \url{http://biorxiv.org/lookup/doi/10.1101/2021.01.25.428047}.
+  
+  \bibitem{sigmod}
+  Liu Y. SigMod v2; 2018.
+  \newblock \url{https://github.com/YuanlongLiu/SigMod}.
+  
+  \bibitem{Jassal2019}
+  Jassal B, Matthews L, Viteri G, Gong C, Lorente P, Fabregat A, et~al.
+  \newblock The reactome pathway knowledgebase.
+  \newblock Nucleic Acids Research. 2019;doi:{10.1093/nar/gkz1031}.
+  
+  \bibitem{Yu2016}
+  Yu G, He QY.
+  \newblock {ReactomePA}: an R/Bioconductor package for reactome pathway analysis
+    and visualization.
+  \newblock Molecular {BioSystems}. 2016;12(2):477--479.
+  \newblock doi:{10.1039/c5mb00663e}.
+  
+  \bibitem{Benjamini1995}
+  Benjamini Y, Hochberg Y.
+  \newblock Controlling the False Discovery Rate: A Practical and Powerful
+    Approach to Multiple Testing.
+  \newblock Journal of the Royal Statistical Society: Series B (Methodological).
+    1995;57(1):289--300.
+  \newblock doi:{10.1111/j.2517-6161.1995.tb02031.x}.
+  
+  \bibitem{nogueira_measuring_2016}
+  Nogueira S, Brown G.
+  \newblock Measuring the {Stability} of {Feature} {Selection}.
+  \newblock In: Machine {Learning} and {Knowledge} {Discovery} in {Databases}.
+    vol. 9852. Cham: Springer International Publishing; 2016. p. 442--457.
+  \newblock Available from:
+    \url{http://link.springer.com/10.1007/978-3-319-46227-1_28}.
+  
+  \bibitem{Metcalfe2008}
+  Metcalfe KA, Finch A, Poll A, Horsman D, Kim-Sing C, Scott J, et~al.
+  \newblock Breast cancer risks in women with a family history of breast or
+    ovarian cancer who have tested negative for a {BRCA}1 or {BRCA}2 mutation.
+  \newblock British Journal of Cancer. 2008;100(2):421--425.
+  \newblock doi:{10.1038/sj.bjc.6604830}.
+  
+  \bibitem{pinero_disgenet:_2017}
+  Piñero J, Bravo A, Queralt-Rosinach N, Gutiérrez-Sacristán A, Deu-Pons J,
+    Centeno E, et~al.
+  \newblock {DisGeNET}: a comprehensive platform integrating information on human
+    disease-associated genes and variants.
+  \newblock Nucleic Acids Research. 2017;45(D1):D833--D839.
+  \newblock doi:{10.1093/nar/gkw943}.
+  
+  \bibitem{Michailidou2017}
+  Michailidou K, Lindstr\"{o}m S, Dennis J, Beesley J, Hui S, Kar S, et~al.
+  \newblock Association analysis identifies 65 new breast cancer risk loci.
+  \newblock Nature. 2017;551(7678):92--94.
+  \newblock doi:{10.1038/nature24284}.
+  
+  \bibitem{the_1000_genomes_project_consortium_global_2015}
+  {The 1000 Genomes Project Consortium}, Gibbs RA, Boerwinkle E, Doddapaneni H,
+    Han Y, Korchina V, et~al.
+  \newblock A global reference for human genetic variation.
+  \newblock Nature. 2015;526(7571):68--74.
+  \newblock doi:{10.1038/nature15393}.
+  
+  \bibitem{Mulligan2011}
+  Mulligan AM, , Couch FJ, Barrowdale D, Domchek SM, Eccles D, et~al.
+  \newblock Common breast cancer susceptibility alleles are associated with
+    tumour subtypes in {BRCA}1 and {BRCA}2 mutation carriers: results from the
+    Consortium of Investigators of Modifiers of {BRCA}1/2.
+  \newblock Breast Cancer Research. 2011;13(6).
+  \newblock doi:{10.1186/bcr3052}.
+  
+  \bibitem{rinella_genetic_2013}
+  Rinella ES, Shao Y, Yackowski L, Pramanik S, Oratz R, Schnabel F, et~al.
+  \newblock Genetic variants associated with breast cancer risk for {Ashkenazi}
+    {Jewish} women with strong family histories but no identifiable {BRCA}1/2
+    mutation.
+  \newblock Human Genetics. 2013;132(5):523--536.
+  \newblock doi:{10.1007/s00439-013-1269-4}.
+  
+  \bibitem{brisbin_meta-analysis_2011}
+  Brisbin AG, Asmann YW, Song H, Tsai YY, Aakre JA, Yang P, et~al.
+  \newblock Meta-analysis of 8q24 for seven cancers reveals a locus between {NOV}
+    and {ENPP}2 associated with cancer development.
+  \newblock BMC Medical Genetics. 2011;12(1):156.
+  \newblock doi:{10.1186/1471-2350-12-156}.
+  
+  \bibitem{search_newly_2009}
+  {SEARCH}, {The GENICA Consortium}, {kConFab}, {Australian Ovarian Cancer Study
+    Group}, Ahmed S, Thomas G, et~al.
+  \newblock Newly discovered breast cancer susceptibility loci on 3p24 and
+    17q23.2.
+  \newblock Nature Genetics. 2009;41(5):585--590.
+  \newblock doi:{10.1038/ng.354}.
+  
+  \bibitem{nielsen_hereditary_2016}
+  Nielsen FC, van Overeem~Hansen T, Sørensen CS.
+  \newblock Hereditary breast and ovarian cancer: new genes in confined pathways.
+  \newblock Nature Reviews Cancer. 2016;16(9):599--612.
+  \newblock doi:{10.1038/nrc.2016.72}.
+  
+  \bibitem{pinero_uncovering_2016}
+  Piñero J, Berenstein A, Gonzalez-Perez A, Chernomoretz A, Furlong LI.
+  \newblock Uncovering disease mechanisms through network biology in the era of
+    {Next} {Generation} {Sequencing}.
+  \newblock Scientific Reports. 2016;6(1):24570.
+  \newblock doi:{10.1038/srep24570}.
+  
+  \bibitem{quigley_5p12_2014}
+  Quigley DA, Fiorito E, Nord S, Van~Loo P, Alnaes GG, Fleischer T, et~al.
+  \newblock The 5p12 breast cancer susceptibility locus affects {MRPS}30
+    expression in estrogen-receptor positive tumors.
+  \newblock Molecular Oncology. 2014;8(2):273--284.
+  \newblock doi:{10.1016/j.molonc.2013.11.008}.
+  
+  \bibitem{Yu2016Repositioning}
+  Yu M, Li R, Zhang J.
+  \newblock Repositioning of antibiotic levofloxacin as a mitochondrial
+    biogenesis inhibitor to target breast cancer.
+  \newblock Biochemical and Biophysical Research Communications.
+    2016;471(4):639--645.
+  \newblock doi:{10.1016/j.bbrc.2016.02.072}.
+  
+  \bibitem{liu_jab1_cops5_2018}
+  Liu G, Claret FX, Zhou F, Pan Y.
+  \newblock Jab1/{COPS}5 as a {Novel} {Biomarker} for {Diagnosis}, {Prognosis},
+    {Therapy} {Prediction} and {Therapeutic} {Tools} for {Human} {Cancer}.
+  \newblock Frontiers in Pharmacology. 2018;9:135.
+  \newblock doi:{10.3389/fphar.2018.00135}.
+  
+  \bibitem{deloscamposComplexTraitPredictionEra2018}
+  de~los Campos G, Vazquez AI, Hsu S, Lello L.
+  \newblock Complex-{Trait} {Prediction} in the {Era} of {Big} {Data}.
+  \newblock Trends in Genetics. 2018;34(10):746--754.
+  \newblock doi:{10.1016/j.tig.2018.07.004}.
+  
+  \bibitem{nikolayeva_network_2018}
+  Nikolayeva I, Guitart~Pla O, Schwikowski B.
+  \newblock Network module identification—{A} widespread theoretical bias and
+    best practices.
+  \newblock Methods. 2018;132:19--25.
+  \newblock doi:{10.1016/j.ymeth.2017.08.008}.
+  
+  \bibitem{Ioachim2002}
+  Ioachim E, Charchanti A, Briasoulis E, Karavasilis V, Tsanou H, Arvanitis DL,
+    et~al.
+  \newblock Immunohistochemical expression of extracellular matrix components
+    tenascin, fibronectin, collagen type {IV} and laminin in breast cancer: their
+    prognostic value and role in tumour invasion and progression.
+  \newblock European Journal of Cancer. 2002;38(18):2362--2370.
+  \newblock doi:{10.1016/s0959-8049(02)00210-1}.
+  
+  \bibitem{Yi2016}
+  Yi W, Xiao E, Ding R, Luo P, Yang Y.
+  \newblock High expression of fibronectin is associated with poor prognosis,
+    cell proliferation and malignancy via the {NF}-$\kappa$B/p53-apoptosis
+    signaling pathway in colorectal cancer.
+  \newblock Oncology Reports. 2016;36(6):3145--3153.
+  \newblock doi:{10.3892/or.2016.5177}.
+  
+  \bibitem{Sponziello2016}
+  Sponziello M, Rosignolo F, Celano M, Maggisano V, Pecce V, Rose RFD, et~al.
+  \newblock Fibronectin-1 expression is increased in aggressive thyroid cancer
+    and favors the migration and invasion of cancer cells.
+  \newblock Molecular and Cellular Endocrinology. 2016;431:123--132.
+  \newblock doi:{10.1016/j.mce.2016.05.007}.
+  
+  \bibitem{ahmed_newly_2009}
+  Ahmed S, Thomas G, Ghoussaini M, Healey CS, Humphreys MK, Platte R, et~al.
+  \newblock Newly discovered breast cancer susceptibility loci on 3p24 and
+    17q23.2.
+  \newblock Nature Genetics. 2009;41(5):585--590.
+  \newblock doi:{10.1038/ng.354}.
+  
+  \bibitem{breyer_expressed_2014}
+  Breyer J, Dorset D, Clark T, Bradley K, Wahlfors T, McReynolds K, et~al.
+  \newblock An {Expressed} {Retrogene} of the {Master} {Embryonic} {Stem} {Cell}
+    {Gene} {POU}5F1 {Is} {Associated} with {Prostate} {Cancer} {Susceptibility}.
+  \newblock The American Journal of Human Genetics. 2014;94(3):395--404.
+  \newblock doi:{10.1016/j.ajhg.2014.01.019}.
+  
+  \bibitem{Chen2016}
+  Chen HY, Chen RH.
+  \newblock Cullin 3 Ubiquitin Ligases in Cancer Biology: Functions and
+    Therapeutic Implications.
+  \newblock Frontiers in Oncology. 2016;6.
+  \newblock doi:{10.3389/fonc.2016.00113}.
+  
+  \bibitem{Loignon2009}
+  Loignon M, Miao W, Hu L, Bier A, Bismar TA, Scrivens PJ, et~al.
+  \newblock Cul3 overexpression depletes Nrf2 in breast cancer and is associated
+    with sensitivity to carcinogens, to oxidative stress, and to chemotherapy.
+  \newblock Molecular Cancer Therapeutics. 2009;8(8):2432--2440.
+  \newblock doi:{10.1158/1535-7163.mct-08-1186}.
+  
+  \bibitem{lonjouGenePathwayLevel2021}
+  Lonjou C, Eon-Marchais S, Truong T, Dondon MG, Karimi M, Jiao Y, et~al.
+  \newblock Gene- and pathway-level analyses of {iCOGS} variants highlight novel
+    signaling pathways underlying familial breast cancer susceptibility.
+  \newblock International Journal of Cancer. 2021; p. ijc.33457.
+  \newblock doi:{10.1002/ijc.33457}.
+  
+  \bibitem{halseyFickleValueGenerates2015}
+  Halsey LG, Curran-Everett D, Vowler SL, Drummond GB.
+  \newblock The fickle {P} value generates irreproducible results.
+  \newblock Nature Methods. 2015;12(3):179--185.
+  \newblock doi:{10.1038/nmeth.3288}.
+  
+  \bibitem{wagnerAlternativeRoutesMutational2007}
+  Wagner A, Wright J.
+  \newblock Alternative routes and mutational robustness in complex regulatory
+    networks.
+  \newblock Biosystems. 2007;88(1-2):163--172.
+  \newblock doi:{10.1016/j.biosystems.2006.06.002}.
+  
+  \bibitem{gallagherPostGWASEraAssociation2018}
+  Gallagher MD, Chen-Plotkin AS.
+  \newblock The {Post}-{GWAS} {Era}: {From} {Association} to {Function}.
+  \newblock The American Journal of Human Genetics. 2018;102(5):717--730.
+  \newblock doi:{10.1016/j.ajhg.2018.04.002}.
+  
+  \bibitem{ionita-laza_sequence_2013}
+  Ionita-Laza I, Lee S, Makarov V, Buxbaum J, Lin X.
+  \newblock Sequence {Kernel} {Association} {Tests} for the {Combined} {Effect}
+    of {Rare} and {Common} {Variants}.
+  \newblock The American Journal of Human Genetics. 2013;92(6):841--853.
+  \newblock doi:{10.1016/j.ajhg.2013.04.015}.
+  
+  \bibitem{wang_combat:_2017}
+  Wang M, Huang J, Liu Y, Ma L, Potash JB, Han S.
+  \newblock {COMBAT}: {A} {Combined} {Association} {Test} for {Genes} {Using}
+    {Summary} {Statistics}.
+  \newblock Genetics. 2017;207(3):883--891.
+  \newblock doi:{10.1534/genetics.117.300257}.
+  
+  \bibitem{Xie2003}
+  Xie T.
+  \newblock Analysis of the Gene-Dense Major Histocompatibility Complex Class
+    {III} Region and Its Comparison to Mouse.
+  \newblock Genome Research. 2003;13(12):2621--2636.
+  \newblock doi:{10.1101/gr.1736803}.
+  
+  \bibitem{di_tommaso_nextflow_2017}
+  Di~Tommaso P, Chatzou M, Floden EW, Barja PP, Palumbo E, Notredame C.
+  \newblock Nextflow enables reproducible computational workflows.
+  \newblock Nature Biotechnology. 2017;35(4):316--319.
+  \newblock doi:{10.1038/nbt.3820}.
+  
+  \end{thebibliography}
+
+
+% Either type in your references using
+% \begin{thebibliography}{}
+% \bibitem{}
+% Text
+% \end{thebibliography}
+%
+% or
+%
+% Compile your BiBTeX database using our plos2015.bst
+% style file and paste the contents of your .bbl file
+% here. See http://journals.plos.org/plosone/s/latex for 
+% step-by-step instructions.
+% 
+
+\section{Supporting information}
+
+% Include only the SI item label in the paragraph heading. Use the \nameref{label} command to cite SI items in the text.
+\paragraph*{S1 Table}
+\label{stab:snp_summary}
+\textbf{SNP summary statistics on GENESIS.}
+
+\paragraph*{S2 Table}
+\label{stab:gene_summary}
+\textbf{Gene summary statistics on GENESIS.}
+
+\paragraph*{S3 Table}
+\label{stab:snp_solutions}
+\textbf{Summary statistics on the results of SConES on the three SNP networks (Section~\ref{methods:networks}).} The first row within each block contains the summary statistics on the whole network.
+
+\paragraph*{S4 Table}
+\label{stab:sigmod_pwy}
+\textbf{Pathway enrichment analyses of the genes in SigMod's solution.}
+
+\paragraph*{S5 Table}
+\label{stab:dmgwas_pwy}
+\textbf{Pathway enrichment analyses of the genes in dmGWAS' solution.}
+
+\paragraph*{S6 Table}
+\label{stab:hotnet2_pwy}
+\textbf{Pathway enrichment analyses of the genes in HotNet2's solution.}
+
+\paragraph*{S7 Table}
+\label{stab:consensus_pwy}
+\textbf{Pathway enrichment analyses of the genes in the consensus' solution.}
+
+\paragraph*{S1 Fig}
+\label{sfig:pcs}
+\textbf{GENESIS shows no differential population structure between cases and controls.} \textbf{(A,B,C,D)}~Eight main principal components, computed on the genotypes of GENESIS. Cases are colored in green, controls in orange.
+%\includegraphics[width=.9\linewidth]{./figures/sfigure_1.pdf}
+
+\paragraph*{S2 Fig}
+\label{sfig:snp_gene_manhattan}
+\textbf{Association in GENESIS. The red lines represent the Bonferroni thresholds.} \textbf{(A)}~SNP association, measured from the outcome of a 1 d.f. $\chi^2$ allelic test (Section~\ref{methods:conventional}). Significant SNPs within a coding gene, or within 50 kilobases of its boundaries, are annotated. The Bonferroni threshold is 2.54 \texttimes{} 10\textsuperscript{-7}. \textbf{(B)}~Gene association, measured by P\=/value of VEGAS2 \cite{mishra_vegas2:_2015} using the 10\% of SNPs with the lowest P\=/values (Section~\ref{methods:conventional}). The Bonferroni threshold is 1.53 \texttimes{} 10\textsuperscript{-6}. \textbf{(C)}~SNP association as in panel (A). The SNPs in black were selected by an L1-penalized logistic regression (Section~\ref{methods:classifier}, $\lambda = 0.03$).
+%\includegraphics[width=.7\linewidth]{./figures/sfigure_2.png}
+
+\paragraph*{S3 Fig}
+\label{sfig:consensus_stats}
+\textbf{Relationship between the log\textsubscript{10} of the betweenness centrality and the -log\textsubscript{10} of the VEGAS2 P\=/value of the genes in the consensus solution.} The blue line represents a fitted generalized linear model.
+%\includegraphics[width=.65\textwidth]{./figures/sfigure_3.pdf}
+  
+\paragraph*{S4 Fig}
+\label{sfig:additional-benchmarks}
+\textbf{Additional benchmarks of the network methods.} \textbf{(A)}~Precision and recall of the evaluated methods with respect to Bonferroni-significant SNPs/genes in BCAC. For reference, we added a gray line with a slope of 1. \textbf{(B)}~Sensitivity and specificity on the test set of the L1-penalized logistic regression trained on the features selected by each of the methods. The performance of the classifier trained on all SNPs is also displayed. Points are the average over the 5 runs; the error bars represent the standard error of the mean.
+%\includegraphics[width=.675\linewidth]{./figures/sfigure_4.pdf
+
+\paragraph*{S5 Fig}
+\label{sfig:rewirings}
+\textbf{Number of times a gene was selected by either dmGWAS, heinz, or SigMod in 100 rewirings of the PPIN (Section~\ref{methods:rewiring}) and its betweenness.} This figure is equivalent to Fig~\ref{fig:issues}B, split by method. 
+%\includegraphics[width=.9\linewidth]{./figures/sfigure_5.pdf
+
+\paragraph*{S6 Fig}
+\label{sfig:pearson_methods}
+\textbf{Pearson correlation between the different solutions.} \textbf{(A)}~Correlation between selected SNPs. \textbf{(B)}~Correlation between selected genes. In general, the solutions display a very low overlap.
+%\includegraphics[width=.9\linewidth]{./figures/sfigure_6.pdf}
+  
+\paragraph*{S7 Fig}
+\label{sfig:params_size}
+\textbf{Size of the solutions obtained under different parameters.} \textbf{(A)}~Size of the solution produced by different parameter values, expressed as a percentage of the maximum solution size for the method, or the highest tested value for the parameter, respectively. The size of the solution is the median among all the solution sizes for the same parameter. \textbf{(B)}~Boxplot of the solution sizes of the methods under the explored parameters (Section~\ref{methods:parameters}).
+%\includegraphics[width=.9\linewidth]{./figures/sfigure_7.pdf
+
+\paragraph*{S8 Fig}
+\label{sfig:params_pearson}
+\textbf{Pearson correlation between the solutions obtained under different parameters, computed as in Section~\ref{methods:algorithm_comparison}.} Grey tiles represent the cases where we could not compute the Pearson correlation because the two vectors were either all ones (all genes/SNPs were selected) or zeros (no genes/SNPs were selected).
+%\includegraphics[width=.9\linewidth]{./figures/sfigure_8.pdf
+
+\paragraph*{S9 Fig}
+\label{sfig:lc_ht_comparison}
+\textbf{Comparison of the benchmark on high-throughput (HT) interactions to the benchmark on both high-throughput and literature curated interactions (HT+LC).} Grey lines represent no change in the statistic between the benchmarks (1 for ratios mean(HT) / mean(HT + LC), 0 for differences mean(HT) - mean(HT + LC)). \textbf{(A)}~Ratios of the selected features between both benchmarks and of the active set (Section~\ref{methods:classifier}). \textbf{(B)}~Shifts in sensitivity and specificity. \textbf{(C)}~Shift in Pearson correlation between benchmarks. \textbf{(D)}~Ratio between the runtimes of the benchmarks. For gene-based methods, inverted triangles represent the ratio of runtimes of the algorithms themselves, and circles the total time, which includes the algorithm themselves and the additional 119\,980 seconds (1 day and 9.33 hours) that VEGAS2 took on average to compute the gene scores from SNP summary statistics. In general, adding additional interactions slightly improved the stability of the solution. However, it increased the solution size and the required runtime, and had mixed effects on the sensitivity and specificity.
+%\includegraphics[width=.85\linewidth]{./figures/sfigure_10.pdf}
+  
+\paragraph*{S10 Fig}
+\label{sfig:biotypes_excluded}
+\textbf{Biotypes of genes from the annotation that are not present in the HINT PPIN.}
+%\includegraphics[width=.9\linewidth]{./figures/sfigure_9.pdf}
+
+\end{document}
