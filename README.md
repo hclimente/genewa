@@ -1,6 +1,6 @@
 In this repository, we evaluate six network-based GWAS tools on the [GENESIS dataset](http://bmccancer.biomedcentral.com/articles/10.1186/s12885-015-2028-9). It containts the accompanying scripts, results, and laboratory notebooks of the following article:
 
-> **Biological networks and GWAS: comparing and combining network methods to understand the genetics of familial breast cancer susceptibility in the GENESIS study.** Héctor Climente-González, Christine Lonjou, Fabienne Lesueur, GENESIS Study collaborators, Dominique Stoppa-Lyonnet, Nadine Andrieu, Chloé-Agathe Azencott,  GENESIS study group. *bioRxiv* 2020.05.04.076661; doi: https://doi.org/10.1101/2020.05.04.076661
+> Climente-González H, Lonjou C, Lesueur F, GENESIS study group, Stoppa-Lyonnet D, et al. (2021) **Boosting GWAS using biological networks: A study on susceptibility to familial breast cancer.** PLOS Computational Biology 17(3): e1008819. https://doi.org/10.1371/journal.pcbi.1008819
 
 This repository is organized into four main subfolders:
 
